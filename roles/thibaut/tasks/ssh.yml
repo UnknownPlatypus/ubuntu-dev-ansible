@@ -1,0 +1,21 @@
+---
+- name: Check ssh dir exists
+  ansible.builtin.stat:
+    path: ~/.ssh
+  register: ssh_dir
+
+- name: Create ssh dir (if needed)
+  when: not ssh_dir.stat.exists
+  ansible.builtin.file:
+    path: ~/.ssh
+    state: directory
+    mode: "0700"
+
+- name: Ssh known_hosts contains github.com key
+  ansible.builtin.lineinfile:
+    dest: ~/.ssh/known_hosts
+    create: true
+    mode: "0644"
+    state: present
+    line: "{{ lookup('file', 'github_ssh_host_key') }}"
+    regexp: "^github\\.com "
