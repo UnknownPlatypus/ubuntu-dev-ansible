@@ -1,0 +1,14 @@
+- name: Sanity checks
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Check we are running in the directory of the script
+      failed_when: not ansible_env.PWD.endswith('/ubuntu-dev-ansible')
+      ansible.builtin.debug:
+        msg: This playbook should only be run from the `ubuntu-dev-ansible` folder
+
+- name: Setup ubuntu machine
+  hosts: localhost
+  connection: local
+  roles:
+    - adam_mac
