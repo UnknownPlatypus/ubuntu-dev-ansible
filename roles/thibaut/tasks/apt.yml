@@ -1,0 +1,18 @@
+---
+- name: Ensure apt-transport-https is installed (for https signing urls)
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+    state: present
+
+- name: Add google APT repository
+  ansible.builtin.deb822_repository:
+    name: google
+    types: [deb]
+    uris:
+      - http://dl.google.com/linux/chrome/deb
+    signed_by: https://dl.google.com/linux/linux_signing_key.pub
+    suites: [stable]
+    components: [main]
+    state: present
+    enabled: true

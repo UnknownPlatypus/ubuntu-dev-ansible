@@ -1,3 +1,10 @@
 ---
 - name: Basic settings
   ansible.builtin.import_tasks: ssh.yml
+
+- name: Setup apt
+  ansible.builtin.import_tasks: apt.yml
+  become: true
+
+- name: Install things
+  ansible.builtin.import_tasks: installs.yml
