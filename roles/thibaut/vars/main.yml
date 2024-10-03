@@ -1,0 +1,21 @@
+---
+# thibaut_aptcustom_repositories:
+thibaut_apt_packages:
+- google-chrome-stable
+thibaut_uv_tools:
+  - name: black
+  - name: ruff
+  - name: httpie
+  - name: ipython
+  - name: hatch
+  - name: twine
+  - name: build
+  - name: auditwheel
+  - name: yt-dlp
+  - name: ebcli
+  - name: pre-commit
+    with:
+      - pre-commit-uv # Really not sure about that
+  - name: tox
+    with:
+      - tox-uv

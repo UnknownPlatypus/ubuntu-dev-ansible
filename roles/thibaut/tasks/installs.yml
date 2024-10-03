@@ -29,3 +29,44 @@
   tags:
     - apt
     - cleanup
+
+- name: uv install latest Pythons
+  ansible.builtin.command: >
+    uv python install
+    3.8
+    3.9
+    3.10
+    3.11
+    3.12
+    3.13
+  tags:
+    - uv
+
+- name: Uv install tools
+  ansible.builtin.command: >
+    uv tool install
+    --python 3.12
+    {{ item.name }}
+    {% if item.with is defined %}
+    {% for w in item.with %}--with {{ w }}{% endfor %}
+    {% endif %}
+  loop: "{{ thibaut_uv_tools }}"
+  tags:
+    - uv
+
+- name: Uv upgrade tools
+  ansible.builtin.command: >
+    uv tool upgrade
+    {{ item.name }}
+    {% if item.with is defined %}
+    {% for w in item.with %}--upgrade-package {{ w }}{% endfor %}
+    {% endif %}
+  loop: "{{ thibaut_uv_tools }}"
+  tags:
+    - uv
+
+- name: Uv prune cache
+  ansible.builtin.command: uv cache prune
+  tags:
+    - uv
+    - cleanup
