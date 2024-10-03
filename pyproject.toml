@@ -1,0 +1,15 @@
+[project]
+name = "ubuntu-dev-ansible"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "ansible-dev-tools>=24.9.0; platform_system != 'Windows'",
+  "ansible>=10.4.0",
+  "python-debian>=0.1.49",
+]
+
+[tool.uv]
+# https://github.com/astral-sh/uv/issues/6127#issuecomment-2298975659
+environments = ["platform_system == 'Windows'", "platform_system != 'Windows'"]

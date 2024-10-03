@@ -6,10 +6,9 @@ and re-install with less effort.
 ## Getting Started
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) with the command from the site.
-2. `uv venv --python 3.12`
-3. `source .venv/bin/activate`
-4. `uv pip install ansible`
-5. `ansible-playbook playbook.yml`
+2. `uv sync`
+3. `ansible-galaxy role install markosamuli.linuxbrew`
+4. `ansible-playbook --ask-become-pass playbook.yml`
 
 ## Credits
 
