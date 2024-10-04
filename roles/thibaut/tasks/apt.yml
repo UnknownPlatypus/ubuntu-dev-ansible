@@ -14,20 +14,32 @@
     signed_by: https://dl.google.com/linux/linux_signing_key.pub
     suites: [stable]
     components: [main]
+    architectures: amd64
     enabled: true
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
     name: docker
-    types: deb
+    types: [deb]
     uris:
       - https://download.docker.com/linux/ubuntu
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
     suites: "{{ ansible_distribution_release }}" # noble, focal, ...
     components: [stable]
     architectures: amd64
-    signed_by: https://download.docker.com/linux/ubuntu/gpg
     enabled: true
 
+- name: Add Mozilla APT repository
+  ansible.builtin.deb822_repository:
+    name: mozilla
+    types: [deb]
+    uris:
+      - https://packages.mozilla.org/apt
+    signed_by: https://packages.mozilla.org/apt/repo-signing-key.gpg
+    suites: [mozilla]
+    components: [main]
+    architectures: amd64
+    enabled: true
 
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:

@@ -1,6 +1,7 @@
 ---
 thibaut_apt_packages:
   - curl
+  - firefox-nightly
   - git
   - google-chrome-stable
   - hyperfine
@@ -36,9 +37,6 @@ thibaut_brew_packages:
   - pandoc
 
 # thibaut_homebrew_cask_packages:
-#   - discord
-#   - docker
-#   - evernote
 #   - firefox
 #   - font-ubuntu-mono-nerd-font
 #   - google-earth-pro
