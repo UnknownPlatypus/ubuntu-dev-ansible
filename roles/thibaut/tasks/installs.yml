@@ -6,7 +6,7 @@
   tags:
     - apt
 
-- name: Install apt packages
+- name: Install apt packages # noqa:package-latest
   ansible.builtin.apt:
     name: "{{ thibaut_apt_packages }}"
     state: latest
@@ -30,7 +30,24 @@
     - apt
     - cleanup
 
-- name: uv install latest Pythons
+- name: Install linuxbrew
+  ansible.builtin.include_role:
+    name: "markosamuli.linuxbrew"
+  vars:
+    linuxbrew_use_installer: true
+  tags:
+    - brew
+
+- name: Install brew packages
+  community.general.homebrew:
+    name: "{{ thibaut_brew_packages }}"
+    state: latest
+    update_homebrew: true
+    upgrade_all: true
+  tags:
+    - brew
+
+- name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
     3.8
