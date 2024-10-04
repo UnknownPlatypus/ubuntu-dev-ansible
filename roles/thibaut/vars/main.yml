@@ -1,7 +1,23 @@
 ---
-# thibaut_aptcustom_repositories:
 thibaut_apt_packages:
+  - git
 - google-chrome-stable
+  - hyperfine
+  - nginx
+  - jq
+  - tmux
+  - wget
+  # Geolibraries
+  - binutils
+  - libproj-dev
+  - gdal-bin
+
+# Use brew for packages that are lagging a lot behind in apt.
+thibaut_brew_packages:
+  - btop
+  - fd
+  - fzf
+  - tlrc
 thibaut_uv_tools:
   - name: black
   - name: ruff
@@ -13,6 +29,7 @@ thibaut_uv_tools:
   - name: auditwheel
   - name: yt-dlp
   - name: ebcli
+  - name: jpegoptim-py
   - name: pre-commit
     with:
       - pre-commit-uv # Really not sure about that
