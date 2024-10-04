@@ -21,6 +21,9 @@ thibaut_apt_packages:
   - gdal-bin
   # GUI
   - foliate # Ebook reader
+
+thibaut_deb_packages:
+  - https://discord.com/api/download?platform=linux&format=deb
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
   - btop
