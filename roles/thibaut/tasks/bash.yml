@@ -1,0 +1,11 @@
+---
+- name: Setup fzf shell integration
+  ansible.builtin.blockinfile:
+    path: ~/.bashrc
+    create: true
+    mode: "0644"
+    block: |
+      eval "$(fzf --bash)"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: fzf"
+    prepend_newline: true
+    append_newline: true

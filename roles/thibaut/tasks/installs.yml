@@ -32,7 +32,7 @@
 
 - name: Install linuxbrew
   ansible.builtin.include_role:
-    name: "markosamuli.linuxbrew"
+    name: markosamuli.linuxbrew
   vars:
     linuxbrew_use_installer: true
   tags:

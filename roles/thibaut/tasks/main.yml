@@ -8,3 +8,7 @@
 
 - name: Install things
   ansible.builtin.import_tasks: installs.yml
+
+- name: Update bash related files
+  ansible.builtin.import_tasks: bash.yml
+
