@@ -47,6 +47,9 @@
   tags:
     - brew
 
+- name: Install dprint with the installer
+  ansible.builtin.shell: curl -fsSL https://dprint.dev/install.sh | sh
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install

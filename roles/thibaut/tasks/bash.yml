@@ -6,6 +6,8 @@
     mode: "0644"
     block: |
       eval "$(fzf --bash)"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK: fzf"
+      export DPRINT_INSTALL="/home/thibaut/.dprint"
+      export PATH="$DPRINT_INSTALL/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
     prepend_newline: true
     append_newline: true
