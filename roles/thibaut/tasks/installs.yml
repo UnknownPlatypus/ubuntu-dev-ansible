@@ -47,8 +47,18 @@
   tags:
     - brew
 
+- name: Check if dprint is installed
+  ansible.builtin.command: dprint --version
+  register: dprint_installed
+  ignore_errors: true
+
+- name: Upgrade dprint if installed
+  ansible.builtin.command: dprint upgrade
+  when: dprint_installed.rc == 0
+
 - name: Install dprint with the installer
   ansible.builtin.shell: curl -fsSL https://dprint.dev/install.sh | sh
+  when: dprint_installed.rc != 0
 
 - name: Uv install latest Pythons
   ansible.builtin.command: >
