@@ -1,12 +1,20 @@
 ---
 thibaut_apt_packages:
+  - curl
   - git
 - google-chrome-stable
   - hyperfine
   - nginx
   - jq
+  - sd
   - tmux
+  - tree
   - wget
+  # Build tools
+  - pkg-config
+  - default-libmysqlclient-dev
+  - gcc
+  - build-essential
   # Geolibraries
   - binutils
   - libproj-dev
@@ -18,6 +26,8 @@ thibaut_brew_packages:
   - fd
   - fzf
   - tlrc
+  - ripgrep
+  - pandoc
 thibaut_uv_tools:
   - name: black
   - name: ruff
@@ -30,6 +40,7 @@ thibaut_uv_tools:
   - name: yt-dlp
   - name: ebcli
   - name: jpegoptim-py
+  - name: shellcheck-py
   - name: pre-commit
     with:
       - pre-commit-uv # Really not sure about that
