@@ -2,7 +2,7 @@
 thibaut_apt_packages:
   - curl
   - git
-- google-chrome-stable
+  - google-chrome-stable
   - hyperfine
   - nginx
   - jq
@@ -19,7 +19,8 @@ thibaut_apt_packages:
   - binutils
   - libproj-dev
   - gdal-bin
-
+  # GUI
+  - foliate # Ebook reader
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
   - btop
@@ -28,6 +29,26 @@ thibaut_brew_packages:
   - tlrc
   - ripgrep
   - pandoc
+
+# thibaut_homebrew_cask_packages:
+#   - discord
+#   - docker
+#   - evernote
+#   - firefox
+#   - font-ubuntu-mono-nerd-font
+#   - google-earth-pro
+#   - istat-menus
+#   - karabiner-elements
+#   - keyboard-maestro
+#   - mactex
+#   - rectangle
+#   - steam
+#   - tableplus
+#   - vlc
+
+#  - awscli ~# TODO: v2 is a shitshow top install
+# TODO: https://github.com/asottile/all-repos
+# Try: starship - detailed terminal prompt
 thibaut_uv_tools:
   - name: black
   - name: ruff
@@ -47,3 +68,6 @@ thibaut_uv_tools:
   - name: tox
     with:
       - tox-uv
+
+thibaut_cargo_tools:
+  - tokei

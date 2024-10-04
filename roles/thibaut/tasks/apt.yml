@@ -14,5 +14,8 @@
     signed_by: https://dl.google.com/linux/linux_signing_key.pub
     suites: [stable]
     components: [main]
-    state: present
     enabled: true
+
+- name: Add Foliate PPA repository
+  ansible.builtin.apt_repository:
+    repo: ppa:apandada1/foliate
