@@ -16,6 +16,19 @@
     components: [main]
     enabled: true
 
+- name: Add Docker APT repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris:
+      - https://download.docker.com/linux/ubuntu
+    suites: "{{ ansible_distribution_release }}" # noble, focal, ...
+    components: [stable]
+    architectures: amd64
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
+    enabled: true
+
+
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:apandada1/foliate
