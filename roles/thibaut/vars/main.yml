@@ -25,6 +25,7 @@ thibaut_apt_packages:
 thibaut_deb_packages:
   - https://discord.com/api/download?platform=linux&format=deb
   - https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+  - https://release.gitkraken.com/linux/gitkraken-amd64.deb
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
   - btop
