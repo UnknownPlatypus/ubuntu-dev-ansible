@@ -1,0 +1,34 @@
+---
+- name: Stat the existing destination file
+  ansible.builtin.stat:
+    path: "~/{{ item }}"
+  register: repo_file_stat
+  loop:
+    - all-repos.json
+    - my-repos.json
+
+- name: Show diff if the content has drifted
+  ansible.builtin.command:
+    cmd: diff "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}" "~/{{ item }}"
+  register: all_repos_conf_diff
+  changed_when: all_repos_conf_diff.rc == 1
+  ignore_errors: true
+  loop:
+    - all-repos.json
+    - my-repos.json
+
+- name: Copy the configuration files (if it does not exist)
+  ansible.builtin.copy:
+    src: "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}"
+    dest: "~/{{ item }}"
+    mode: "0600"
+    force: false  # Don't overwrite existing files
+  loop:
+    - all-repos.json
+    - my-repos.json
+
+- name: Run all-repos-clone command
+  ansible.builtin.command:
+    cmd: all-repos-clone
+    chdir: "{{ ansible_env.HOME }}"
+  changed_when: true

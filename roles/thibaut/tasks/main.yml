@@ -15,3 +15,7 @@
 - name: Add some symlinks
   ansible.builtin.import_tasks: symlinks.yml
 
+- name: Clone my repos into ~/workspace
+  ansible.builtin.import_tasks: all-repos.yml
+  tags:
+    - all-repos

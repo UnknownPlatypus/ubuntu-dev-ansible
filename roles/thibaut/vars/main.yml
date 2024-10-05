@@ -64,6 +64,7 @@ thibaut_brew_packages:
   - ripgrep # Recursively searches directories for a regex pattern
 
 thibaut_uv_tools:
+  - name: all-repos # Clone all your repositories and apply sweeping changes
   - name: auditwheel # Auditing and repairing wheels for PyPI
   - name: black # The uncompromising Python code formatter
   - name: build # A simple, correct Python build frontend
@@ -85,4 +86,3 @@ thibaut_uv_tools:
       - tox-uv # uv plugin for tox
 
 # TODO: https://github.com/asottile/all-repos
-# Try: starship - detailed terminal prompt

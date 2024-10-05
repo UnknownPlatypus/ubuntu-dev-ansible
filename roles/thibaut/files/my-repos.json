@@ -1,0 +1,4 @@
+{
+    "django-upgrade": "git@github.com:UnknownPlatypus/django-upgrade",
+    "djangofmt": "git@github.com:UnknownPlatypus/djangofmt.git"
+}
