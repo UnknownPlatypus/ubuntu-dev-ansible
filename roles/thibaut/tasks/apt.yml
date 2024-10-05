@@ -65,6 +65,18 @@
     architectures: amd64
     enabled: true
 
+- name: Add Visual Studio Code APT repository
+  ansible.builtin.deb822_repository:
+    name: vscode
+    types: [deb]
+    uris:
+      - https://packages.microsoft.com/repos/code
+    signed_by: /etc/apt/keyrings/packages.microsoft.gpg
+    suites: [stable]
+    components: [main]
+    architectures: amd64
+    enabled: true
+
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:apandada1/foliate

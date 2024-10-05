@@ -24,6 +24,7 @@ thibaut_apt_packages:
   - foliate # Ebook reader
   - spotify-client
   - tableplus
+  - code
 
 thibaut_deb_packages:
   - url: https://discord.com/api/download?platform=linux&format=deb
@@ -44,7 +45,6 @@ thibaut_brew_packages:
 
 # thibaut_homebrew_cask_packages:
 #   - vlc
-#   - code
 
 #  - awscli ~# TODO: v2 is a shitshow top install
 # TODO: https://github.com/asottile/all-repos
