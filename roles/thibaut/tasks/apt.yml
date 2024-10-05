@@ -40,7 +40,7 @@
     components: [main]
     architectures: amd64
     enabled: true
-    
+
 - name: Add Spotify APT repository
   ansible.builtin.deb822_repository:
     name: spotify
@@ -50,6 +50,18 @@
     signed_by: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
     suites: [stable]
     components: [non-free]
+    architectures: amd64
+    enabled: true
+
+- name: Add TablePlus APT repository
+  ansible.builtin.deb822_repository:
+    name: tableplus
+    types: [deb]
+    uris:
+      - https://deb.tableplus.com/debian/24
+    signed_by: https://deb.tableplus.com/apt.tableplus.com.gpg.key
+    suites: [tableplus]
+    components: [main]
     architectures: amd64
     enabled: true
 
