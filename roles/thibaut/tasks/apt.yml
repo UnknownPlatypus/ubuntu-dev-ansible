@@ -89,6 +89,18 @@
     architectures: [amd64]
     enabled: true
 
+- name: Add MongoDB 8.0 repository
+  ansible.builtin.deb822_repository:
+    name: mongodb-org-8.0
+    uris:
+      - https://repo.mongodb.org/apt/ubuntu
+    suites: [noble/mongodb-org/8.0]
+    components: [multiverse]
+    architectures: [amd64]
+    signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
+    enabled: true
+
+
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:apandada1/foliate

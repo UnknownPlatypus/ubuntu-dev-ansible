@@ -7,6 +7,7 @@ thibaut_apt_packages:
   - google-chrome-stable # Google Chrome web browser
   - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
+  - mongodb-org  # Popular NoSQL database for scalable, document-oriented storage
   - mysql-server  # Widely used open-source relational database management system (RDBMS)
   - nginx # High-performance HTTP server and reverse proxy
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
