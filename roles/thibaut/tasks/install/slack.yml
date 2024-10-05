@@ -1,6 +1,6 @@
 ---
 # Slack does not provided a 'latest' url so we have to manually find it.
-- name: Get latest Slack version download page
+- name: Get latest Slack download page
   ansible.builtin.uri:
     url: https://slack.com/downloads/instructions/linux?build=deb
     return_content: true
@@ -10,7 +10,7 @@
   ansible.builtin.set_fact:
     slack_latest_url: "{{ slack_download_page.content | regex_search('https://downloads.slack-edge.com/desktop-releases/linux/x64/.*\\.deb') }}"
 
-- name: Debug latest Slack URL (optional, for testing)
+- name: Print latest Slack download URL
   ansible.builtin.debug:
     msg: "Latest Slack URL: {{ slack_latest_url }}"
 

@@ -79,6 +79,11 @@
   tags:
     - dprint
 
+- name: Install jetbrains Toolbox
+  ansible.builtin.import_tasks: install/jetbrains-toolbox.yml
+  tags:
+    - jetbrains
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
