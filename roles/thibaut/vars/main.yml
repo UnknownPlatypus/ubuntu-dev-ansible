@@ -1,72 +1,85 @@
 ---
 thibaut_apt_packages:
-  - bat
-  - curl
-  - firefox-nightly
-  - git
-  - google-chrome-stable
-  - hyperfine
-  - nginx
-  - jq
-  - sd
-  - tmux
-  - tree
-  - wget
+  - bat # Cat clone with syntax highlighting and Git integration
+  - curl # Command line tool for transferring data using various protocols
+  - firefox-nightly # Nightly build of Firefox browser
+  - git # Distributed version control system
+  - google-chrome-stable # Google Chrome web browser
+  - hyperfine # Command-line benchmarking tool
+  - jq # Lightweight command-line JSON processor
+  - nginx # High-performance HTTP server and reverse proxy
+  - pv # Pipe Viewer - monitors the progress of data through a pipeline
+  - sd # Intuitive find & replace CLI
+  - tmux # Terminal multiplexer
+  - tree # Directory listing in tree-like format
+  - wget # Retrieves files using HTTP, HTTPS, and FTP protocols
+
   # Build tools
-  - pkg-config
-  - default-libmysqlclient-dev
-  - gcc
-  - build-essential
+  - pkg-config # Helper tool used when compiling applications and libraries
+  - default-libmysqlclient-dev # MySQL database development files
+  - gcc # GNU Compiler Collection
+  - build-essential # Informational list of build-essential packages
+
   # Geolibraries
-  - binutils
-  - libproj-dev
-  - gdal-bin
+  - binutils # GNU assembler, linker and binary utilities
+  - libproj-dev # Cartographic Projections Library
+  - gdal-bin # Geospatial Data Abstraction Library - Utility programs
+
   # GUI
-  - code
+  - code # Visual Studio Code editor
   - foliate # Ebook reader
-  - spotify-client
-  - tableplus
-  - vlc
+  - spotify-client # Spotify music streaming client
+  - tableplus # Modern, native, and friendly GUI tool for relational databases
+  - vlc # Multimedia player and streamer
 
 thibaut_deb_packages:
+  # Popular chat and voice communication platform for communities
   - url: https://discord.com/api/download?platform=linux&format=deb
     file_name: discord-latest.deb
+  # GUI application for managing Docker containers and images  
   - url: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
     file_name: docker-desktop-amd64.deb
+  # Powerful Git GUI client with visual commit history and integrations
   - url: https://release.gitkraken.com/linux/gitkraken-amd64.deb
     file_name: gitkraken-amd64.deb
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
-  - btop
-  - fd
-  - fzf
-  - tlrc
-  - ripgrep
-  - pandoc
+  - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+  - dust # More intuitive version of du (disk usage)
+  - eza # Modern replacement for ls
+  - fd # Simple, fast and user-friendly alternative to find
+  - fzf # General-purpose command-line fuzzy finder
+  - lychee # Fast, async, stream-based link checker
+  - oxipng # Multithreaded PNG optimizer
+  - pandoc # Universal document converter
+  - sd # Intuitive find & replace CLI (already in apt packages, possibly for version control)
+  - taplo # TOML toolkit
+  - tokei # Code statistics tool
+  - tlrc # tl;dr pages client (simplified man pages)
+  - typos-cli # Source code spell checker
+  - ripgrep # Recursively searches directories for a regex pattern
 
-#  - awscli ~# TODO: v2 is a shitshow top install
+thibaut_uv_tools:
+  - name: auditwheel # Auditing and repairing wheels for PyPI
+  - name: black # The uncompromising Python code formatter
+  - name: build # A simple, correct Python build frontend
+  - name: deptry # Command line tool to check for unused, missing and transitive dependencies in a Python project
+  - name: ebcli # Command Line Interface for AWS Elastic Beanstalk
+  - name: hatch # Modern, extensible Python project management
+  - name: httpie # User-friendly command-line HTTP client for the API era
+  - name: ipython # Enhanced interactive Python shell
+  - name: jpegoptim-py # Python wrapper for jpegoptim
+  - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
+  - name: ruff # An extremely fast Python linter, written in Rust
+  - name: twine # Utilities for interacting with PyPI
+  - name: yt-dlp # Fork of youtube-dl with additional features and fixes
+  - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks
+    with:
+      - pre-commit-uv # uv plugin for pre-commit
+  - name: tox # Generic virtual environment management and test command line tool
+    with:
+      - tox-uv # uv plugin for tox
+
 # TODO: https://github.com/asottile/all-repos
 # Try: starship - detailed terminal prompt
-thibaut_uv_tools:
-  - name: black
-  - name: ruff
-  - name: httpie
-  - name: ipython
-  - name: hatch
-  - name: twine
-  - name: build
-  - name: auditwheel
-  - name: yt-dlp
-  - name: ebcli
-  - name: jpegoptim-py
-  - name: shellcheck-py
-  - name: pre-commit
-    with:
-      - pre-commit-uv # Really not sure about that
-  - name: tox
-    with:
-      - tox-uv
-
-thibaut_cargo_tools:
-  - tokei

@@ -1,3 +1,4 @@
+---
 - name: Check if dprint is installed
   ansible.builtin.command: dprint --version
   register: dprint_installed

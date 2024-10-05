@@ -52,7 +52,6 @@
     - apt
     - cleanup
 
-
 - name: Install linuxbrew
   ansible.builtin.include_role:
     name: markosamuli.linuxbrew
@@ -70,7 +69,6 @@
   tags:
     - brew
 
-
 - name: Install awscli v2
   ansible.builtin.import_tasks: install/awscli_v2.yml
   tags:
@@ -80,7 +78,7 @@
   ansible.builtin.import_tasks: install/dprint.yml
   tags:
     - dprint
-    
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
