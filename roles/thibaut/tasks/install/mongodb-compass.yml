@@ -1,0 +1,32 @@
+---
+# MongoDB Compass does not provided a 'latest' url so we have to manually find it.
+- name: Fetch latest MongoDB Compass release data from GitHub API
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/mongodb-js/compass/releases/latest"
+    return_content: yes
+  register: compass_release_data
+
+- name: Get the latest MongoDB Compass release version
+  set_fact:
+    compass_latest_version: "{{ (compass_release_data.content | from_json).name }}"
+
+- name: Build the latest MongoDB Compass download URL
+  set_fact:
+    compass_latest_url: "https://downloads.mongodb.com/compass/mongodb-compass_{{ compass_latest_version }}_amd64.deb"
+    compass_tmp_dir: "/tmp/mongodb-compass-{{ compass_latest_version }}.deb" 
+
+- name: Print latest MongoDB Compass download URL
+  ansible.builtin.debug:
+    msg: "Latest compass URL: {{ compass_latest_url }}"
+
+- name: Download latest MongoDB Compass .deb packages from url
+  ansible.builtin.get_url:
+    url: "{{ compass_latest_url }}"
+    dest: "{{ compass_tmp_dir }}"
+    mode: "0644"
+    timeout: 30
+
+- name: Install latest MongoDB Compass version
+  ansible.builtin.apt:
+    deb: "{{ compass_tmp_dir }}"
+  become: true

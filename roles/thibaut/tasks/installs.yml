@@ -84,6 +84,11 @@
   tags:
     - jetbrains
 
+- name: Install MongoDB Compass
+  ansible.builtin.import_tasks: install/mongodb-compass.yml
+  tags:
+    - mongo
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
