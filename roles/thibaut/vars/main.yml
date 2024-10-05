@@ -22,6 +22,7 @@ thibaut_apt_packages:
   - gdal-bin
   # GUI
   - foliate # Ebook reader
+  - spotify-client
 
 thibaut_deb_packages:
   - url: https://discord.com/api/download?platform=linux&format=deb
@@ -41,8 +42,6 @@ thibaut_brew_packages:
   - pandoc
 
 # thibaut_homebrew_cask_packages:
-#   - steam
-#   - spotify
 #   - tableplus
 #   - vlc
 

@@ -40,6 +40,18 @@
     components: [main]
     architectures: amd64
     enabled: true
+    
+- name: Add Spotify APT repository
+  ansible.builtin.deb822_repository:
+    name: spotify
+    types: [deb]
+    uris:
+      - http://repository.spotify.com
+    signed_by: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
+    suites: [stable]
+    components: [non-free]
+    architectures: amd64
+    enabled: true
 
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
