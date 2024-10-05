@@ -22,7 +22,7 @@
   loop: "{{ thibaut_deb_packages }}"
   tags:
     - apt
- 
+
 - name: Install downloaded .deb packages
   ansible.builtin.apt:
     deb: /tmp/{{ item.file_name }}
