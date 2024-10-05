@@ -14,13 +14,25 @@
   tags:
     - apt
 
-- name: Install .deb packages from url # noqa:package-latest
+- name: Download .deb packages from url
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: /tmp/{{ item.file_name }}
+    timeout: 30
+  loop: "{{ thibaut_deb_packages }}"
+  tags:
+    - apt
+ 
+- name: Install downloaded .deb packages
   ansible.builtin.apt:
-    deb: "{{ item }}"
+    deb: /tmp/{{ item.file_name }}
   loop: "{{ thibaut_deb_packages }}"
   become: true
   tags:
     - apt
+
+- name: Install slack latest .deb package
+  ansible.builtin.import_tasks: slack.yml
 
 - name: Remove useless packages from the cache
   ansible.builtin.apt:
@@ -64,7 +76,7 @@
   ansible.builtin.command: dprint upgrade
   when: dprint_installed.rc == 0
 
-- name: Install dprint with the installer
+- name: Install dprint if not installed
   ansible.builtin.shell: curl -fsSL https://dprint.dev/install.sh | sh
   when: dprint_installed.rc != 0
 

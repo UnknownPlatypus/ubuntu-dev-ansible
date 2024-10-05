@@ -24,9 +24,13 @@ thibaut_apt_packages:
   - foliate # Ebook reader
 
 thibaut_deb_packages:
-  - https://discord.com/api/download?platform=linux&format=deb
-  - https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
-  - https://release.gitkraken.com/linux/gitkraken-amd64.deb
+  - url: https://discord.com/api/download?platform=linux&format=deb
+    file_name: discord-latest.deb
+  - url: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+    file_name: docker-desktop-amd64.deb
+  - url: https://release.gitkraken.com/linux/gitkraken-amd64.deb
+    file_name: gitkraken-amd64.deb
+
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
   - btop
@@ -37,15 +41,8 @@ thibaut_brew_packages:
   - pandoc
 
 # thibaut_homebrew_cask_packages:
-#   - firefox
-#   - font-ubuntu-mono-nerd-font
-#   - google-earth-pro
-#   - istat-menus
-#   - karabiner-elements
-#   - keyboard-maestro
-#   - mactex
-#   - rectangle
 #   - steam
+#   - spotify
 #   - tableplus
 #   - vlc
 
