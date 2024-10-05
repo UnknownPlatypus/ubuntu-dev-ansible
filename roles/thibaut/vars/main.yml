@@ -21,10 +21,11 @@ thibaut_apt_packages:
   - libproj-dev
   - gdal-bin
   # GUI
+  - code
   - foliate # Ebook reader
   - spotify-client
   - tableplus
-  - code
+  - vlc
 
 thibaut_deb_packages:
   - url: https://discord.com/api/download?platform=linux&format=deb
@@ -42,9 +43,6 @@ thibaut_brew_packages:
   - tlrc
   - ripgrep
   - pandoc
-
-# thibaut_homebrew_cask_packages:
-#   - vlc
 
 #  - awscli ~# TODO: v2 is a shitshow top install
 # TODO: https://github.com/asottile/all-repos
