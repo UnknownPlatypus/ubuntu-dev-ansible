@@ -12,3 +12,6 @@
 - name: Update bash related files
   ansible.builtin.import_tasks: bash.yml
 
+- name: Add some symlinks
+  ansible.builtin.import_tasks: symlinks.yml
+

@@ -1,0 +1,7 @@
+# There is a name collision with another debian package.
+# See https://github.com/sharkdp/bat?tab=readme-ov-file#on-ubuntu-using-apt
+- name: Create bat -> batcat symlink
+  ansible.builtin.file:
+    src: /usr/bin/batcat
+    dest: ~/.local/bin/bat
+    state: link

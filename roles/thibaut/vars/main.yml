@@ -1,5 +1,6 @@
 ---
 thibaut_apt_packages:
+  - bat
   - curl
   - firefox-nightly
   - git
