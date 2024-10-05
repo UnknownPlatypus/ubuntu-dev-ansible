@@ -7,6 +7,7 @@ thibaut_apt_packages:
   - google-chrome-stable # Google Chrome web browser
   - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
+  - mysql-server  # Widely used open-source relational database management system (RDBMS)
   - nginx # High-performance HTTP server and reverse proxy
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
   - sd # Intuitive find & replace CLI
@@ -16,15 +17,15 @@ thibaut_apt_packages:
   - wget # Retrieves files using HTTP, HTTPS, and FTP protocols
 
   # Build tools
-  - pkg-config # Helper tool used when compiling applications and libraries
+  - build-essential # Informational list of build-essential packages
   - default-libmysqlclient-dev # MySQL database development files
   - gcc # GNU Compiler Collection
-  - build-essential # Informational list of build-essential packages
+  - pkg-config # Helper tool used when compiling applications and libraries
 
   # Geolibraries
   - binutils # GNU assembler, linker and binary utilities
-  - libproj-dev # Cartographic Projections Library
   - gdal-bin # Geospatial Data Abstraction Library - Utility programs
+  - libproj-dev # Cartographic Projections Library
 
   # GUI
   - code # Visual Studio Code editor
