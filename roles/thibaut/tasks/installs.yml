@@ -33,6 +33,13 @@
 
 - name: Install slack latest .deb package
   ansible.builtin.import_tasks: slack.yml
+  tags: 
+    - slack
+
+- name: Install awscli v2
+  ansible.builtin.import_tasks: awscli_v2.yml
+  tags: 
+    - awscli
 
 - name: Remove useless packages from the cache
   ansible.builtin.apt:
@@ -46,7 +53,7 @@
   ansible.builtin.apt:
     autoremove: true
   become: true
-  tags:
+  tags: 
     - apt
     - cleanup
 
