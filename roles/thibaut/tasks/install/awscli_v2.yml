@@ -1,6 +1,6 @@
 ---
 # https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-- name: Download awscliv2 installer.
+- name: Download awscliv2 installer
   ansible.builtin.unarchive:
     src: https://awscli.amazonaws.com/awscli-exe-linux-{{ ansible_architecture }}.zip
     dest: /tmp
@@ -8,7 +8,7 @@
     creates: /tmp/aws
     mode: "0755"
 
-- name: Run the installer.
+- name: Run the awscliv2 installer
   ansible.builtin.command:
     cmd: /tmp/aws/install --update
   become: true
