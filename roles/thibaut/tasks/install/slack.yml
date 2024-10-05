@@ -8,7 +8,7 @@
 
 - name: Extract latest Slack download URL
   ansible.builtin.set_fact:
-    slack_latest_url: "{{ slack_download_page.content | regex_search('https://downloads.slack-edge.com/desktop-releases/linux/x64/.*\\.deb') }}"
+    slack_latest_url: "{{ slack_download_page.content | regex_search('https://downloads.slack-edge.com/desktop-releases/linux/x64/.*?\\.deb') }}"
 
 - name: Print latest Slack download URL
   ansible.builtin.debug:
