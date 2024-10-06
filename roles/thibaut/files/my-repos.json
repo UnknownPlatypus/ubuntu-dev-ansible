@@ -1,4 +1,20 @@
 {
-    "django-upgrade": "git@github.com:UnknownPlatypus/django-upgrade",
-    "djangofmt": "git@github.com:UnknownPlatypus/djangofmt.git"
+  "AOC2022": "git@github.com:UnknownPlatypus/AOC2022.git",
+  "AOC2023": "git@github.com:UnknownPlatypus/AOC2023.git",
+  "diane": "git@github.com:UnknownPlatypus/diane.git",
+  "djangofmt": "git@github.com:UnknownPlatypus/djangofmt.git",
+  "django": "git@github.com:django/django.git",
+  "django-stubs": "git@github.com:UnknownPlatypus/django-stubs.git",
+  "django-upgrade": "git@github.com:UnknownPlatypus/django-upgrade.git",
+  "dprint": "git@github.com:UnknownPlatypus/dprint.git",
+  "dprint-plugin-toml": "git@github.com:UnknownPlatypus/dprint-plugin-toml.git",
+  "jpegoptim": "git@github.com:UnknownPlatypus/jpegoptim.git",
+  "jpegoptim-py": "git@github.com:UnknownPlatypus/jpegoptim-py.git",
+  "markup_fmt": "git@github.com:UnknownPlatypus/markup_fmt.git",
+  "mirrors-svgo": "git@github.com:UnknownPlatypus/mirrors-svgo.git",
+  "programming-memento": "git@github.com:UnknownPlatypus/programming-memento.git",
+  "pyupgrade": "git@github.com:UnknownPlatypus/pyupgrade.git",
+  "ruff": "git@github.com:UnknownPlatypus/ruff.git",
+  "shellcheck-py": "git@github.com:shellcheck-py/shellcheck-py.git",
+  "ubuntu-dev-ansible": "git@github.com:UnknownPlatypus/ubuntu-dev-ansible.git"
 }

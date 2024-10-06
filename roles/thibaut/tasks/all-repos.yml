@@ -1,34 +1,56 @@
 ---
-- name: Stat the existing destination file
-  ansible.builtin.stat:
-    path: "~/{{ item }}"
-  register: repo_file_stat
-  loop:
-    - all-repos.json
-    - my-repos.json
-
-- name: Show diff if the content has drifted
+- name: Show all-repos config files diff
   ansible.builtin.command:
     cmd: diff "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}" "~/{{ item }}"
   register: all_repos_conf_diff
-  changed_when: all_repos_conf_diff.rc == 1
+  changed_when: all_repos_conf_diff.rc >= 1
   ignore_errors: true
   loop:
     - all-repos.json
     - my-repos.json
 
-- name: Copy the configuration files (if it does not exist)
+- name: Update all-repos config files
   ansible.builtin.copy:
     src: "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}"
     dest: "~/{{ item }}"
     mode: "0600"
-    force: false  # Don't overwrite existing files
+    force: true
   loop:
     - all-repos.json
     - my-repos.json
+  when: all_repos_conf_diff.changed
 
 - name: Run all-repos-clone command
   ansible.builtin.command:
-    cmd: all-repos-clone
+    cmd: all-repos-clone --jobs -1
     chdir: "{{ ansible_env.HOME }}"
   changed_when: true
+  loop:
+    - all-repos.json
+    - my-repos.jsonþ
+  when: all_repos_conf_diff.changed
+
+- name: Get list of git repos in /tmp/workspace
+  ansible.builtin.find:
+    paths: /tmp/workspace
+    file_type: directory
+  register: tmp_git_repos
+  when: all_repos_conf_diff.changed
+
+- name: Check which git repo don't exist in ~/workspace
+  ansible.builtin.stat:
+    path: "~/workspace/{{ item.path | basename }}"
+  loop: "{{ tmp_git_repos.files }}"
+  register: workspace_dir_stats
+  when: all_repos_conf_diff.changed
+
+- name: Copy missing git repos to ~/workspace
+  ansible.builtin.copy:
+    src: "{{ item.item.path }}/"
+    dest: "~/workspace/{{ item.item.path | basename }}/"
+    remote_src: true
+    mode: preserve
+  loop: "{{ workspace_dir_stats.results }}"
+  when:
+    - all_repos_conf_diff.changed
+    - not item.stat.exists

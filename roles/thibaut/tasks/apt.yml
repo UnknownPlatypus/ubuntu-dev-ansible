@@ -100,7 +100,6 @@
     signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
     enabled: true
 
-
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:apandada1/foliate

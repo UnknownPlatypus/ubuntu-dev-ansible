@@ -1,9 +1,9 @@
 {
-    "output_dir": "/tmp/workspace",
-    "source": "all_repos.source.json_file",
-    "source_settings":  {
-        "filename": "./my-repos.json"
-    },
-    "push": "all_repos.push.github_pull_request",
-    "push_settings": {"username": "UnknownPlatypus"}
+  "output_dir": "/tmp/workspace",
+  "source": "all_repos.source.json_file",
+  "source_settings": {
+    "filename": "./my-repos.json"
+  },
+  "push": "all_repos.push.github_pull_request",
+  "push_settings": { "username": "UnknownPlatypus" }
 }
