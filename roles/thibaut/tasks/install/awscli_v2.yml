@@ -9,8 +9,7 @@
     mode: "0755"
 
 - name: Run the awscliv2 installer
-  ansible.builtin.command:
-    cmd: /tmp/aws/install --update
+  ansible.builtin.command: /tmp/aws/install --update
   become: true
   register: aws_install
   changed_when: "'Skipping install' not in aws_install.stdout"
