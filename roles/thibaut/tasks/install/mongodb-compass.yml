@@ -13,7 +13,7 @@
 - name: Build the latest MongoDB Compass download URL
   set_fact:
     compass_latest_url: "https://downloads.mongodb.com/compass/mongodb-compass_{{ compass_latest_version }}_amd64.deb"
-    compass_tmp_dir: "/tmp/mongodb-compass-{{ compass_latest_version }}.deb" 
+    compass_tmp_dir: "/tmp/mongodb-compass-{{ compass_latest_version }}.deb"
 
 - name: Print latest MongoDB Compass download URL
   ansible.builtin.debug:

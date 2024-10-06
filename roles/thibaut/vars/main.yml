@@ -7,8 +7,8 @@ thibaut_apt_packages:
   - google-chrome-stable # Google Chrome web browser
   - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
-  - mongodb-org  # Popular NoSQL database for scalable, document-oriented storage
-  - mysql-server  # Widely used open-source relational database management system (RDBMS)
+  - mongodb-org # Popular NoSQL database for scalable, document-oriented storage
+  - mysql-server # Widely used open-source relational database management system (RDBMS)
   - nginx # High-performance HTTP server and reverse proxy
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
   - sd # Intuitive find & replace CLI
@@ -39,7 +39,7 @@ thibaut_deb_packages:
   # Popular chat and voice communication platform for communities
   - url: https://discord.com/api/download?platform=linux&format=deb
     file_name: discord-latest.deb
-  # GUI application for managing Docker containers and images  
+  # GUI application for managing Docker containers and images
   - url: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
     file_name: docker-desktop-amd64.deb
   # Powerful Git GUI client with visual commit history and integrations
