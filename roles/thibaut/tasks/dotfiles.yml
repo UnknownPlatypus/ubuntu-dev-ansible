@@ -1,0 +1,54 @@
+---
+- name: Dotfiles dirs
+  ansible.builtin.file:
+    path: ~/.{{ item }}
+    state: directory
+  loop:
+    - innotop
+    - ipython
+    - ipython/profile_default
+    - ipython/profile_default/startup
+    - config
+    - config/git
+    - config/pip
+    - config/zed
+  tags:
+    - dotfiles
+
+- name: Dotfiles links
+  ansible.builtin.file:
+    src: "{{ ansible_env.PWD }}/roles/thibaut/files/dotfiles/{{ item }}"
+    path: ~/.{{ item }}
+    state: link
+  loop:
+    - ansible.cfg
+    - config/karabiner
+    - config/ripgreprc
+    - config/starship.toml
+    - config/git/attributes
+    - config/git/config
+    - config/git/ignore
+    - config/pip/pip.conf
+    - config/zed/keymap.json
+    - config/zed/settings.json
+    - digrc
+    - inputrc
+    - ipython/profile_default/startup/00-imports.py
+    - mrconfig
+    - ssh/config
+    - zprofile
+    - zshrc
+  tags:
+    - dotfiles
+
+- name: Innotop.conf
+  ansible.builtin.copy:
+    src: dotfiles/innotop/innotop.conf
+    dest: ~/.innotop/innotop.conf
+    force: false # Only if it doesn't exist
+
+- name: Pypirc
+  ansible.builtin.copy:
+    src: dotfiles/pypirc
+    dest: ~/.pypirc
+    force: false
