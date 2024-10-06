@@ -54,6 +54,7 @@ thibaut_brew_packages:
   - fd # Simple, fast and user-friendly alternative to find
   - fzf # General-purpose command-line fuzzy finder
   - lychee # Fast, async, stream-based link checker
+  - n # Simple Node.js Versions manager
   - oxipng # Multithreaded PNG optimizer
   - pandoc # Universal document converter
   - sd # Intuitive find & replace CLI (already in apt packages, possibly for version control)

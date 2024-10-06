@@ -129,3 +129,13 @@
   tags:
     - uv
     - cleanup
+
+- name: Install latest node with n
+  ansible.builtin.command:
+    cmd: n latest
+  environment:
+    N_PREFIX: "{{ ansible_env.HOME }}/.n"
+  register: n_install
+  changed_when: "'installing' in n_install.stdout"
+  tags:
+    - node
