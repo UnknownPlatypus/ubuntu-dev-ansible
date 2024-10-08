@@ -1,5 +1,5 @@
 ---
-- name: Setup fzf shell integration
+- name: Update .bashrc for various tools
   ansible.builtin.blockinfile:
     path: ~/.bashrc
     create: true
@@ -12,3 +12,13 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
     prepend_newline: true
     append_newline: true
+
+- name: Check GNOME Terminal profiles are loaded
+  ansible.builtin.command: dconf read /org/gnome/terminal/legacy/profiles:/list
+  register: gnome_profiles
+  changed_when: false
+
+- name: Load GNOME Terminal profiles
+  ansible.builtin.shell: dconf load /org/gnome/terminal/ < "{{ thibaut_files }}/gnome-terminal-profiles.dconf"
+  when: not gnome_profiles.stdout
+  changed_when: true

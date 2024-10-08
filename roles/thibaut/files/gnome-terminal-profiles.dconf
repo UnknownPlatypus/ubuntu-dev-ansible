@@ -1,0 +1,35 @@
+[legacy/keybindings]
+copy='<Primary>c'
+next-tab='<Primary><Shift>Right'
+paste='<Primary>v'
+prev-tab='<Primary><Shift>Left'
+
+[legacy/profiles:]
+list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '2b1eed43-429c-4ffa-b1c3-2ca3483bfb5e']
+
+[legacy/profiles:/:2b1eed43-429c-4ffa-b1c3-2ca3483bfb5e]
+background-color='#282A36'
+bold-color='#6E46A4'
+bold-color-same-as-fg=false
+bold-is-bright=false
+foreground-color='#F8F8F2'
+palette=['#262626', '#E356A7', '#42E66C', '#E4F34A', '#9B6BDF', '#E64747', '#75D7EC', '#EFA554', '#7A7A7A', '#FF79C6', '#50FA7B', '#F1FA8C', '#BD93F9', '#FF5555', '#8BE9FD', '#FFB86C']
+use-theme-colors=false
+visible-name='Prod Deploy'
+
+[legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+background-color='rgb(0,0,0)'
+background-transparency-percent=22
+bold-is-bright=false
+cursor-blink-mode='system'
+cursor-shape='block'
+default-size-columns=160
+default-size-rows=40
+foreground-color='rgb(255,255,255)'
+highlight-colors-set=false
+palette=['rgb(46,52,54)', 'rgb(204,0,0)', 'rgb(78,154,6)', 'rgb(196,160,0)', 'rgb(52,101,164)', 'rgb(117,80,123)', 'rgb(6,152,154)', 'rgb(211,215,207)', 'rgb(85,87,83)', 'rgb(239,41,41)', 'rgb(138,226,52)', 'rgb(252,233,79)', 'rgb(114,159,207)', 'rgb(173,127,168)', 'rgb(52,226,226)', 'rgb(238,238,236)']
+scroll-on-output=false
+use-theme-colors=false
+use-theme-transparency=false
+use-transparent-background=true
+visible-name='Thibaut'
