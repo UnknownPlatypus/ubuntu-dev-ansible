@@ -17,7 +17,7 @@
 
 - name: Dotfiles links
   ansible.builtin.file:
-    src: "{{ ansible_env.PWD }}/roles/thibaut/files/dotfiles/{{ item }}"
+    src: "{{ thibaut_files }}/dotfiles/{{ item }}"
     path: ~/.{{ item }}
     state: link
   loop:

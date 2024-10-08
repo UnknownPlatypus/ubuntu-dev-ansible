@@ -1,7 +1,7 @@
 ---
 - name: Show all-repos config files diff
   ansible.builtin.command:
-    cmd: diff "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}" "~/{{ item }}"
+    cmd: diff "{{ thibaut_files }}/{{ item }}" "~/{{ item }}"
   register: all_repos_conf_diff
   changed_when: all_repos_conf_diff.rc >= 1
   ignore_errors: true
@@ -11,7 +11,7 @@
 
 - name: Update all-repos config files
   ansible.builtin.copy:
-    src: "{{ ansible_env.PWD }}/roles/thibaut/files/{{ item }}"
+    src: "{{ thibaut_files }}/{{ item }}"
     dest: "~/{{ item }}"
     mode: "0600"
     force: true
