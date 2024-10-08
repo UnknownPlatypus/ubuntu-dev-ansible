@@ -79,6 +79,14 @@
   tags:
     - dprint
 
+- name: Install rust toolchain
+  ansible.builtin.include_role:
+    name: hurricanehrndz.rustup
+  vars:
+    rustup_cargo_crates: []
+  tags:
+    - rust
+
 - name: Install jetbrains Toolbox
   ansible.builtin.import_tasks: install/jetbrains-toolbox.yml
   tags:

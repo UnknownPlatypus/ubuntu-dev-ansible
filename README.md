@@ -7,7 +7,7 @@ and re-install with less effort.
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) with the command from the site.
 2. `uv sync`
-3. `ansible-galaxy role install markosamuli.linuxbrew`
+3. `ansible-galaxy role install markosamuli.linuxbrew hurricanehrndz.rustup`
 4. `ansible-playbook --ask-become-pass playbook.yml`
 
 ## Credits
