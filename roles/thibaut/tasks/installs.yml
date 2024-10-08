@@ -19,6 +19,7 @@
     url: "{{ item.url }}"
     dest: /tmp/{{ item.file_name }}
     timeout: 30
+    mode: "0755"
   loop: "{{ thibaut_deb_packages }}"
   tags:
     - apt
@@ -87,7 +88,7 @@
   tags:
     - rust
 
-- name: Install jetbrains Toolbox
+- name: Install JetBrains Toolbox
   ansible.builtin.import_tasks: install/jetbrains-toolbox.yml
   tags:
     - jetbrains

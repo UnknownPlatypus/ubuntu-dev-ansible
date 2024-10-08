@@ -12,6 +12,7 @@
     - config/git
     - config/pip
     - config/zed
+  mode: "0755"
   tags:
     - dotfiles
 
@@ -45,10 +46,12 @@
   ansible.builtin.copy:
     src: dotfiles/innotop/innotop.conf
     dest: ~/.innotop/innotop.conf
+    mode: "0755"
     force: false # Only if it doesn't exist
 
 - name: Pypirc
   ansible.builtin.copy:
     src: dotfiles/pypirc
     dest: ~/.pypirc
+    mode: "0755"
     force: false

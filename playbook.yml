@@ -1,3 +1,4 @@
+---
 - name: Sanity checks
   hosts: localhost
   connection: local

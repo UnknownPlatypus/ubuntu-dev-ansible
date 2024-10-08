@@ -4,44 +4,44 @@
 - name: Check if JetBrains Toolbox is present
   ansible.builtin.stat:
     path: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
-  ignore_errors: yes
-  changed_when: false
-  failed_when: false
   register: stat_result
+  ignore_errors: true
+  changed_when: false
 
-# See https://www.jetbrains.com/help/rust/installation-guide.html#toolbox
-- name: Ensure libfuse2 is installed (Toolbox requirement)
-  ansible.builtin.apt:
-    name:
-      - libfuse2
-    state: present
-  become: true
-
-- name: Get latest Jetbrains Toolbox download page
-  ansible.builtin.uri:
-    url: https://www.jetbrains.com/toolbox-app/download/download-thanks.html?platform=linux
-    return_content: true
-  register: jetbrains_download_page
+- name: Download and install JetBrains ToolBox
   when: not stat_result.stat.exists
+  block:
+    # See https://www.jetbrains.com/help/rust/installation-guide.html#toolbox
+    - name: Ensure libfuse2 is installed (Toolbox requirement)
+      ansible.builtin.apt:
+        name:
+          - libfuse2
+        state: present
+      become: true
 
-- name: Find all versions of JetBrains Toolbox
-  ansible.builtin.uri:
-    url: https://data.services.jetbrains.com/products/releases?code=TBA&type=release
-    return_content: true
-  register: jetbrains_index
-  check_mode: false
+    - name: Get latest Jetbrains Toolbox download page
+      ansible.builtin.uri:
+        url: https://www.jetbrains.com/toolbox-app/download/download-thanks.html?platform=linux
+        return_content: true
+      register: jetbrains_download_page
 
-- name: Finds the latest version of JetBrains Toolbox
-  ansible.builtin.set_fact:
-    jetbrains_toolbox_version: "{{ (jetbrains_index.content | from_json).TBA.0.build }}"
+    - name: Find all versions of JetBrains Toolbox
+      ansible.builtin.uri:
+        url: https://data.services.jetbrains.com/products/releases?code=TBA&type=release
+        return_content: true
+      register: jetbrains_index
+      check_mode: false
 
-- name: Download JetBrains ToolBox
-  ansible.builtin.unarchive:
-    src: "https://download.jetbrains.com/toolbox/jetbrains-toolbox-{{ jetbrains_toolbox_version }}.tar.gz"
-    dest: "/tmp"
-    remote_src: true
-  when: not stat_result.stat.exists
+    - name: Finds the latest version of JetBrains Toolbox
+      ansible.builtin.set_fact:
+        jetbrains_toolbox_version: "{{ (jetbrains_index.content | from_json).TBA.0.build }}"
 
-- name: Install JetBrains ToolBox
-  ansible.builtin.command: "/tmp/jetbrains-toolbox-{{ jetbrains_toolbox_version }}/jetbrains-toolbox"
-  when: not stat_result.stat.exists
+    - name: Download JetBrains ToolBox
+      ansible.builtin.unarchive:
+        src: https://download.jetbrains.com/toolbox/jetbrains-toolbox-{{ jetbrains_toolbox_version }}.tar.gz
+        dest: /tmp
+        remote_src: true
+
+    - name: Run JetBrains ToolBox
+      ansible.builtin.command: /tmp/jetbrains-toolbox-{{ jetbrains_toolbox_version }}/jetbrains-toolbox
+      changed_when: true

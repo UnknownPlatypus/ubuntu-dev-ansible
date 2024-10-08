@@ -23,4 +23,3 @@
   when: dprint_installed.rc != 0
   args:
     creates: ~/.dprint/bin/dprint
-
