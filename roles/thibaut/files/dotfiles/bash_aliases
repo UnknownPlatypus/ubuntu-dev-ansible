@@ -1,0 +1,30 @@
+# Posix
+alias restart="source ~/.bashrc"
+alias perms="stat -c '%a - %n'"
+
+# interactive modes
+alias cp="cp -i"
+alias ln="ln -i"
+alias mv="mv -i"
+
+# Python & friends
+alias python=python3
+alias pm='python manage.py'
+alias pr="pre-commit run"
+function workon() { source ~/.virtualenvs/$1/bin/activate; }
+
+# Rust
+alias cwr="cargo watch -q -c -x 'run -q'"
+
+# Clipboard utils
+alias clip="xclip -selection c"
+
+# Kill stopped processes
+alias kstop="kill -9 $(jobs -p)"
+
+# ripgrep
+alias rgm='rg --no-filename --only-matching --no-line-number'
+
+# Git
+alias grgc="git reset --hard HEAD && git clean -fd"
+alias rmgm='git branch --merged master | grep -v master | xargs git branch -d'

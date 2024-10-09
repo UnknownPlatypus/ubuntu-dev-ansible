@@ -7,16 +7,18 @@
   loop:
     - ipython/profile_default/startup
     - config/dust
+    - aws
   tags:
     - dotfiles
 
-- name: Dotfiles links
+- name: Create Dotfiles
   ansible.builtin.copy:
     src: "{{ thibaut_files }}/dotfiles/{{ item }}"
     dest: ~/.{{ item }}
     mode: "0755"
     force: false
   loop:
+    - aws/config
     - config/dust/config.toml
     - config/ripgreprc
     - ipython/profile_default/startup/00-imports.py
