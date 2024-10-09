@@ -1,25 +1,13 @@
 ---
-- name: Check if dprint is installed
-  ansible.builtin.command: dprint --version
-  register: dprint_installed
-  ignore_errors: true
-  changed_when: false
-
-- name: Upgrade dprint if installed
-  ansible.builtin.command: dprint upgrade
-  when: dprint_installed.rc == 0
-  register: dprint_upgrade
-  changed_when: "'Already on latest version' not in dprint_upgrade.stdout"
-
-- name: Download dprint installer (if dprint is not installed)
-  ansible.builtin.get_url:
-    url: https://dprint.dev/install.sh
-    dest: /tmp/dprint-install.sh
-    mode: "0755"
-  when: dprint_installed.rc != 0
-
-- name: Run dprint installer (if dprint is not installed)
-  ansible.builtin.command: sh /tmp/dprint-install.sh
-  when: dprint_installed.rc != 0
+# https://dprint.dev/install/
+- name: Install Dprint
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://dprint.dev/install.sh | sh
   args:
     creates: ~/.dprint/bin/dprint
+
+- name: Upgrade dprint
+  ansible.builtin.command: dprint upgrade
+  register: dprint_upgrade
+  changed_when: "'Already on latest version' not in dprint_upgrade.stdout"
