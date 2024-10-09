@@ -1,59 +1,6 @@
 ---
-- name: Setup apt repositories
-  ansible.builtin.import_tasks: apt_repositories.yml
-  become: true
-
-- name: Update apt package manager cache
-  ansible.builtin.apt:
-    update_cache: true
-  become: true
-  tags:
-    - apt
-
-- name: Install apt packages # noqa:package-latest
-  ansible.builtin.apt:
-    name: "{{ thibaut_apt_packages }}"
-    state: latest
-  become: true
-  tags:
-    - apt
-
-- name: Remove useless packages from the cache
-  ansible.builtin.apt:
-    autoclean: true
-  become: true
-  tags:
-    - apt
-    - cleanup
-
-- name: Remove dependencies that are no longer required
-  ansible.builtin.apt:
-    autoremove: true
-  become: true
-  tags:
-    - apt
-    - cleanup
-
-- name: Download .deb packages from url
-  ansible.builtin.get_url:
-    url: "{{ item.url }}"
-    dest: /tmp/{{ item.file_name }}
-    timeout: 30
-    mode: "0755"
-  loop: "{{ thibaut_deb_packages }}"
-  tags:
-    - apt
-
-- name: Install downloaded .deb packages
-  ansible.builtin.apt:
-    deb: /tmp/{{ item.file_name }}
-  loop: "{{ thibaut_deb_packages }}"
-  become: true
-  tags:
-    - apt
-
-- name: Install slack latest .deb package
-  ansible.builtin.import_tasks: packages/slack.yml
+- name: Setup, install and cleanup apt packages
+  ansible.builtin.import_tasks: apt_installs.yml
   tags:
     - apt
 
@@ -84,6 +31,11 @@
   tags:
     - dprint
 
+- name: Install JetBrains Toolbox
+  ansible.builtin.import_tasks: packages/jetbrains-toolbox.yml
+  tags:
+    - jetbrains
+
 - name: Install rust toolchain
   ansible.builtin.include_role:
     name: hurricanehrndz.rustup
@@ -91,16 +43,6 @@
     rustup_cargo_crates: [devai]
   tags:
     - rust
-
-- name: Install JetBrains Toolbox
-  ansible.builtin.import_tasks: packages/jetbrains-toolbox.yml
-  tags:
-    - jetbrains
-
-- name: Install MongoDB Compass
-  ansible.builtin.import_tasks: packages/mongodb-compass.yml
-  tags:
-    - mongo
 
 - name: Uv install latest Pythons
   ansible.builtin.command: >
