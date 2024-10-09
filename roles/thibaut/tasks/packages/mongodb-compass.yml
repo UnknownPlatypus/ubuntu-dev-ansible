@@ -1,5 +1,6 @@
 ---
-# MongoDB Compass does not provided a 'latest' url so we have to manually find it.
+# MongoDB Compass does not provide a 'latest' url so we have to manually find it.
+# https://www.mongodb.com/docs/compass/current/install/
 - name: Fetch latest MongoDB Compass release data from GitHub API
   ansible.builtin.uri:
     url: https://api.github.com/repos/mongodb-js/compass/releases/latest

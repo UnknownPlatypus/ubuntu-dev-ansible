@@ -1,17 +1,17 @@
 ---
-# Jetbrains Toolbox does not provided a 'latest' url so we have to manually find it.
-# We only ensure it is installed because the tool automatically update himself.
-- name: Check if JetBrains Toolbox is present
+# Jetbrains Toolbox does not provide a 'latest' url so we have to manually find it.
+# We only ensure it is installed because the tool automatically update himself afterward.
+# https://www.jetbrains.com/help/rust/installation-guide.html#-nhkivi_92
+- name: Check if JetBrains Toolbox is installed
   ansible.builtin.stat:
     path: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
-  register: stat_result
+  register: jetbrains_toolbox_installed
   ignore_errors: true
   changed_when: false
 
 - name: Download and install JetBrains ToolBox
-  when: not stat_result.stat.exists
+  when: not jetbrains_toolbox_installed.stat.exists
   block:
-    # See https://www.jetbrains.com/help/rust/installation-guide.html#toolbox
     - name: Ensure libfuse2 is installed (Toolbox requirement)
       ansible.builtin.apt:
         name:
@@ -42,6 +42,6 @@
         dest: /tmp
         remote_src: true
 
-    - name: Run JetBrains ToolBox
+    - name: Launch JetBrains ToolBox
       ansible.builtin.command: /tmp/jetbrains-toolbox-{{ jetbrains_toolbox_version }}/jetbrains-toolbox
       changed_when: true

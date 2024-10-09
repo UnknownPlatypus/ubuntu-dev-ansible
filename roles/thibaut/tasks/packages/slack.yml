@@ -1,5 +1,6 @@
 ---
 # Slack does not provide a 'latest' url so we have to manually find it.
+# https://slack.com/help/articles/212924728-Download-Slack-for-Linux--beta-
 - name: Get latest Slack download page
   ansible.builtin.uri:
     url: https://slack.com/downloads/instructions/linux?build=deb
