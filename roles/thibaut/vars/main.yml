@@ -72,7 +72,7 @@ thibaut_uv_tools:
   - name: black # The uncompromising Python code formatter
   - name: build # A simple, correct Python build frontend
   - name: deptry # Command line tool to check for unused, missing and transitive dependencies in a Python project
-  - name: ebcli # Command Line Interface for AWS Elastic Beanstalk
+  - name: awsebcli # Command Line Interface for AWS Elastic Beanstalk
   - name: hatch # Modern, extensible Python project management
   - name: httpie # User-friendly command-line HTTP client for the API era
   - name: ipython # Enhanced interactive Python shell
