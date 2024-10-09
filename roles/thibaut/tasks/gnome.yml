@@ -1,0 +1,10 @@
+---
+- name: Check GNOME config was loaded
+  ansible.builtin.command: dconf read /org/gnome/terminal/legacy/profiles:/list
+  register: gnome_profiles
+  changed_when: false
+
+- name: Load GNOME config
+  ansible.builtin.shell: dconf load / < "{{ thibaut_files }}/gnome-terminal-profiles.dconf"
+  when: not gnome_profiles.stdout
+  changed_when: true

@@ -8,8 +8,6 @@
     - ipython/profile_default/startup
     - config/dust
     - aws
-  tags:
-    - dotfiles
 
 - name: Create Dotfiles
   ansible.builtin.copy:
@@ -26,5 +24,17 @@
     - digrc
     - gitconfig_opensource
     - gitignore
-  tags:
-    - dotfiles
+
+- name: Update ~/.bashrc for various tools
+  ansible.builtin.blockinfile:
+    path: ~/.bashrc
+    create: true
+    mode: "0644"
+    block: |
+      eval "$(fzf --bash)"
+      export DPRINT_INSTALL="$HOME/.dprint"
+      export N_PREFIX=$HOME/.n
+      export PATH="$N_PREFIX/bin:$DPRINT_INSTALL/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
+    prepend_newline: true
+    append_newline: true

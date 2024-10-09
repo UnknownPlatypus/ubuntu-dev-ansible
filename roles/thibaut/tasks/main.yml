@@ -1,26 +1,22 @@
 ---
-- name: Basic settings
+- name: Basic SSH settings
   ansible.builtin.import_tasks: ssh.yml
 
-- name: Setup apt
-  ansible.builtin.import_tasks: apt.yml
-  become: true
-
-- name: Install things
+- name: Install tools via apt/brew/uv/cargo
   ansible.builtin.import_tasks: installs.yml
 
-- name: Link in dotfiles
+- name: Copy dotfiles
   ansible.builtin.import_tasks: dotfiles.yml
   tags:
     - dotfiles
 
-- name: Update bash related files
-  ansible.builtin.import_tasks: bash.yml
-  tags:
-    - bash
-
 - name: Add some symlinks
   ansible.builtin.import_tasks: symlinks.yml
+
+- name: Load GNOME dconf settings
+  ansible.builtin.import_tasks: gnome.yml
+  tags:
+    - gnome
 
 - name: Clone my repos into ~/workspace
   ansible.builtin.import_tasks: all-repos.yml

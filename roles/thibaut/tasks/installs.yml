@@ -1,4 +1,8 @@
 ---
+- name: Setup apt repositories
+  ansible.builtin.import_tasks: apt_repositories.yml
+  become: true
+
 - name: Update apt package manager cache
   ansible.builtin.apt:
     update_cache: true
@@ -13,6 +17,22 @@
   become: true
   tags:
     - apt
+
+- name: Remove useless packages from the cache
+  ansible.builtin.apt:
+    autoclean: true
+  become: true
+  tags:
+    - apt
+    - cleanup
+
+- name: Remove dependencies that are no longer required
+  ansible.builtin.apt:
+    autoremove: true
+  become: true
+  tags:
+    - apt
+    - cleanup
 
 - name: Download .deb packages from url
   ansible.builtin.get_url:
@@ -33,25 +53,9 @@
     - apt
 
 - name: Install slack latest .deb package
-  ansible.builtin.import_tasks: install/slack.yml
+  ansible.builtin.import_tasks: packages/slack.yml
   tags:
     - apt
-
-- name: Remove useless packages from the cache
-  ansible.builtin.apt:
-    autoclean: true
-  become: true
-  tags:
-    - apt
-    - cleanup
-
-- name: Remove dependencies that are no longer required
-  ansible.builtin.apt:
-    autoremove: true
-  become: true
-  tags:
-    - apt
-    - cleanup
 
 - name: Install linuxbrew
   ansible.builtin.include_role:
@@ -71,12 +75,12 @@
     - brew
 
 - name: Install awscli v2
-  ansible.builtin.import_tasks: install/awscli_v2.yml
+  ansible.builtin.import_tasks: packages/awscli_v2.yml
   tags:
     - awscli
 
 - name: Install dprint
-  ansible.builtin.import_tasks: install/dprint.yml
+  ansible.builtin.import_tasks: packages/dprint.yml
   tags:
     - dprint
 
@@ -89,12 +93,12 @@
     - rust
 
 - name: Install JetBrains Toolbox
-  ansible.builtin.import_tasks: install/jetbrains-toolbox.yml
+  ansible.builtin.import_tasks: packages/jetbrains-toolbox.yml
   tags:
     - jetbrains
 
 - name: Install MongoDB Compass
-  ansible.builtin.import_tasks: install/mongodb-compass.yml
+  ansible.builtin.import_tasks: packages/mongodb-compass.yml
   tags:
     - mongo
 
