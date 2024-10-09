@@ -1,0 +1,16 @@
+# Python
+*.pyc
+.tox
+.venv
+venv
+
+# Misc
+.idea
+.vscode
+.django
+.python-version
+t.py
+t.txt
+t.md
+t.sh
+*.sqlite3

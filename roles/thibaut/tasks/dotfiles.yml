@@ -3,55 +3,26 @@
   ansible.builtin.file:
     path: ~/.{{ item }}
     state: directory
+    mode: "0755"
   loop:
-    - innotop
-    - ipython
-    - ipython/profile_default
     - ipython/profile_default/startup
-    - config
-    - config/git
-    - config/pip
-    - config/zed
-  mode: "0755"
+    - config/dust
   tags:
     - dotfiles
 
 - name: Dotfiles links
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: "{{ thibaut_files }}/dotfiles/{{ item }}"
-    path: ~/.{{ item }}
-    state: link
-  loop:
-    - ansible.cfg
-    - config/karabiner
-    - config/ripgreprc
-    - config/starship.toml
-    - config/git/attributes
-    - config/git/config
-    - config/git/ignore
-    - config/pip/pip.conf
-    - config/zed/keymap.json
-    - config/zed/settings.json
-    - digrc
-    - inputrc
-    - ipython/profile_default/startup/00-imports.py
-    - mrconfig
-    - ssh/config
-    - zprofile
-    - zshrc
-  tags:
-    - dotfiles
-
-- name: Innotop.conf
-  ansible.builtin.copy:
-    src: dotfiles/innotop/innotop.conf
-    dest: ~/.innotop/innotop.conf
-    mode: "0755"
-    force: false # Only if it doesn't exist
-
-- name: Pypirc
-  ansible.builtin.copy:
-    src: dotfiles/pypirc
-    dest: ~/.pypirc
+    dest: ~/.{{ item }}
     mode: "0755"
     force: false
+  loop:
+    - config/dust/config.toml
+    - config/ripgreprc
+    - ipython/profile_default/startup/00-imports.py
+    - ansible.cfg
+    - digrc
+    - gitconfig_opensource
+    - gitignore
+  tags:
+    - dotfiles
