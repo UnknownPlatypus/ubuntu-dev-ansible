@@ -6,7 +6,7 @@
     dest: /tmp
     remote_src: true
     creates: /tmp/aws
-    mode: "0600"
+    mode: "0755"
 
 - name: Run the awscliv2 installer
   ansible.builtin.command: /tmp/aws/install --update

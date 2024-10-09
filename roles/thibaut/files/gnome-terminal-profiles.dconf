@@ -1,13 +1,16 @@
-[legacy/keybindings]
+[org/gnome/shell]
+favorite-apps=['org.gnome.Nautilus.desktop', 'slack.desktop', 'firefox.desktop', 'gitkraken.desktop', 'org.gnome.Terminal.desktop', 'code.desktop', 'spotify.desktop', 'org.gnome.Settings.desktop', 'gnome-control-center.desktop', 'firefox-nightly.desktop']
+
+[org/gnome/terminal/legacy/keybindings]
 copy='<Primary>c'
 next-tab='<Primary><Shift>Right'
 paste='<Primary>v'
 prev-tab='<Primary><Shift>Left'
 
-[legacy/profiles:]
+[org/gnome/terminal/legacy/profiles:]
 list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '2b1eed43-429c-4ffa-b1c3-2ca3483bfb5e']
 
-[legacy/profiles:/:2b1eed43-429c-4ffa-b1c3-2ca3483bfb5e]
+[org/gnome/terminal/legacy/profiles:/:2b1eed43-429c-4ffa-b1c3-2ca3483bfb5e]
 background-color='#282A36'
 bold-color='#6E46A4'
 bold-color-same-as-fg=false
@@ -17,7 +20,7 @@ palette=['#262626', '#E356A7', '#42E66C', '#E4F34A', '#9B6BDF', '#E64747', '#75D
 use-theme-colors=false
 visible-name='Prod Deploy'
 
-[legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
 background-color='rgb(0,0,0)'
 background-transparency-percent=22
 bold-is-bright=false
