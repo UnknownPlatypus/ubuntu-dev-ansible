@@ -12,4 +12,4 @@ and re-install with less effort.
 
 ## Credits
 
-Thank you Adam for you [macos-ansible project](https://github.com/adamchainz/mac-ansible) and [blog post](https://adamj.eu/tech/2019/03/20/how-i-provision-my-macbook-with-ansible/), this is heavily inspired by your project.
+Thank you Adam for your [macos-ansible project](https://github.com/adamchainz/mac-ansible) and [blog post](https://adamj.eu/tech/2019/03/20/how-i-provision-my-macbook-with-ansible/), that heavily inspired by your project.

@@ -67,6 +67,7 @@ thibaut_brew_packages:
   - ripgrep # Recursively searches directories for a regex pattern
 
 thibaut_uv_tools:
+  - name: astpretty # Pretty print the output of python stdlib ast.parse
   - name: all-repos # Clone all your repositories and apply sweeping changes
   - name: auditwheel # Auditing and repairing wheels for PyPI
   - name: black # The uncompromising Python code formatter
