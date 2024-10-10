@@ -23,6 +23,7 @@ thibaut_apt_packages:
   - build-essential # Informational list of build-essential packages
   - default-libmysqlclient-dev # MySQL database development files
   - gcc # GNU Compiler Collection
+  - clang # Clang C, C++, and Objective-C compiler
   - pkg-config # Helper tool used when compiling applications and libraries
 
   # Geolibraries
