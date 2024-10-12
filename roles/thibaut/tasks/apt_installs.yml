@@ -47,3 +47,12 @@
 
 - name: Install MongoDB Compass
   ansible.builtin.import_tasks: packages/mongodb-compass.yml
+
+# Fix an issue with Ubuntu 24.04 about the unprivileged namespaces,
+# See https://docs.docker.com/desktop/install/linux/ubuntu/#prerequisites
+- name: Fix Docker Desktop startup on 24.04
+  ansible.posix.sysctl:
+    name: kernel.apparmor_restrict_unprivileged_userns
+    value: "0"
+    sysctl_set: true
+  become: true
