@@ -13,9 +13,14 @@
     - brew
 
 - name: Install brew packages
+  ansible.builtin.command: brew install {{ thibaut_brew_packages | join(" ") }}
+  register: brew_install
+  changed_when: brew_install.stdout
+  tags:
+    - brew
+
+- name: Upgrade brew and brew packages
   community.general.homebrew:
-    name: "{{ thibaut_brew_packages }}"
-    state: latest
     update_homebrew: true
     upgrade_all: true
   tags:
