@@ -4,12 +4,11 @@
 - name: Fetch latest MongoDB Compass release data from GitHub API
   ansible.builtin.uri:
     url: https://api.github.com/repos/mongodb-js/compass/releases/latest
-    return_content: true
   register: compass_release_data
 
 - name: Get the latest MongoDB Compass release version
   ansible.builtin.set_fact:
-    compass_latest_version: "{{ (compass_release_data.content | from_json).name }}"
+    compass_latest_version: "{{ compass_release_data.json.name }}"
 
 - name: Build the latest MongoDB Compass download URL
   ansible.builtin.set_fact:

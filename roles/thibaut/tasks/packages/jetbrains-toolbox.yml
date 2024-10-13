@@ -28,13 +28,12 @@
     - name: Find all versions of JetBrains Toolbox
       ansible.builtin.uri:
         url: https://data.services.jetbrains.com/products/releases?code=TBA&type=release
-        return_content: true
       register: jetbrains_index
       check_mode: false
 
     - name: Finds the latest version of JetBrains Toolbox
       ansible.builtin.set_fact:
-        jetbrains_toolbox_version: "{{ (jetbrains_index.content | from_json).TBA.0.build }}"
+        jetbrains_toolbox_version: "{{ jetbrains_index.json.TBA.0.build }}"
 
     - name: Download JetBrains ToolBox
       ansible.builtin.unarchive:
