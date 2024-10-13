@@ -1,0 +1,38 @@
+---
+# https://ollama.com/download
+- name: Check if ollama is already installed
+  ansible.builtin.command: ollama --version
+  register: local_ollama_version_output
+  ignore_errors: true
+  changed_when: false
+
+- name: Fetch latest ollama release data from GitHub API
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/ollama/ollama/releases/latest
+  register: ollama_release_data
+
+- name: Extract the ollama local and latest version
+  ansible.builtin.set_fact:
+    ollama_installed_version: "{{ local_ollama_version_output.stdout | trim | replace('ollama version is ', '') }}"
+    ollama_latest_version: "{{ ollama_release_data.json.tag_name | replace('v', '') }}"
+  changed_when: false
+
+- name: Print parsed ollama local and latest version
+  ansible.builtin.debug:
+    msg:
+      - "Local ollama version: {{ ollama_installed_version }}"
+      - "Latest ollama version: {{ ollama_latest_version }}"
+
+- name: Install or Upgrade Ollama
+  when: local_ollama_version_output.rc != 0 or ollama_latest_version != ollama_installed_version
+  block:
+    - name: Download ollama install script if needed
+      ansible.builtin.get_url:
+        url: https://ollama.com/install.sh
+        dest: /tmp/install_ollama.sh
+        mode: "0755"
+
+    - name: Install or Update ollama
+      ansible.builtin.command: sh /tmp/install_ollama.sh
+      register: install_result
+      changed_when: install_result is changed

@@ -22,3 +22,9 @@
   ansible.builtin.import_tasks: all-repos.yml
   tags:
     - all-repos
+
+- name: Self hosted LLM (Require `--tags llm` to be executed)
+  ansible.builtin.import_tasks: llm.yml
+  tags:
+    - llm
+    - never
