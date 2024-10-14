@@ -28,3 +28,15 @@ alias rgm='rg --no-filename --only-matching --no-line-number'
 # Git
 alias grgc="git reset --hard HEAD && git clean -fd"
 alias rmgm='git branch --merged master | grep -v master | xargs git branch -d'
+
+alias gc="git commit -m"
+alias gca="git commit -am"
+alias gcf="git commit --amend --reuse-message HEAD"
+
+alias gl="git log --oneline --decorate --graph"
+alias glog="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --"
+alias gls="git log --stat"
+
+alias gps="git push"
+alias gpl="git pull"
+alias gs="git status -s -b"
