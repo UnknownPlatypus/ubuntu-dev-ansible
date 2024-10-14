@@ -1,0 +1,34 @@
+---
+# https://fabric.com/download
+- name: Check if fabric is already installed
+  ansible.builtin.command: fabric --version
+  register: local_fabric_version_output
+  ignore_errors: true
+  changed_when: false
+
+- name: Fetch latest fabric release data from GitHub API
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/danielmiessler/fabric/releases/latest
+  register: fabric_release_data
+
+- name: Extract the fabric local and latest version
+  ansible.builtin.set_fact:
+    fabric_installed_version: "{{ local_fabric_version_output.stdout | trim | replace('v', '') }}"
+    fabric_latest_version: "{{ fabric_release_data.json.tag_name | replace('v', '') }}"
+  changed_when: false
+
+- name: Print parsed fabric local and latest version
+  ansible.builtin.debug:
+    msg:
+      - "Local fabric version: {{ fabric_installed_version }}"
+      - "Latest fabric version: {{ fabric_latest_version }}"
+
+- name: Install or Upgrade fabric
+  when: local_fabric_version_output.rc != 0 or fabric_latest_version != fabric_installed_version
+  block:
+    - name: Download fabric binary
+      ansible.builtin.get_url:
+        url: https://github.com/danielmiessler/fabric/releases/latest/download/fabric-linux-amd64
+        dest: /usr/local/bin/fabric
+        mode: "0755"
+      become: true
