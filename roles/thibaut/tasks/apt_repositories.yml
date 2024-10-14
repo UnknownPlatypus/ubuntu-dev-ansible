@@ -83,9 +83,9 @@
     types: [deb]
     uris:
       - https://pkgs.tailscale.com/stable/ubuntu/
-    suites: [noble]
+    suites: "{{ ansible_distribution_release }}"
     components: [main]
-    signed_by: https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg
+    signed_by: "https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_distribution_release }}.noarmor.gpg"
     architectures: [amd64]
     enabled: true
 
@@ -94,7 +94,7 @@
     name: mongodb-org-8.0
     uris:
       - https://repo.mongodb.org/apt/ubuntu
-    suites: [noble/mongodb-org/8.0]
+    suites: ["{{ ansible_distribution_release }}/mongodb-org/8.0"]
     components: [multiverse]
     architectures: [amd64]
     signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
