@@ -3,6 +3,7 @@
   hosts: localhost
   connection: local
   any_errors_fatal: true
+  tags: always
   tasks:
     - name: Check we are running in the directory of the script
       failed_when: not ansible_env.PWD.endswith('/ubuntu-dev-ansible')
