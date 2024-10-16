@@ -11,6 +11,9 @@ and re-install with less effort.
 4. `ansible-galaxy role install markosamuli.linuxbrew hurricanehrndz.rustup`
 5. `ansible-playbook --ask-become-pass playbook.yml`
 
+For some extra LLM goodies (Ollama, open-webui, fabric, ...)
+- `ansible-playbook --ask-become-pass playbook.yml --tags llm`
+
 ## Credits
 
 Thank you, Adam, for your [macos-ansible project](https://github.com/adamchainz/mac-ansible) and [blog post](https://adamj.eu/tech/2019/03/20/how-i-provision-my-macbook-with-ansible/), that inspired this project.
