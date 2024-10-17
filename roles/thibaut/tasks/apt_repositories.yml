@@ -5,99 +5,96 @@
       - apt-transport-https
     state: present
 
+- name: Set architecture to amd64 if x86_64
+  set_fact:
+    architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
 - name: Add google APT repository
   ansible.builtin.deb822_repository:
     name: google
     types: [deb]
-    uris:
-      - http://dl.google.com/linux/chrome/deb
+    architectures: "{{ architecture }}"
+    uris: http://dl.google.com/linux/chrome/deb
     signed_by: https://dl.google.com/linux/linux_signing_key.pub
     suites: [stable]
     components: [main]
-    architectures: amd64
     enabled: true
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris:
-      - https://download.docker.com/linux/ubuntu
-    signed_by: https://download.docker.com/linux/ubuntu/gpg
-    suites: "{{ ansible_distribution_release }}" # noble, focal, ...
+    architectures: "{{ architecture }}"
+    uris: "https://download.docker.com/linux/{{ ansible_distribution|lower }}"
+    signed_by: "https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg"
+    suites: ["{{ ansible_distribution_release|lower }}"] # noble, focal, ...
     components: [stable]
-    architectures: amd64
     enabled: true
 
 - name: Add Mozilla APT repository
   ansible.builtin.deb822_repository:
     name: mozilla
     types: [deb]
-    uris:
-      - https://packages.mozilla.org/apt
+    architectures: "{{ architecture }}"
+    uris: https://packages.mozilla.org/apt
     signed_by: https://packages.mozilla.org/apt/repo-signing-key.gpg
     suites: [mozilla]
     components: [main]
-    architectures: amd64
     enabled: true
 
 - name: Add Spotify APT repository
   ansible.builtin.deb822_repository:
     name: spotify
     types: [deb]
-    uris:
-      - http://repository.spotify.com
+    architectures: "{{ architecture }}"
+    uris: http://repository.spotify.com
     signed_by: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
     suites: [stable]
     components: [non-free]
-    architectures: amd64
     enabled: true
 
 - name: Add TablePlus APT repository
   ansible.builtin.deb822_repository:
     name: tableplus
     types: [deb]
-    uris:
-      - https://deb.tableplus.com/debian/24
+    architectures: "{{ architecture }}"
+    uris: "https://deb.tableplus.com/debian/{{ ansible_distribution_major_version }}"
     signed_by: https://deb.tableplus.com/apt.tableplus.com.gpg.key
     suites: [tableplus]
     components: [main]
-    architectures: amd64
     enabled: true
 
 - name: Add Visual Studio Code APT repository
   ansible.builtin.deb822_repository:
     name: vscode
     types: [deb]
-    uris:
-      - https://packages.microsoft.com/repos/code
+    architectures: "{{ architecture }}"
+    uris: https://packages.microsoft.com/repos/code
     signed_by: https://packages.microsoft.com/keys/microsoft.asc
     suites: [stable]
     components: [main]
-    architectures: amd64
     enabled: true
 
 - name: Add Tailscale APT repository
   ansible.builtin.deb822_repository:
     name: tailscale
     types: [deb]
-    uris:
-      - https://pkgs.tailscale.com/stable/ubuntu/
-    suites: "{{ ansible_distribution_release }}"
+    architectures: "{{ architecture }}"
+    uris: "https://pkgs.tailscale.com/stable/{{ ansible_distribution|lower }}"
+    signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_distribution|lower }}/{{ ansible_distribution_release|lower }}.noarmor.gpg"
+    suites: ["{{ ansible_distribution_release|lower }}"]
     components: [main]
-    signed_by: "https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_distribution_release }}.noarmor.gpg"
-    architectures: [amd64]
     enabled: true
 
-- name: Add MongoDB 8.0 repository
+- name: Add MongoDB 8.0 APT repository
   ansible.builtin.deb822_repository:
     name: mongodb-org-8.0
-    uris:
-      - https://repo.mongodb.org/apt/ubuntu
-    suites: ["{{ ansible_distribution_release }}/mongodb-org/8.0"]
-    components: [multiverse]
-    architectures: [amd64]
+    types: [deb]
+    architectures: "{{ architecture }}"
+    uris: "https://repo.mongodb.org/apt/{{ ansible_distribution|lower }}"
     signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
+    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/8.0"]
+    components: [multiverse]
     enabled: true
 
 - name: Add Foliate PPA repository

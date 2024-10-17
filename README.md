@@ -12,7 +12,12 @@ and re-install with less effort.
 5. `ansible-playbook --ask-become-pass playbook.yml`
 
 For some extra LLM goodies (Ollama, open-webui, fabric, ...)
+
 - `ansible-playbook --ask-become-pass playbook.yml --tags llm`
+
+## Debugging
+
+- Print current ansible facts filtered using `ansible localhost -m ansible.builtin.setup -c local -a 'filter=ansible_d*'`
 
 ## Credits
 
