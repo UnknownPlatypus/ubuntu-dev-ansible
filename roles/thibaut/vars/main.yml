@@ -13,7 +13,6 @@ thibaut_apt_packages:
   - mysql-server # Widely used open-source relational database management system (RDBMS)
   - nginx # High-performance HTTP server and reverse proxy
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
-  - sd # Intuitive find & replace CLI
   - tailscale # Secure, easy-to-use VPN for building private networks
   - tmux # Terminal multiplexer
   - tree # Directory listing in tree-like format
@@ -60,7 +59,7 @@ thibaut_brew_packages:
   - "n" # Simple Node.js Versions manager # noqa
   - oxipng # Multithreaded PNG optimizer
   - pandoc # Universal document converter
-  - sd # Intuitive find & replace CLI (already in apt packages, possibly for version control)
+  - sd # Intuitive find & replace CLI
   - taplo # TOML toolkit
   - tokei # Code statistics tool
   - tlrc # tl;dr pages client (simplified man pages)
