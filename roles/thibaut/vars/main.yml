@@ -81,8 +81,10 @@ thibaut_uv_tools:
   - name: httpie # User-friendly command-line HTTP client for the API era
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
-  - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
+  - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
+  - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
   - name: ruff # An extremely fast Python linter, written in Rust
+  - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
   - name: twine # Utilities for interacting with PyPI
   - name: yt-dlp # Fork of youtube-dl with additional features and fixes
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks
@@ -91,4 +93,3 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
-  - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
