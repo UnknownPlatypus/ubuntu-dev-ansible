@@ -91,3 +91,4 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
+  - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
