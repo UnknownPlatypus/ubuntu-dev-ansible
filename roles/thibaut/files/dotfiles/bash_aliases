@@ -25,6 +25,9 @@ alias kstop="kill -9 $(jobs -p)"
 # ripgrep
 alias rgm='rg --no-filename --only-matching --no-line-number'
 
+# rip
+alias rip='rip --graveyard ~/.local/share/Trash/files'
+
 # Git
 alias grgc="git reset --hard HEAD && git clean -fd"
 alias rmgm='git branch --merged master | grep -v master | xargs git branch -d'
