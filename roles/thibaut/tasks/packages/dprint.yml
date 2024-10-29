@@ -1,9 +1,13 @@
 ---
 # https://dprint.dev/install/
+- name: Download Dprint installer
+  ansible.builtin.get_url:
+    url: https://dprint.dev/install.sh
+    dest: /tmp/dprint_install.sh
+    mode: "0755"
+
 - name: Install Dprint
-  ansible.builtin.shell: |
-    set -o pipefail
-    curl -fsSL https://dprint.dev/install.sh | sh
+  ansible.builtin.command: /tmp/dprint_install.sh
   args:
     creates: ~/.dprint/bin/dprint
 

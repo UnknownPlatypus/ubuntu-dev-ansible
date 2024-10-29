@@ -4,15 +4,15 @@
   tags:
     - ssh
 
-- name: Install tools via apt/brew/uv/cargo
-  ansible.builtin.import_tasks: installs.yml
-  tags:
-    - installs
-
 - name: Copy dotfiles
   ansible.builtin.import_tasks: dotfiles.yml
   tags:
     - dotfiles
+
+- name: Install tools via apt/brew/uv/cargo
+  ansible.builtin.import_tasks: installs.yml
+  tags:
+    - installs
 
 - name: Add some symlinks
   ansible.builtin.import_tasks: symlinks.yml
