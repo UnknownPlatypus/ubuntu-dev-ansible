@@ -7,6 +7,9 @@
 - name: Install linuxbrew
   ansible.builtin.include_role:
     name: markosamuli.linuxbrew
+    apply:
+      tags:
+        - brew
   vars:
     linuxbrew_use_installer: true
   tags:
@@ -44,6 +47,9 @@
 - name: Install rust toolchain
   ansible.builtin.include_role:
     name: hurricanehrndz.rustup
+    apply:
+      tags:
+        - rust
   vars:
     rustup_cargo_crates: "{{ thibaut_cargo_packages }}"
   tags:
