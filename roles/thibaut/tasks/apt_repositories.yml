@@ -100,3 +100,23 @@
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
     repo: ppa:apandada1/foliate
+
+- name: Update apt package manager cache
+  ansible.builtin.command: apt update
+  register: apt_output
+  become: true
+
+- name: Extract duplicate apt list
+  ansible.builtin.set_fact:
+    duplicate_list_files: "{{ apt_output.stderr_lines |
+      map('regex_search', '.*configured multiple times in (/etc/apt/sources.list.d/.*?)\\.list.* and \\1\\.sources', '\\1') |
+      select('defined') |
+      flatten |
+      unique }}"
+
+- name: Remove duplicate .list files
+  file:
+    path: "{{ item }}.list"
+    state: absent
+  loop: "{{ duplicate_list_files }}"
+  when: duplicate_list_files | length > 0

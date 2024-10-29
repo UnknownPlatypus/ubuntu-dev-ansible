@@ -1,11 +1,6 @@
 ---
-- name: Setup apt repositories
+- name: Setup apt repositories & Update apt cache
   ansible.builtin.import_tasks: apt_repositories.yml
-  become: true
-
-- name: Update apt package manager cache
-  ansible.builtin.apt:
-    update_cache: true
   become: true
 
 - name: Install apt packages # noqa: package-latest
