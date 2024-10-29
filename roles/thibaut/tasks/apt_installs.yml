@@ -8,7 +8,7 @@
     update_cache: true
   become: true
 
-- name: Install apt packages # noqa:package-latest
+- name: Install apt packages # noqa: package-latest
   ansible.builtin.apt:
     name: "{{ thibaut_apt_packages }}"
     state: latest

@@ -66,6 +66,9 @@ thibaut_brew_packages:
   - typos-cli # Source code spell checker
   - ripgrep # Recursively searches directories for a regex pattern
 
+thibaut_cargo_packages:
+  - rip2 # A rust-based rm with a focus on safety, ergonomics, and performance
+
 thibaut_uv_tools:
   - name: astpretty # Pretty print the output of python stdlib ast.parse
   - name: all-repos # Clone all your repositories and apply sweeping changes
