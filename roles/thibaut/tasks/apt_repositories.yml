@@ -86,14 +86,14 @@
     components: [main]
     enabled: true
 
-- name: Add MongoDB 8.0 APT repository
+- name: Add MongoDB 7.0 APT repository
   ansible.builtin.deb822_repository:
-    name: mongodb-org-8.0
+    name: mongodb-org-7.0
     types: [deb]
     architectures: "{{ architecture }}"
     uris: "https://repo.mongodb.org/apt/{{ ansible_distribution|lower }}"
-    signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
-    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/8.0"]
+    signed_by: https://www.mongodb.org/static/pgp/server-7.0.asc
+    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/7.0"]
     components: [multiverse]
     enabled: true
 
