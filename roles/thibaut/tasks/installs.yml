@@ -49,6 +49,13 @@
   tags:
     - rust
 
+- name: Upgrade UV
+  ansible.builtin.command: uv self update
+  register: uv_update
+  changed_when: "'latest version of uv' not in uv_update.stderr"
+  tags:
+    - uv
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
