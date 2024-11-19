@@ -33,6 +33,11 @@
   tags:
     - dprint
 
+- name: Install atuin
+  ansible.builtin.import_tasks: packages/atuin.yml
+  tags:
+    - atuin
+
 - name: Install JetBrains Toolbox
   ansible.builtin.import_tasks: packages/jetbrains-toolbox.yml
   tags:

@@ -1,0 +1,33 @@
+---
+# https://dprint.dev/install/
+- name: Download Atuin installer
+  ansible.builtin.get_url:
+    url: https://setup.atuin.sh
+    dest: /tmp/atuin_install.sh
+    mode: "0755"
+
+- name: Install Atuin
+  ansible.builtin.command: /tmp/atuin_install.sh
+  args:
+    creates: ~/.atuin/bin
+
+- name: Update Atuin bash startup script to disable up-arrow binding
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    regexp: '^eval "\$\(\atuin init bash\)"$'
+    line: 'eval "$(atuin init bash --disable-up-arrow)"'
+    backrefs: true
+
+- name: Check if `atuin history list` contains any lines
+  ansible.builtin.command: ~/.atuin/bin/atuin history list
+  register: atuin_history_output
+  changed_when: false
+
+- name: Run `atuin import auto` if they are only a few atuin history lines
+  ansible.builtin.command: atuin import auto
+  when: atuin_history_output.stdout_lines | length <= 10
+
+- name: Upgrade Atuin
+  ansible.builtin.command: ~/.atuin/bin/atuin-update
+  register: atuin_upgrade
+  changed_when: "'Already up to date' not in atuin_upgrade.stderr"
