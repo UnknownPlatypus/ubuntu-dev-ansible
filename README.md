@@ -20,8 +20,9 @@ For some extra LLM goodies (Ollama, open-webui, fabric, ...)
 - Print current ansible facts filtered using `ansible localhost -m ansible.builtin.setup -c local -a 'filter=ansible_d*'`
 
 ## Fork! Copy! Adapt!
+
 The recommanded way to interract with this repository is to make a fork/copy and adapt the code to fit your needs (bring your dotfiles and shiny packages)
-Pull requests are still more than welcome to improve this version! 
+Pull requests are still more than welcome to improve this version!
 
 This repository is public domain, distributed under the Unlicense, so you can
 do whatever you want with it, see LICENSE.
