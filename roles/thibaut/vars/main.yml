@@ -65,8 +65,6 @@ thibaut_brew_packages:
   - tlrc # tl;dr pages client (simplified man pages)
   - typos-cli # Source code spell checker
   - ripgrep # Recursively searches directories for a regex pattern
-
-thibaut_cargo_packages:
   - rip2 # A rust-based rm with a focus on safety, ergonomics, and performance
 
 thibaut_uv_tools:

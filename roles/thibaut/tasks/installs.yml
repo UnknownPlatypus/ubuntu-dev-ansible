@@ -50,7 +50,7 @@
       tags:
         - rust
   vars:
-    rustup_cargo_crates: "{{ thibaut_cargo_packages }}"
+    rustup_cargo_crates: []
   tags:
     - rust
 
