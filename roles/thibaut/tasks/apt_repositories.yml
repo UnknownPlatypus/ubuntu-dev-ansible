@@ -86,16 +86,21 @@
     components: [main]
     enabled: true
 
-- name: Add MongoDB 7.0 APT repository
+- name: Set MongoDB version based on Ubuntu release
+  ansible.builtin.set_fact:
+    mongodb_version: "{{ '8.0' if ansible_distribution_release == 'noble' else '7.0' }}"
+
+- name: Add MongoDB APT repository based on Ubuntu release
   ansible.builtin.deb822_repository:
-    name: mongodb-org-7.0
+    name: "mongodb-org-{{ mongodb_version }}"
     types: [deb]
     architectures: "{{ architecture }}"
     uris: "https://repo.mongodb.org/apt/{{ ansible_distribution|lower }}"
-    signed_by: https://www.mongodb.org/static/pgp/server-7.0.asc
-    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/7.0"]
+    signed_by: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/{{ mongodb_version }}"]
     components: [multiverse]
     enabled: true
+  when: ansible_distribution_release in ['noble', 'jammy']
 
 - name: Add Foliate PPA repository
   ansible.builtin.apt_repository:
