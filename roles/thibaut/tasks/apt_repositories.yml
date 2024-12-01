@@ -6,7 +6,7 @@
     state: present
 
 - name: Set architecture to amd64 if x86_64
-  set_fact:
+  ansible.builtin.set_fact:
     architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
 - name: Add google APT repository
@@ -25,9 +25,9 @@
     name: docker
     types: [deb]
     architectures: "{{ architecture }}"
-    uris: "https://download.docker.com/linux/{{ ansible_distribution|lower }}"
-    signed_by: "https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg"
-    suites: ["{{ ansible_distribution_release|lower }}"] # noble, focal, ...
+    uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
+    signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    suites: ["{{ ansible_distribution_release | lower }}"] # noble, focal, ...
     components: [stable]
     enabled: true
 
@@ -80,9 +80,9 @@
     name: tailscale
     types: [deb]
     architectures: "{{ architecture }}"
-    uris: "https://pkgs.tailscale.com/stable/{{ ansible_distribution|lower }}"
-    signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_distribution|lower }}/{{ ansible_distribution_release|lower }}.noarmor.gpg"
-    suites: ["{{ ansible_distribution_release|lower }}"]
+    uris: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}"
+    signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}.noarmor.gpg"
+    suites: ["{{ ansible_distribution_release | lower }}"]
     components: [main]
     enabled: true
 
@@ -95,9 +95,11 @@
     name: "mongodb-org-{{ mongodb_version }}"
     types: [deb]
     architectures: "{{ architecture }}"
-    uris: "https://repo.mongodb.org/apt/{{ ansible_distribution|lower }}"
+    uris: "https://repo.mongodb.org/apt/{{ ansible_distribution | lower }}"
     signed_by: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
-    suites: ["{{ ansible_distribution_release|lower }}/mongodb-org/{{ mongodb_version }}"]
+    suites: [
+      "{{ ansible_distribution_release | lower }}/mongodb-org/{{ mongodb_version }}",
+    ]
     components: [multiverse]
     enabled: true
   when: ansible_distribution_release in ['noble', 'jammy']
@@ -110,17 +112,25 @@
   ansible.builtin.command: apt update
   register: apt_output
   become: true
+  changed_when: true
 
 - name: Extract duplicate apt list
   ansible.builtin.set_fact:
-    duplicate_list_files: "{{ apt_output.stderr_lines |
-      map('regex_search', '.*configured multiple times in (/etc/apt/sources.list.d/.*?)\\.list.* and \\1\\.sources', '\\1') |
-      select('defined') |
-      flatten |
-      unique }}"
+    duplicate_list_files: >-
+      {{
+        apt_output.stderr_lines |
+        map('regex_search',
+          '.*configured multiple times in (/etc/apt/sources.list.d/.*?)\\.list.* and \\1\\.sources',
+          '\\1'
+        ) |
+        select('defined') |
+        flatten |
+        unique
+      }}
+  when: apt_output.stderr_lines
 
 - name: Remove duplicate .list files
-  file:
+  ansible.builtin.file:
     path: "{{ item }}.list"
     state: absent
   loop: "{{ duplicate_list_files }}"

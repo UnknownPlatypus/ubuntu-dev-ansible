@@ -14,7 +14,7 @@
 - name: Update Atuin bash startup script to disable up-arrow binding
   ansible.builtin.lineinfile:
     path: ~/.bashrc
-    regexp: '\$\(atuin init bash\)'
+    regexp: "\\$\\(atuin init bash\\)"
     line: 'eval "$(atuin init bash --disable-up-arrow)"'
     backrefs: true
 
