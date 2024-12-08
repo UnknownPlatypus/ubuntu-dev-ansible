@@ -9,6 +9,11 @@
     state: latest
   become: true
 
+- name: Upgrade apt packages
+  ansible.builtin.apt:
+    upgrade: safe
+  become: true
+
 - name: Remove useless packages from the cache
   ansible.builtin.apt:
     autoclean: true

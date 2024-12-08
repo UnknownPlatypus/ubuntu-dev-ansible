@@ -127,11 +127,13 @@
         flatten |
         unique
       }}
-  when: apt_output.stderr_lines
+  when: "'configured multiple times' in apt_output.stderr"
 
 - name: Remove duplicate .list files
   ansible.builtin.file:
     path: "{{ item }}.list"
     state: absent
   loop: "{{ duplicate_list_files }}"
-  when: duplicate_list_files | length > 0
+  when:
+    - "'configured multiple times' in apt_output.stderr"
+    - duplicate_list_files | length > 0
