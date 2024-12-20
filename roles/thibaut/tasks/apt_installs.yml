@@ -56,3 +56,11 @@
     value: "0"
     sysctl_set: true
   become: true
+
+# Fix an issue with gitkraken adding a weird shortcut file making the
+# favorite bar not working properly
+- name: Remove gitkraken-url-handler.desktop
+  ansible.builtin.file:
+    path: /usr/share/applications/gitkraken-url-handler.desktop
+    state: absent
+  become: true
