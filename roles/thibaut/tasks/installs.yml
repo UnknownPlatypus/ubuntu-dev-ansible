@@ -54,6 +54,11 @@
   tags:
     - rust
 
+- name: Install Rust stable and nightly with rustup
+  ansible.builtin.command: rustup install stable nightly
+  register: rustup_install_output
+  changed_when: "'unchanged' not in rustup_install_output.stdout"
+
 - name: Upgrade UV
   ansible.builtin.command: uv self update
   register: uv_update
