@@ -26,7 +26,7 @@
 - name: Install awscli v2
   ansible.builtin.import_tasks: packages/awscli_v2.yml
   tags:
-    - awscli
+    - aws-cli
 
 - name: Install dprint
   ansible.builtin.import_tasks: packages/dprint.yml

@@ -13,3 +13,21 @@
   become: true
   register: aws_install
   changed_when: "'Skipping install' not in aws_install.stdout"
+
+- name: List AWS CLI version directories
+  ansible.builtin.find:
+    paths: /usr/local/aws-cli/v2
+    file_type: directory
+    excludes: ["current"]
+  register: aws_versions
+
+- name: Sort versions and identify old ones to remove
+  ansible.builtin.set_fact:
+    versions_to_remove: "{{ (aws_versions.files | map(attribute='path') | sort)[:-2] }}"
+
+- name: Remove old AWS CLI versions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ versions_to_remove }}"
+  become: true
