@@ -86,6 +86,16 @@
     components: [main]
     enabled: true
 
+- name: Add caprine APT repository
+  ansible.builtin.deb822_repository:
+    name: caprine
+    types: [deb]
+    uris: "https://apt.fury.io/lefterisgar/"
+    suites: ["*"]
+    components: ["*"]
+    enabled: true
+    trusted: true
+
 - name: Set MongoDB version based on Ubuntu release
   ansible.builtin.set_fact:
     mongodb_version: "{{ '8.0' if ansible_distribution_release == 'noble' else '7.0' }}"

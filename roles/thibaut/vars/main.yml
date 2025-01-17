@@ -3,6 +3,7 @@ thibaut_files: "{{ ansible_env.PWD }}/roles/thibaut/files"
 
 thibaut_apt_packages:
   - bat # Cat clone with syntax highlighting and Git integration
+  - caprine # Elegant Facebook Messenger desktop app
   - curl # Command line tool for transferring data using various protocols
   - firefox-nightly # Nightly build of Firefox browser
   - git # Distributed version control system
