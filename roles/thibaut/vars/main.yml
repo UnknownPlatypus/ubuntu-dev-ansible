@@ -60,6 +60,7 @@ thibaut_brew_packages:
   - "n" # Simple Node.js Versions manager # noqa
   - oxipng # Multithreaded PNG optimizer
   - pandoc # Universal document converter
+  - podman # Daemonless container engine for managing OCI containers and pods
   - sd # Intuitive find & replace CLI
   - taplo # TOML toolkit
   - tokei # Code statistics tool

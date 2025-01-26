@@ -43,6 +43,11 @@
   tags:
     - jetbrains
 
+- name: Install Podman Desktop Toolbox
+  ansible.builtin.import_tasks: packages/podman-desktop.yml
+  tags:
+    - podman
+
 - name: Install rust toolchain
   ansible.builtin.include_role:
     name: hurricanehrndz.rustup

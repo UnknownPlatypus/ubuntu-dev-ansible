@@ -1,0 +1,81 @@
+- name: List Podman Desktop version directories
+  ansible.builtin.find:
+    paths: /opt/podman-desktop
+    file_type: directory
+    patterns: "podman-desktop-*"
+  register: local_podman_versions
+
+- name: Fetch latest Podman Desktop release data from GitHub API
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/podman-desktop/podman-desktop/releases/latest
+  register: podman_desktop_release_data
+
+- name: Extract the podamn-desktop local and latest version
+  ansible.builtin.set_fact:
+    podman_desktop_installed_version: "{{
+      local_podman_versions.files 
+      | map(attribute='path') 
+      | sort
+      | last 
+      | default('') 
+      | replace('/opt/podman-desktop/podman-desktop-', '')
+    }}"
+    podman_desktop_latest_version: "{{ podman_desktop_release_data.json.tag_name | replace('v', '') }}"
+  changed_when: false
+
+- name: Print parsed podman-desktop local and latest version
+  ansible.builtin.debug:
+    msg:
+      - "Local podman-desktop version: {{ podman_desktop_installed_version }}"
+      - "Latest podman-desktop version: {{ podman_desktop_latest_version }}"
+
+- name: Install or Upgrade Ollama
+  when: podman_desktop_installed_version != podman_desktop_latest_version
+  block:
+    - name: Create Podman installation directory
+      ansible.builtin.file:
+        path: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}"
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Download & install Podman Desktop
+      ansible.builtin.unarchive:
+        src: "https://github.com/podman-desktop/podman-desktop/releases/download/v{{ podman_desktop_latest_version }}/podman-desktop-{{ podman_desktop_latest_version }}.tar.gz"
+        dest: "/opt/podman-desktop"
+        creates: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop"
+        remote_src: true
+        mode: "0755"
+      become: true
+
+    - name: Download Podman Desktop logo
+      ansible.builtin.get_url:
+        url: https://podman-desktop.io/img/logo.svg
+        dest: "/opt/podman-desktop/podman-desktop.svg"
+        mode: "0644"
+      become: true
+
+    - name: Create .desktop file
+      ansible.builtin.copy:
+        dest: "/usr/share/applications/podman-desktop.desktop"
+        content: |
+          [Desktop Entry]
+          Name=Podman Desktop
+          Exec=/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop
+          Icon=/opt/podman-desktop/podman-desktop.svg
+          Type=Application
+          Categories=Development;Virtualization;
+          Terminal=false
+        mode: "0644"
+      become: true
+
+    - name: Sort versions and identify old ones to remove
+      ansible.builtin.set_fact:
+        versions_to_remove: "{{ (local_podman_versions.files | map(attribute='path') | sort)[:-1] }}"
+
+    - name: Remove old podman-desktop versions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      with_items: "{{ versions_to_remove }}"
+      become: true
