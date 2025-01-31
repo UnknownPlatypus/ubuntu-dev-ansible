@@ -82,6 +82,7 @@ thibaut_uv_tools:
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
+  - name: posting # The modern API client that lives in your terminal. 
   - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
