@@ -46,8 +46,8 @@ thibaut_deb_packages:
   - url: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
     file_name: docker-desktop-amd64.deb
   # Powerful Git GUI client with visual commit history and integrations
-  - url: https://release.gitkraken.com/linux/gitkraken-amd64.deb
-    file_name: gitkraken-amd64.deb
+  - url: https://release.gitkraken.com/linux/GitKraken-v10.0.2.deb
+    file_name: gitkraken-amd64-v10.0.2.deb
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
