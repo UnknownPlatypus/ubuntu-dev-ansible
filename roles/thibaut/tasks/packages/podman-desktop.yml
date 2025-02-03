@@ -1,3 +1,4 @@
+---
 - name: List Podman Desktop version directories
   ansible.builtin.find:
     paths: /opt/podman-desktop
@@ -12,15 +13,17 @@
 
 - name: Extract the podamn-desktop local and latest version
   ansible.builtin.set_fact:
-    podman_desktop_installed_version: "{{
-      local_podman_versions.files 
-      | map(attribute='path') 
-      | sort
-      | last 
-      | default('') 
-      | replace('/opt/podman-desktop/podman-desktop-', '')
-    }}"
+    podman_desktop_installed_version: |
+      {{
+        local_podman_versions.files
+        | map(attribute='path')
+        | sort
+        | last
+        | default('')
+        | replace('/opt/podman-desktop/podman-desktop-', '')
+      }}
     podman_desktop_latest_version: "{{ podman_desktop_release_data.json.tag_name | replace('v', '') }}"
+    podman_desktop_github_url: "https://github.com/podman-desktop/podman-desktop/releases/download"
   changed_when: false
 
 - name: Print parsed podman-desktop local and latest version
@@ -41,7 +44,7 @@
 
     - name: Download & install Podman Desktop
       ansible.builtin.unarchive:
-        src: "https://github.com/podman-desktop/podman-desktop/releases/download/v{{ podman_desktop_latest_version }}/podman-desktop-{{ podman_desktop_latest_version }}.tar.gz"
+        src: "{{ podman_desktop_github_url }}/v{{ podman_desktop_latest_version }}/podman-desktop-{{ podman_desktop_latest_version }}.tar.gz"
         dest: "/opt/podman-desktop"
         creates: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop"
         remote_src: true

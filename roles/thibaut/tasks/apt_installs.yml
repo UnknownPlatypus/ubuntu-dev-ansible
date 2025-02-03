@@ -31,14 +31,15 @@
 - name: Download .deb packages from url
   ansible.builtin.get_url:
     url: "{{ item.url }}"
-    dest: /tmp/{{ item.file_name }}
+    dest: "/tmp/{{ item.file_name }}"
     timeout: 30
     mode: "0755"
   loop: "{{ thibaut_deb_packages }}"
 
 - name: Install downloaded .deb packages
   ansible.builtin.apt:
-    deb: /tmp/{{ item.file_name }}
+    deb: "/tmp/{{ item.file_name }}"
+    allow_downgrade: "{{ item.allow_downgrade | default('false') }}"
   loop: "{{ thibaut_deb_packages }}"
   become: true
 

@@ -13,13 +13,13 @@ repos:
     rev: v24.12.2
     hooks:
       - id: ansible-lint
-        entry: ansible-lint -v --force-color
+        entry: ansible-lint -v --force-color --fix
         additional_dependencies: [ansible]
   - repo: local
     hooks:
       - id: dprint-fmt
         name: dprint
-        entry: /home/thibaut/.dprint/bin/dprint fmt --config dprint.json
+        entry: /home/thibaut/.dprint/bin/dprint fmt --config dprint.json --allow-no-files
         language: system
         require_serial: true
         types: [text]

@@ -107,9 +107,8 @@
     architectures: "{{ architecture }}"
     uris: "https://repo.mongodb.org/apt/{{ ansible_distribution | lower }}"
     signed_by: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
-    suites: [
-      "{{ ansible_distribution_release | lower }}/mongodb-org/{{ mongodb_version }}",
-    ]
+    suites:
+      - "{{ ansible_distribution_release | lower }}/mongodb-org/{{ mongodb_version }}"
     components: [multiverse]
     enabled: true
   when: ansible_distribution_release in ['noble', 'jammy']
