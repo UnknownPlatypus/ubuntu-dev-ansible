@@ -1,3 +1,7 @@
 [user]
 	email = thibaut.decombe@gmail.com
 	name = Thibaut Decombe
+
+
+[checkout]
+    workers = 0
