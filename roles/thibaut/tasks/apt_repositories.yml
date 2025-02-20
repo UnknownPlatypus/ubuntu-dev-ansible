@@ -48,7 +48,7 @@
     types: [deb]
     architectures: "{{ architecture }}"
     uris: http://repository.spotify.com
-    signed_by: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
+    signed_by: https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg
     suites: [stable]
     components: [non-free]
     enabled: true
