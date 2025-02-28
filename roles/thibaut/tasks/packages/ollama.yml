@@ -26,7 +26,7 @@
 - name: Install or Upgrade Ollama
   when: local_ollama_version_output.rc != 0 or ollama_latest_version != ollama_installed_version
   block:
-    - name: Download ollama install script if needed
+    - name: Download ollama install script (if needed)
       ansible.builtin.get_url:
         url: https://ollama.com/install.sh
         dest: /tmp/install_ollama.sh
