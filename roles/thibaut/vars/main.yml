@@ -55,11 +55,13 @@ thibaut_deb_packages:
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
+  - binsider # TUI to analyze ELF binaries
   - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
   - dust # More intuitive version of du (disk usage)
   - eza # Modern replacement for ls
   - fd # Simple, fast and user-friendly alternative to find
   - fzf # General-purpose command-line fuzzy finder
+  - lazydocker # A simple terminal UI for both docker and docker-compose
   - lychee # Fast, async, stream-based link checker
   - "n" # Simple Node.js Versions manager # noqa
   - oxipng # Multithreaded PNG optimizer
@@ -86,6 +88,7 @@ thibaut_uv_tools:
   - name: httpie # User-friendly command-line HTTP client for the API era
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
+  - name: maturin # Build and publish crates with pyo3, cffi and uniffi bindings as well as rust binaries as python packages
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
   - name: posting # The modern API client that lives in your terminal.
   - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
