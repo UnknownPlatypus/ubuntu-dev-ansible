@@ -48,6 +48,11 @@
   tags:
     - podman
 
+- name: Docker install side-effects
+  ansible.builtin.import_tasks: packages/docker.yml
+  tags:
+    - docker
+
 - name: Install rust toolchain
   ansible.builtin.include_role:
     name: hurricanehrndz.rustup

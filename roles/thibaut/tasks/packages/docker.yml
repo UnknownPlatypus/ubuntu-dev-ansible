@@ -1,0 +1,24 @@
+---
+# https://docs.docker.com/engine/install/linux-postinstall/
+
+- name: Create docker group
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: true
+  become: true
+
+- name: Enable Docker and containerd services
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  become: true
+  with_items:
+    - docker.service
+    - containerd.service

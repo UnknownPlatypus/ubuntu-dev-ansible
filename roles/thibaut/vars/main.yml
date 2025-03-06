@@ -38,13 +38,17 @@ thibaut_apt_packages:
   - tableplus # Modern, native, and friendly GUI tool for relational databases
   - vlc # Multimedia player and streamer
 
+  # Docker
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
 thibaut_deb_packages:
   # Popular chat and voice communication platform for communities
   - url: https://discord.com/api/download?platform=linux&format=deb
     file_name: discord-latest.deb
-  # GUI application for managing Docker containers and images
-  - url: https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
-    file_name: docker-desktop-amd64.deb
   # Powerful Git GUI client with visual commit history and integrations
   - url: https://release.gitkraken.com/linux/GitKraken-v10.0.2.deb
     file_name: gitkraken-amd64-v10.0.2.deb
