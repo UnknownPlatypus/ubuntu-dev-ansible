@@ -59,6 +59,7 @@ thibaut_deb_packages:
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
+  - act # Run your GitHub Actions locally
   - binsider # TUI to analyze ELF binaries
   - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
   - dust # More intuitive version of du (disk usage)
@@ -95,6 +96,7 @@ thibaut_uv_tools:
   - name: maturin # Build and publish crates with pyo3, cffi and uniffi bindings as well as rust binaries as python packages
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
   - name: posting # The modern API client that lives in your terminal.
+  - name: pre-commit-mirror-maker # Scripts for creating mirror repositories that do not have .pre-commit-hooks.yaml
   - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
