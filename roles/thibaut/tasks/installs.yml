@@ -53,6 +53,11 @@
   tags:
     - docker
 
+- name: Act install side-effects
+  ansible.builtin.import_tasks: packages/act.yml
+  tags:
+    - act
+
 - name: Install rust toolchain
   ansible.builtin.include_role:
     name: hurricanehrndz.rustup

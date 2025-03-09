@@ -1,0 +1,16 @@
+---
+- name: Ensure .actrc file exists
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.actrc"
+    content: |
+      # .actrc - Configuration file for Act (GitHub Actions local runner)
+      -P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:full-24.04
+      -P ubuntu-22.04=ghcr.io/catthehacker/ubuntu:act-22.04
+      -P ubuntu-20.04=ghcr.io/catthehacker/ubuntu:act-20.04
+      -P ubuntu-18.04=ghcr.io/catthehacker/ubuntu:act-18.04
+
+      # Make `actions/upload-artifact` and `actions/download-artifact` work
+      # with a local `.artifacts` folder in the directory act is run.
+      # See https://github.com/nektos/act/issues/329#issuecomment-1187246629
+      --artifact-server-path .artifacts
+    mode: "0644"
