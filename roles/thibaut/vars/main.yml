@@ -66,6 +66,7 @@ thibaut_brew_packages:
   - eza # Modern replacement for ls
   - fd # Simple, fast and user-friendly alternative to find
   - fzf # General-purpose command-line fuzzy finder
+  - git-cliff # A highly customizable Changelog Generator that follows Conventional Commit specifications
   - lazydocker # A simple terminal UI for both docker and docker-compose
   - lychee # Fast, async, stream-based link checker
   - "n" # Simple Node.js Versions manager # noqa
