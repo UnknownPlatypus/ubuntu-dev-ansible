@@ -87,6 +87,8 @@ thibaut_uv_tools:
   - name: auditwheel # Auditing and repairing wheels for PyPI
   - name: black # The uncompromising Python code formatter
   - name: build # A simple, correct Python build frontend
+  - name: djade # A Django template formatter.
+  - name: djangofmt # A fast, HTML aware, Django template formatter, written in Rust.
   - name: deptry # Command line tool to check for unused, missing and transitive dependencies in a Python project
   - name: dolphie # Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
   - name: awsebcli # Command Line Interface for AWS Elastic Beanstalk
@@ -94,10 +96,12 @@ thibaut_uv_tools:
   - name: httpie # User-friendly command-line HTTP client for the API era
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
+  - name: keyring # Easy way to access the system keyring service from python
   - name: maturin # Build and publish crates with pyo3, cffi and uniffi bindings as well as rust binaries as python packages
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
   - name: posting # The modern API client that lives in your terminal.
   - name: pre-commit-mirror-maker # Scripts for creating mirror repositories that do not have .pre-commit-hooks.yaml
+  - name: py-spy # Sampling profiler for Python programs
   - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
