@@ -1,11 +1,16 @@
 ---
 - name: Basic SSH settings
-  ansible.builtin.import_tasks: ssh.yml
+  ansible.builtin.import_tasks: system/ssh.yml
   tags:
     - ssh
 
+- name: Customize grub dual boot
+  ansible.builtin.import_tasks: system/grub.yml
+  tags:
+    - grub
+
 - name: Copy dotfiles
-  ansible.builtin.import_tasks: dotfiles.yml
+  ansible.builtin.import_tasks: system/dotfiles.yml
   tags:
     - dotfiles
 
@@ -15,12 +20,12 @@
     - installs
 
 - name: Add some symlinks
-  ansible.builtin.import_tasks: symlinks.yml
+  ansible.builtin.import_tasks: system/symlinks.yml
   tags:
     - symlinks
 
 - name: Load GNOME dconf settings
-  ansible.builtin.import_tasks: gnome.yml
+  ansible.builtin.import_tasks: system/gnome.yml
   tags:
     - gnome
 
