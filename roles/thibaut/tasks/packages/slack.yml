@@ -22,7 +22,7 @@
     mode: "0644"
     timeout: 30
 
-- name: Install latest Slack version
-  ansible.builtin.apt:
-    deb: /tmp/slack-latest.deb
-  become: true
+# - name: Install latest Slack version
+#  ansible.builtin.apt:
+#    deb: /tmp/slack-latest.deb
+#  become: true
