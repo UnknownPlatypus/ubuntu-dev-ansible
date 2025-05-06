@@ -100,7 +100,7 @@
     3.14
     3.14t
   register: uv_python_install
-  changed_when: "'All requested versions already installed' not in uv_python_install.stderr"
+  changed_when: "'Installed' in uv_python_install.stderr"
   tags:
     - uv
 
