@@ -69,6 +69,13 @@
   tags:
     - rust
 
+- name: Install cargo packages
+  ansible.builtin.command: "cargo install {{ thibaut_cargo_packages | join(' ') }}"
+  register: cargo_install_output
+  changed_when: "'Installing' in cargo_install_output.stderr"
+  tags:
+    - rust
+
 - name: Install Rust stable and nightly with rustup
   ansible.builtin.command: rustup install stable nightly
   register: rustup_install_output

@@ -114,3 +114,7 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
+
+# Avoid cargo install if possible because they are rather slow (building from source)
+thibaut_cargo_packages:
+  - samply # A sampling CPU profiler. See https://github.com/astral-sh/uv/issues/10344
