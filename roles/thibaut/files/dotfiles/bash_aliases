@@ -43,3 +43,6 @@ alias gls="git log --stat"
 alias gps="git push"
 alias gpl="git pull"
 alias gs="git status -s -b"
+
+# https://adamj.eu/tech/2025/05/08/docker-disable-adverts/
+export DOCKER_CLI_HINTS=false
