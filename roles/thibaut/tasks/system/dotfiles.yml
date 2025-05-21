@@ -21,6 +21,7 @@
     - config/ripgreprc
     - ipython/profile_default/startup/00-imports.py
     - ansible.cfg
+    - bash_aliases
     - digrc
     - gitconfig_opensource
     - gitignore

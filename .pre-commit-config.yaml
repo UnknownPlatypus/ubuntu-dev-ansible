@@ -3,14 +3,14 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b # frozen: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.2.1
+    rev: e98f9b38769d45cbe3c55a23b2eb25631babe7c4 # frozen: v25.4.0
     hooks:
       - id: ansible-lint
         entry: ansible-lint -v --force-color --fix
