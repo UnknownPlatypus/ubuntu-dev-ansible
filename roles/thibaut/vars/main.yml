@@ -102,7 +102,7 @@ thibaut_uv_tools:
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
   - name: posting # The modern API client that lives in your terminal.
   - name: pre-commit-mirror-maker # Scripts for creating mirror repositories that do not have .pre-commit-hooks.yaml
-  - name: py-spy # Sampling profiler for Python programs
+  - name: pyinstrument # Sampling profiler for Python programs
   - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
