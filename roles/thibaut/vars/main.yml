@@ -111,6 +111,7 @@ thibaut_uv_tools:
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks
     with:
       - pre-commit-uv # uv plugin for pre-commit
+  - name: rust-just # A handy command runner
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
