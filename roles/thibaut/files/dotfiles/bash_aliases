@@ -48,5 +48,5 @@ alias gs="git status -s -b"
 export DOCKER_CLI_HINTS=false
 
 add-import() {
-  git diff --name-only | xargs ruff check --isolated --fix --select I002 --config "lint.isort.required-imports=[\"$1\"]"
+  git diff --name-only --relative | xargs ruff check --isolated --fix --select I002 --config "lint.isort.required-imports=[\"$1\"]"
 }
