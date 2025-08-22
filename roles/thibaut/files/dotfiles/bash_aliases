@@ -50,3 +50,11 @@ export DOCKER_CLI_HINTS=false
 add-import() {
   git diff --name-only --relative | xargs ruff check --isolated --fix --select I002 --config "lint.isort.required-imports=[\"$1\"]"
 }
+
+rm-unused-ignore() {
+    rg "unused-ignore" | while IFS=':' read -r file_path lineno rest; do
+        if [[ "$file_path" && "$lineno" =~ ^[0-9]+$ ]]; then
+            sed -i "${lineno}s/# type: ignore\[.*\]//" "$file_path"
+        fi
+    done
+}
