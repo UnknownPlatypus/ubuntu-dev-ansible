@@ -13,9 +13,6 @@
   register: uv_open_webui_upgrade
   changed_when: "'Nothing to upgrade' not in uv_open_webui_upgrade.stderr"
 
-- name: Install fabric
-  ansible.builtin.import_tasks: packages/fabric.yml
-
 - name: Install devai
   community.general.cargo:
     name: devai

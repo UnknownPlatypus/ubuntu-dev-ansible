@@ -11,7 +11,7 @@ and re-install with less effort.
 4. `ansible-galaxy role install markosamuli.linuxbrew hurricanehrndz.rustup`
 5. `ansible-playbook --ask-become-pass playbook.yml`
 
-For some extra LLM goodies (Ollama, open-webui, fabric, ...)
+For some extra LLM goodies (Ollama, open-webui, ...)
 
 - `ansible-playbook --ask-become-pass playbook.yml --tags llm`
 
