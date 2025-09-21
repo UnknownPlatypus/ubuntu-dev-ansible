@@ -99,6 +99,7 @@ thibaut_uv_tools:
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
   - name: keyring # Easy way to access the system keyring service from python
+  - name: magic-wormhole # Securely share files and folders with others
   - name: maturin # Build and publish crates with pyo3, cffi and uniffi bindings as well as rust binaries as python packages
   - name: norwegianblue # Python interface to endoflife.date to show end-of-life dates for a number of products.
   - name: posting # The modern API client that lives in your terminal.
