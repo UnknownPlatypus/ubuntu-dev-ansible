@@ -50,7 +50,7 @@ thibaut_deb_packages:
   - url: https://discord.com/api/download?platform=linux&format=deb
     file_name: discord-latest.deb
   # Powerful Git GUI client with visual commit history and integrations
-  - url: https://www.gitkraken.com/download/linux-deb
+  - url: https://api.gitkraken.dev/releases/production/linux/x64/active/gitkraken-amd64.deb
     file_name: gitkraken-amd64.deb
   # Application to comfortably monitor your Internet traffic. Cross-platform, Intuitive, Reliable
   - url: https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
