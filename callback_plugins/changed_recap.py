@@ -17,8 +17,8 @@ class CallbackModule(CallbackBase):
         if result.is_changed():
             self.changed_task_names.append(self.current_task.get_name())
 
-    def playbook_on_stats(self, stats):
-        self._display.banner("RECAP OF CHANGED STEPS")
+    def v2_playbook_on_stats(self, stats):
+        self._display.banner("CHANGED STEPS")
         if self.changed_task_names:
             for task_name in self.changed_task_names:
                 self._display.display(task_name)
