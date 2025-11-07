@@ -36,3 +36,4 @@
       ansible.builtin.command: sh /tmp/install_ollama.sh
       register: install_result
       changed_when: install_result is changed
+      become: true

@@ -71,20 +71,20 @@
 
 - name: Install cargo packages
   ansible.builtin.command: "cargo install {{ thibaut_cargo_packages | join(' ') }}"
-  register: cargo_install_output
-  changed_when: "'Installing' in cargo_install_output.stderr"
+  register: thibaut_cargo_install_output
+  changed_when: "'Installing' in thibaut_cargo_install_output.stderr"
   tags:
     - rust
 
 - name: Install Rust stable and nightly with rustup
   ansible.builtin.command: rustup install stable nightly
-  register: rustup_install_output
-  changed_when: "'unchanged' not in rustup_install_output.stdout"
+  register: thibaut_rustup_install_output
+  changed_when: "'unchanged' not in thibaut_rustup_install_output.stdout"
 
 - name: Upgrade UV
   ansible.builtin.command: uv self update
-  register: uv_update
-  changed_when: "'latest version of uv' not in uv_update.stderr"
+  register: thibaut_uv_update
+  changed_when: "'latest version of uv' not in thibaut_uv_update.stderr"
   tags:
     - uv
 
@@ -99,8 +99,8 @@
     3.13
     3.14
     3.14t
-  register: uv_python_install
-  changed_when: "'Installed' in uv_python_install.stderr"
+  register: thibaut_uv_python_install
+  changed_when: "'Installed' in thibaut_uv_python_install.stderr"
   tags:
     - uv
 
@@ -113,8 +113,8 @@
     {% for w in item.with %}--with {{ w }}{% endfor %}
     {% endif %}
   loop: "{{ thibaut_uv_tools }}"
-  register: uv_tool_install
-  changed_when: "'already installed' not in uv_tool_install.stderr"
+  register: thibaut_uv_tool_install
+  changed_when: "'already installed' not in thibaut_uv_tool_install.stderr"
   tags:
     - uv
 
@@ -126,15 +126,15 @@
     {% for w in item.with %}--upgrade-package {{ w }}{% endfor %}
     {% endif %}
   loop: "{{ thibaut_uv_tools }}"
-  register: uv_upgrade
-  changed_when: "'Nothing to upgrade' not in uv_upgrade.stderr"
+  register: thibaut_uv_upgrade
+  changed_when: "'Nothing to upgrade' not in thibaut_uv_upgrade.stderr"
   tags:
     - uv
 
 - name: Uv prune cache
-  ansible.builtin.command: uv cache prune
-  register: uv_prune
-  changed_when: "'Removed' in uv_prune.stderr"
+  ansible.builtin.command: uv cache prune --force
+  register: thibaut_uv_prune
+  changed_when: "'Removed' in thibaut_uv_prune.stderr"
   tags:
     - uv
     - cleanup
@@ -143,7 +143,7 @@
   ansible.builtin.command: n latest
   environment:
     N_PREFIX: "{{ ansible_env.HOME }}/.n"
-  register: n_install
-  changed_when: "'installing' in n_install.stdout"
+  register: thibaut_n_install
+  changed_when: "'installing' in thibaut_n_install.stdout"
   tags:
     - node

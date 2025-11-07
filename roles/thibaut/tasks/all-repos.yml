@@ -2,27 +2,27 @@
 - name: Check if ~/workspace exists
   ansible.builtin.stat:
     path: ~/workspace
-  register: workspace_stat
+  register: thibaut_workspace_stat
 
 - name: Create ~/workspace if it doesn't exist
   ansible.builtin.file:
     path: ~/workspace
     state: directory
     mode: "0755"
-  when: not workspace_stat.stat.exists
+  when: not thibaut_workspace_stat.stat.exists
 
 - name: Check all-repos config drift
   ansible.builtin.command:
     cmd: diff "{{ thibaut_files }}/{{ item }}" "~/{{ item }}"
-  register: all_repos_conf_diff
-  changed_when: all_repos_conf_diff.rc >= 1
+  register: thibaut_all_repos_conf_diff
+  changed_when: thibaut_all_repos_conf_diff.rc >= 1
   ignore_errors: true
   loop:
     - all-repos.json
     - my-repos.json
 
 - name: Clone all missing repos # noqa: no-handler
-  when: all_repos_conf_diff.changed
+  when: thibaut_all_repos_conf_diff.changed
   block:
     - name: Update all-repos config files
       ansible.builtin.copy:
@@ -44,13 +44,13 @@
       ansible.builtin.find:
         paths: /tmp/workspace
         file_type: directory
-      register: tmp_git_repos
+      register: thibaut_tmp_git_repos
 
     - name: Check which git repo don't exist in ~/workspace
       ansible.builtin.stat:
         path: ~/workspace/{{ item.path | basename }}
-      loop: "{{ tmp_git_repos.files }}"
-      register: workspace_dir_stats
+      loop: "{{ thibaut_tmp_git_repos.files }}"
+      register: thibaut_workspace_dir_stats
 
     - name: Copy missing git repos to ~/workspace
       ansible.builtin.copy:
@@ -58,5 +58,5 @@
         dest: ~/workspace/{{ item.item.path | basename }}/
         remote_src: true
         mode: preserve
-      loop: "{{ workspace_dir_stats.results }}"
+      loop: "{{ thibaut_workspace_dir_stats.results }}"
       when: not item.stat.exists

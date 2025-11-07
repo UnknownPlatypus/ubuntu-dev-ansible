@@ -5,13 +5,13 @@
 # https://github.com/open-webui/open-webui?tab=readme-ov-file#how-to-install-
 - name: Uv install open-webui (on python 3.11 for compatibility reasons)
   ansible.builtin.command: uv tool install --python 3.11 open-webui
-  register: uv_open_webui_install
-  changed_when: "'already installed' not in uv_open_webui_install.stderr"
+  register: thibaut_uv_open_webui_install
+  changed_when: "'already installed' not in thibaut_uv_open_webui_install.stderr"
 
 - name: Uv upgrade open-webui
   ansible.builtin.command: uv tool upgrade open-webui
-  register: uv_open_webui_upgrade
-  changed_when: "'Nothing to upgrade' not in uv_open_webui_upgrade.stderr"
+  register: thibaut_uv_open_webui_upgrade
+  changed_when: "'Nothing to upgrade' not in thibaut_uv_open_webui_upgrade.stderr"
 
 - name: Install devai
   community.general.cargo:

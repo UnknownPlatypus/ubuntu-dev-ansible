@@ -5,15 +5,15 @@
       - apt-transport-https
     state: present
 
-- name: Set architecture to amd64 if x86_64
+- name: Set thibaut_architecture to amd64 if x86_64
   ansible.builtin.set_fact:
-    architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    thibaut_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
 - name: Add google APT repository
   ansible.builtin.deb822_repository:
     name: google
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: http://dl.google.com/linux/chrome/deb
     signed_by: https://dl.google.com/linux/linux_signing_key.pub
     suites: [stable]
@@ -24,7 +24,7 @@
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
     signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
     suites: ["{{ ansible_distribution_release | lower }}"] # noble, focal, ...
@@ -35,7 +35,7 @@
   ansible.builtin.deb822_repository:
     name: mozilla
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: https://packages.mozilla.org/apt
     signed_by: https://packages.mozilla.org/apt/repo-signing-key.gpg
     suites: [mozilla]
@@ -46,7 +46,7 @@
   ansible.builtin.deb822_repository:
     name: spotify
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: http://repository.spotify.com
     signed_by: https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg
     suites: [stable]
@@ -57,7 +57,7 @@
   ansible.builtin.deb822_repository:
     name: tableplus
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: "https://deb.tableplus.com/debian/{{ ansible_distribution_major_version }}"
     signed_by: https://deb.tableplus.com/apt.tableplus.com.gpg.key
     suites: [tableplus]
@@ -68,7 +68,7 @@
   ansible.builtin.deb822_repository:
     name: vscode
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: https://packages.microsoft.com/repos/code
     signed_by: https://packages.microsoft.com/keys/microsoft.asc
     suites: [stable]
@@ -79,7 +79,7 @@
   ansible.builtin.deb822_repository:
     name: tailscale
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}"
     signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}.noarmor.gpg"
     suites: ["{{ ansible_distribution_release | lower }}"]
@@ -98,17 +98,17 @@
 
 - name: Set MongoDB version based on Ubuntu release
   ansible.builtin.set_fact:
-    mongodb_version: "{{ '8.0' if ansible_distribution_release == 'noble' else '7.0' }}"
+    thibaut_mongodb_version: "{{ '8.0' if ansible_distribution_release == 'noble' else '7.0' }}"
 
 - name: Add MongoDB APT repository based on Ubuntu release
   ansible.builtin.deb822_repository:
-    name: "mongodb-org-{{ mongodb_version }}"
+    name: "mongodb-org-{{ thibaut_mongodb_version }}"
     types: [deb]
-    architectures: "{{ architecture }}"
+    architectures: "{{ thibaut_architecture }}"
     uris: "https://repo.mongodb.org/apt/{{ ansible_distribution | lower }}"
-    signed_by: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+    signed_by: "https://www.mongodb.org/static/pgp/server-{{ thibaut_mongodb_version }}.asc"
     suites:
-      - "{{ ansible_distribution_release | lower }}/mongodb-org/{{ mongodb_version }}"
+      - "{{ ansible_distribution_release | lower }}/mongodb-org/{{ thibaut_mongodb_version }}"
     components: [multiverse]
     enabled: true
   when: ansible_distribution_release in ['noble', 'jammy']
