@@ -34,8 +34,7 @@ thibaut_apt_packages:
   # GUI
   - code # Visual Studio Code editor
   - foliate # Ebook reader
-  - spotify-client # Spotify music streaming client
-  - tableplus # Modern, native, and friendly GUI tool for relational databases
+  # - spotify-client # Spotify music streaming client
   - vlc # Multimedia player and streamer
 
   # Docker
