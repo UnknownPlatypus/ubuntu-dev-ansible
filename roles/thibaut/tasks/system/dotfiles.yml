@@ -7,6 +7,7 @@
   loop:
     - ipython/profile_default/startup
     - config/dust
+    - config/zed
     - aws
 
 - name: Create Dotfiles
@@ -18,6 +19,7 @@
   loop:
     - aws/config
     - config/dust/config.toml
+    - config/zed/settings.json
     - config/ripgreprc
     - ipython/profile_default/startup/00-imports.py
     - ansible.cfg

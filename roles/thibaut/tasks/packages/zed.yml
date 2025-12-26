@@ -1,0 +1,23 @@
+---
+# https://zed.dev/docs/linux#zed-on-linux
+
+- name: Check if ZED is installed or get the current version
+  ansible.builtin.command: zed --version
+  register: zed_version_output
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install or Upgrade ZED
+  when: zed_version_output.rc != 0
+  block:
+    - name: Download zed install script (if needed)
+      ansible.builtin.get_url:
+        url: https://zed.dev/install.sh
+        dest: /tmp/install_zed.sh
+        mode: "0755"
+
+    - name: Install or Update zed
+      ansible.builtin.command: sh /tmp/install_zed.sh
+      register: install_result
+      changed_when: install_result is changed
+      become: true
