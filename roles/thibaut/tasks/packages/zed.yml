@@ -4,7 +4,7 @@
 - name: Check if ZED is installed or get the current version
   ansible.builtin.command: zed --version
   register: zed_version_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: false
 
 - name: Install or Upgrade ZED

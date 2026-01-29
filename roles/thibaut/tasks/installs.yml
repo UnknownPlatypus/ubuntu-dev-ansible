@@ -48,6 +48,11 @@
   tags:
     - podman
 
+- name: Install opencode
+  ansible.builtin.import_tasks: packages/opencode.yml
+  tags:
+    - opencode
+
 - name: Docker install side-effects
   ansible.builtin.import_tasks: packages/docker.yml
   tags:

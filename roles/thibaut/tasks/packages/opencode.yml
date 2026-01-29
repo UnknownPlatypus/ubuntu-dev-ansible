@@ -1,0 +1,21 @@
+---
+# https://github.com/anomalyco/opencode
+- name: Try to upgrade opencode
+  ansible.builtin.command: opencode upgrade
+  register: opencode_upgrade_result
+  ignore_errors: true
+  changed_when: "'already installed' not in opencode_upgrade_result.stdout"
+
+- name: Install opencode (if upgrade failed)
+  when: opencode_upgrade_result.rc != 0
+  block:
+    - name: Download opencode install script
+      ansible.builtin.get_url:
+        url: https://opencode.ai/install
+        dest: /tmp/install_opencode.sh
+        mode: "0755"
+
+    - name: Install opencode
+      ansible.builtin.command: bash /tmp/install_opencode.sh
+      register: install_result
+      changed_when: install_result is changed
