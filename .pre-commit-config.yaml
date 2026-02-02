@@ -16,7 +16,7 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/ansible/ansible-lint
-    rev: a2bc8b8b13a80802215856c56823d85007d3baf5 # frozen: v25.12.2
+    rev: 7f6abc5ef97d0fb043a0f3d416dfbc74399fbda0  # frozen: v26.1.1
     hooks:
       - id: ansible-lint
         entry: ansible-lint -v --force-color --fix
