@@ -15,7 +15,7 @@ from typing import Annotated
 
 import cyclopts
 
-app = cyclopts.App(help=__doc__)
+app = cyclopts.App(help=__doc__, default_parameter=cyclopts.Parameter(negative=()))
 logger = logging.getLogger(__name__)
 
 
