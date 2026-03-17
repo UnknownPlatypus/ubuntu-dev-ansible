@@ -28,6 +28,12 @@
     - gitconfig_opensource
     - gitignore
 
+- name: Install custom scripts to ~/.local/bin
+  ansible.builtin.copy:
+    src: "{{ thibaut_files }}/bin/"
+    dest: ~/.local/bin/
+    mode: "0755"
+
 - name: Update ~/.bashrc for various tools
   ansible.builtin.blockinfile:
     path: ~/.bashrc
