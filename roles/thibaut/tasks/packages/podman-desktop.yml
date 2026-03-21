@@ -21,10 +21,16 @@
         | last
         | default('')
         | replace('/opt/podman-desktop/podman-desktop-', '')
+        | split('-')
+        | first
       }}
     podman_desktop_latest_version: "{{ podman_desktop_release_data.json.tag_name | replace('v', '') }}"
-    podman_desktop_github_url: "https://github.com/podman-desktop/podman-desktop/releases/download"
   changed_when: false
+
+- name: Build the podman desktop url
+  ansible.builtin.set_fact:
+    podman_desktop_github_url: "https://github.com/podman-desktop/podman-desktop/releases/download/v{{ podman_desktop_latest_version }}"
+    thibaut_podman_architecture: "{{ 'x64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
 - name: Print parsed podman-desktop local and latest version
   ansible.builtin.debug:
@@ -32,7 +38,7 @@
       - "Local podman-desktop version: {{ podman_desktop_installed_version }}"
       - "Latest podman-desktop version: {{ podman_desktop_latest_version }}"
 
-- name: Install or Upgrade Ollama
+- name: Install or Upgrade Podman Desktop
   when: podman_desktop_installed_version != podman_desktop_latest_version
   block:
     - name: Create Podman installation directory
@@ -44,7 +50,7 @@
 
     - name: Download & install Podman Desktop
       ansible.builtin.unarchive:
-        src: "{{ podman_desktop_github_url }}/v{{ podman_desktop_latest_version }}/podman-desktop-{{ podman_desktop_latest_version }}.tar.gz"
+        src: "{{ podman_desktop_github_url }}/podman-desktop-{{ podman_desktop_latest_version }}-{{ thibaut_podman_architecture }}.tar.gz"
         dest: "/opt/podman-desktop"
         creates: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop"
         remote_src: true

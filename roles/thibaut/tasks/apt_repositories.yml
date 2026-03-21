@@ -53,17 +53,6 @@
     components: [non-free]
     enabled: true
 
-- name: Add TablePlus APT repository
-  ansible.builtin.deb822_repository:
-    name: tableplus
-    types: [deb]
-    architectures: "{{ thibaut_architecture }}"
-    uris: "https://deb.tableplus.com/debian/{{ ansible_distribution_major_version }}"
-    signed_by: https://deb.tableplus.com/apt.tableplus.com.gpg.key
-    suites: [tableplus]
-    components: [main]
-    enabled: true
-
 - name: Add Visual Studio Code APT repository
   ansible.builtin.deb822_repository:
     name: vscode

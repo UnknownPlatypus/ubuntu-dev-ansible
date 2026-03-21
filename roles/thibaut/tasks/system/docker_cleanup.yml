@@ -1,0 +1,6 @@
+---
+- name: Docker system cleanup
+  ansible.builtin.command: docker system prune -f
+  become: true
+  register: docker_prune_result
+  changed_when: "'Total reclaimed space: 0B' not in docker_prune_result.stdout"
