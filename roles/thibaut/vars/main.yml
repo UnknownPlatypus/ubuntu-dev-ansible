@@ -115,6 +115,7 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
+  - name: claude-swap # Swap between multiple claude accounts
 
 # Avoid cargo install if possible because they are rather slow (building from source)
 thibaut_cargo_packages:
