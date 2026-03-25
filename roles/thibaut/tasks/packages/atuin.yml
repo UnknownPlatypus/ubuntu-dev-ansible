@@ -1,5 +1,5 @@
 ---
-# https://dprint.dev/install/
+# https://atuin.sh
 - name: Download Atuin installer
   ansible.builtin.get_url:
     url: https://setup.atuin.sh

@@ -19,6 +19,6 @@
     enabled: true
     state: started
   become: true
-  with_items:
+  loop:
     - docker.service
     - containerd.service

@@ -1,10 +1,4 @@
 ---
-- name: Ensure apt-transport-https is installed (for https signing urls)
-  ansible.builtin.apt:
-    name:
-      - apt-transport-https
-    state: present
-
 - name: Set thibaut_architecture to amd64 if x86_64
   ansible.builtin.set_fact:
     thibaut_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
@@ -42,16 +36,16 @@
     components: [main]
     enabled: true
 
-- name: Add Spotify APT repository
-  ansible.builtin.deb822_repository:
-    name: spotify
-    types: [deb]
-    architectures: "{{ thibaut_architecture }}"
-    uris: http://repository.spotify.com
-    signed_by: https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg
-    suites: [stable]
-    components: [non-free]
-    enabled: true
+#- name: Add Spotify APT repository
+#  ansible.builtin.deb822_repository:
+#    name: spotify
+#    types: [deb]
+#    architectures: "{{ thibaut_architecture }}"
+#    uris: http://repository.spotify.com
+#    signed_by: https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg
+#    suites: [stable]
+#    components: [non-free]
+#    enabled: true
 
 - name: Add Visual Studio Code APT repository
   ansible.builtin.deb822_repository:

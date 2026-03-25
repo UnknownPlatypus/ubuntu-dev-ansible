@@ -1,5 +1,5 @@
 ---
-thibaut_files: "{{ ansible_env.PWD }}/roles/thibaut/files"
+thibaut_files: "{{ role_path }}/files"
 
 thibaut_apt_packages:
   - bat # Cat clone with syntax highlighting and Git integration
