@@ -15,7 +15,6 @@
     src: "{{ thibaut_files }}/dotfiles/{{ item }}"
     dest: ~/.{{ item }}
     mode: "0755"
-    force: false
   loop:
     - aws/config
     - config/dust/config.toml
