@@ -60,6 +60,7 @@ thibaut_brew_packages:
   - act # Run your GitHub Actions locally
   - binsider # TUI to analyze ELF binaries
   - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+  - codex # OpenAI coding agent CLI
   - dua-cli # View disk space usage and delete unwanted data, fast
   - dust # More intuitive version of du (disk usage)
   - eza # Modern replacement for ls
@@ -115,7 +116,6 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
-  - name: claude-swap # Swap between multiple claude accounts
 
 # Avoid cargo install if possible because they are rather slow (building from source)
 thibaut_cargo_packages:

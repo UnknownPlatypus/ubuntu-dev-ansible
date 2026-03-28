@@ -53,6 +53,11 @@
   tags:
     - opencode
 
+- name: Install Claude Code
+  ansible.builtin.import_tasks: packages/claude-code.yml
+  tags:
+    - claude-code
+
 - name: Docker install side-effects
   ansible.builtin.import_tasks: packages/docker.yml
   tags:

@@ -1,0 +1,12 @@
+---
+# https://claude.ai/code
+- name: Download Claude Code installer
+  ansible.builtin.get_url:
+    url: https://claude.ai/install.sh
+    dest: /tmp/claude_code_install.sh
+    mode: "0755"
+
+- name: Install Claude Code
+  ansible.builtin.command: bash /tmp/claude_code_install.sh
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/claude"
