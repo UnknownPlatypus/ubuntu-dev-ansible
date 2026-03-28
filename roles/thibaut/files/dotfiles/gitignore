@@ -10,7 +10,7 @@
 .vscode
 
 # AI
-.claude/worktrees
+.claude
 
 # Python
 *.pyc
@@ -34,4 +34,3 @@ t
 t.html
 *.sqlite3
 .gitlab-ci-local/*
-
