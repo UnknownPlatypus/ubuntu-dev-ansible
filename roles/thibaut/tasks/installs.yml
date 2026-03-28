@@ -94,7 +94,7 @@
 - name: Upgrade UV
   ansible.builtin.command: uv self update
   register: thibaut_uv_update
-  changed_when: "'latest version of uv' not in thibaut_uv_update.stderr"
+  changed_when: "'latest version' not in thibaut_uv_update.stderr"
   tags:
     - uv
 
