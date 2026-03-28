@@ -28,6 +28,10 @@ alias rgm='rg --no-filename --only-matching --no-line-number'
 # rip
 alias rip='rip --graveyard ~/.local/share/Trash/files'
 
+# Claude Code
+alias claude-work='claude --dangerously-skip-permissions'
+alias claude-home='CLAUDE_CONFIG_DIR=~/.claude-home claude --dangerously-skip-permissions'
+
 # Git
 alias grgc="git reset --hard HEAD && git clean -fd"
 alias rmgm='git branch --merged master | grep -v master | xargs git branch -d'
