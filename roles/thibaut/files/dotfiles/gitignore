@@ -1,16 +1,37 @@
+# IDEs
+.idea/*
+!.idea/scopes/
+!.idea/scopes/*.xml
+!.idea/watcherTasks.xml
+!.idea/greenday.iml
+!.idea/modules.xml
+!.idea/webResources.xml
+!.idea/startup.xml
+.vscode
+
+# AI
+.claude/worktrees
+
 # Python
 *.pyc
 .tox
 .venv
 venv
+monkeytype.sqlite3
 
 # Misc
+.env
 .idea
 .vscode
 .django
 .python-version
 t.py
+t2.py
 t.txt
 t.md
 t.sh
+t
+t.html
 *.sqlite3
+.gitlab-ci-local/*
+
