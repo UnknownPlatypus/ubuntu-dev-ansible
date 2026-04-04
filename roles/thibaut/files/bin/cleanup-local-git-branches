@@ -31,6 +31,15 @@ def get_local_branches() -> set[str]:
     }
 
 
+def get_remote_branches(remote: str = "origin") -> set[str]:
+    prefix = f"{remote}/"
+    return {
+        branch.strip().removeprefix(prefix)
+        for branch in run_cmd(["git", "branch", "-r"]).splitlines()
+        if branch.strip().startswith(prefix) and not branch.strip().endswith("/HEAD")
+    }
+
+
 def _check_branch_merged(branch: str) -> str | None:
     """Return the branch name if it has a merged PR, else None."""
     logger.debug(f"Checking PR status for branch: {branch}")
@@ -65,31 +74,56 @@ def get_merged_branches(local_branches: set[str]) -> set[str]:
 
 
 def cleanup_local_git_branches(
-    protected_branches: set[str] | None = None,
+    protected_branches: set[str],
     dry_run: bool = False,
 ) -> None:
-    if protected_branches is None:
-        protected_branches = {"master", "main"}
-
     local_branches = get_local_branches() - protected_branches
     logger.debug(f"Local branches (excluding protected): {sorted(local_branches)}")
 
     branches_to_delete = get_merged_branches(local_branches)
 
     if not branches_to_delete:
-        logger.info("No branches to cleanup!")
+        logger.info("No local branches to cleanup!")
+    else:
+        logger.info("Merged local branches:")
+        for branch in sorted(branches_to_delete):
+            logger.info(f"  - {branch}")
+
+        if dry_run:
+            logger.info("\nDry run, no local branches deleted.")
+        elif input("\nDelete these local branches? (y/n) ").strip().lower() == "y":
+            subprocess.run(["git", "branch", "-D", *branches_to_delete])
+            logger.info("Done!")
+        else:
+            logger.info("Aborted.")
+
+
+def cleanup_remote_git_branches(
+    protected_branches: set[str],
+    remote: str = "origin",
+    dry_run: bool = False,
+) -> None:
+    run_cmd(["git", "fetch", remote, "--prune"])
+
+    remote_branches = get_remote_branches(remote) - protected_branches
+    logger.debug(f"Remote branches (excluding protected): {sorted(remote_branches)}")
+
+    branches_to_delete = get_merged_branches(remote_branches)
+
+    if not branches_to_delete:
+        logger.info("No remote branches to cleanup!")
         return
 
-    logger.info("Merged branches:")
+    logger.info("Merged remote branches:")
     for branch in sorted(branches_to_delete):
-        logger.info(f"  - {branch}")
+        logger.info(f"  - {remote}/{branch}")
 
     if dry_run:
-        logger.info("\nDry run, no branches deleted.")
+        logger.info("\nDry run, no remote branches deleted.")
         return
 
-    if input("\nDelete these branches? (y/n) ").strip().lower() == "y":
-        subprocess.run(["git", "branch", "-D", *branches_to_delete])
+    if input("\nDelete these remote branches? (y/n) ").strip().lower() == "y":
+        subprocess.run(["git", "push", remote, "--delete", *sorted(branches_to_delete)])
         logger.info("Done!")
     else:
         logger.info("Aborted.")
@@ -107,8 +141,16 @@ def main(
         format="[%(levelname)s] %(message)s",
     )
 
+    protected_branches = set(protected)
+
     cleanup_local_git_branches(
-        protected_branches=set(protected),
+        protected_branches=protected_branches,
+        dry_run=dry_run,
+    )
+
+    logger.info("")
+    cleanup_remote_git_branches(
+        protected_branches=protected_branches,
         dry_run=dry_run,
     )
 
