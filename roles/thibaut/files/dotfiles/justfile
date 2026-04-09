@@ -1,0 +1,17 @@
+# List all commands
+_default:
+    @just --list  --unsorted
+
+# Update this PC via ansible
+[working-directory: x'~/workspace/ubuntu-dev-ansible']
+update-pc *args:
+    uv run ansible-playbook --ask-become-pass playbook.yml {{ args }}
+
+# Update home server via ansible
+[working-directory: x'~/workspace/home-lab/ansible']
+update-home-serv:
+    uv run ansible-playbook playbook.yml
+
+# Remove dangling docker images and stopped containers
+clean:
+    docker system prune -f

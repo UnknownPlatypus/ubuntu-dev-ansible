@@ -26,6 +26,7 @@
     - digrc
     - gitconfig_opensource
     - gitignore
+    - justfile
 
 - name: Install custom scripts to ~/.local/bin
   ansible.builtin.copy:
