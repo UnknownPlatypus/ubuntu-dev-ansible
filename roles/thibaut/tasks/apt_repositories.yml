@@ -36,7 +36,7 @@
     components: [main]
     enabled: true
 
-#- name: Add Spotify APT repository
+# - name: Add Spotify APT repository
 #  ansible.builtin.deb822_repository:
 #    name: spotify
 #    types: [deb]

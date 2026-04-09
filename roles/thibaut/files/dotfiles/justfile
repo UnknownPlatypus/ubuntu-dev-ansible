@@ -9,8 +9,8 @@ update-pc *args:
 
 # Update home server via ansible
 [working-directory: x'~/workspace/home-lab/ansible']
-update-home-serv:
-    uv run ansible-playbook playbook.yml
+update-home-serv *args:
+    uv run ansible-playbook playbook.yml {{ args }}
 
 # Remove dangling docker images and stopped containers
 clean:
