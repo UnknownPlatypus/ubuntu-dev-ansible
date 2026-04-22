@@ -14,4 +14,7 @@ update-home-serv *args:
 
 # Remove dangling docker images and stopped containers
 clean:
+    uv cache prune
+    pre-commit gc
     docker system prune -f
+    docker builder prune -f
