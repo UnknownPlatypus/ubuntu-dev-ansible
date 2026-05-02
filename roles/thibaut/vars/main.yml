@@ -121,3 +121,25 @@ thibaut_uv_tools:
 # Avoid cargo install if possible because they are rather slow (building from source)
 thibaut_cargo_packages:
   - samply # A sampling CPU profiler. See https://github.com/astral-sh/uv/issues/10344
+
+# Bash completions to generate into ~/.local/share/bash-completion/completions/<name>
+# `name` must match the binary being completed (that's what bash-completion looks up).
+thibaut_bash_completions:
+  - name: just
+    command: just --completions bash
+  - name: uv
+    command: uv generate-shell-completion bash
+  - name: ruff
+    command: ruff generate-shell-completion bash
+  - name: rustup
+    command: rustup completions bash
+  - name: rg
+    command: rg --generate complete-bash
+  - name: glow
+    command: glow completion bash
+  - name: podman
+    command: podman completion bash
+  - name: docker
+    command: docker completion bash
+  - name: djangofmt
+    command: djangofmt completions bash

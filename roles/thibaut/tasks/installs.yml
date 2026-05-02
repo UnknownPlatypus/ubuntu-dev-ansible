@@ -157,3 +157,32 @@
   changed_when: "'installing' in thibaut_n_install.stdout"
   tags:
     - node
+
+- name: Ensure user bash-completion dir exists
+  ansible.builtin.file:
+    path: ~/.local/share/bash-completion/completions
+    state: directory
+    mode: "0755"
+  tags:
+    - bash-completions
+
+- name: Generate bash completions (stdout)
+  ansible.builtin.command: "{{ item.command }}"
+  register: thibaut_completion_output
+  changed_when: false
+  loop: "{{ thibaut_bash_completions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  tags:
+    - bash-completions
+
+- name: Write bash completions
+  ansible.builtin.copy:
+    content: "{{ item.stdout }}"
+    dest: "~/.local/share/bash-completion/completions/{{ item.item.name }}"
+    mode: "0644"
+  loop: "{{ thibaut_completion_output.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  tags:
+    - bash-completions
