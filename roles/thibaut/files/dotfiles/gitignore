@@ -10,7 +10,10 @@
 .vscode
 
 # AI
+CLAUDE.md
+AGENTS.md
 .claude
+.agents
 .worktrees
 
 # Python
