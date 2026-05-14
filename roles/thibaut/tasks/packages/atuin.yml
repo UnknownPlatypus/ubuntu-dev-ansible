@@ -7,7 +7,7 @@
     mode: "0755"
 
 - name: Install Atuin (and import previous shell history)
-  ansible.builtin.shell: /tmp/atuin_install.sh && ~/.atuin/bin/atuin import auto
+  ansible.builtin.shell: /tmp/atuin_install.sh --non-interactive && ~/.atuin/bin/atuin import auto
   args:
     creates: ~/.atuin/bin
 
