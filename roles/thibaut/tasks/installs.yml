@@ -130,15 +130,6 @@
     - uv
     - cleanup
 
-- name: Install latest node with n
-  ansible.builtin.command: n latest
-  environment:
-    N_PREFIX: "{{ ansible_facts['env'].HOME }}/.n"
-  register: thibaut_n_install
-  changed_when: "'installing' in thibaut_n_install.stdout"
-  tags:
-    - node
-
 - name: Ensure user bash-completion dir exists
   ansible.builtin.file:
     path: ~/.local/share/bash-completion/completions

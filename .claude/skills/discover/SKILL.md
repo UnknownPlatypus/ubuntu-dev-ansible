@@ -80,7 +80,6 @@ Analyze the installed tools for issues. Use batched parallel WebSearch calls (is
 
 - lychee is installed via both brew AND uv (redundant — keep brew, remove from uv)
 - typos-cli is installed via both brew AND uv (redundant — keep brew, remove from uv)
-- `n` (Node version manager) may be superseded by `mise` (polyglot version manager)
 
 These are real issues in the current config. Use them as a baseline for the level of analysis expected.
 
