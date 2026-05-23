@@ -40,7 +40,7 @@
     - llm
     - never
 
-- name: Docker system cleanup
-  ansible.builtin.import_tasks: system/docker_cleanup.yml
+- name: System cleanup
+  ansible.builtin.import_tasks: system/cleanup.yml
   tags:
-    - docker-cleanup
+    - cleanup

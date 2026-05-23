@@ -1,0 +1,70 @@
+---
+- name: Uv prune cache
+  ansible.builtin.command: uv cache prune --force
+  register: thibaut_uv_prune
+  changed_when: "'Removed' in thibaut_uv_prune.stderr"
+  tags:
+    - uv
+    - cleanup
+
+- name: Pre-commit garbage collect
+  ansible.builtin.command: pre-commit gc
+  register: thibaut_pre_commit_gc
+  changed_when: "'0 repo(s) removed' not in thibaut_pre_commit_gc.stdout"
+  tags:
+    - pre-commit
+    - cleanup
+
+- name: Docker system prune
+  ansible.builtin.command: docker system prune -f
+  become: true
+  register: thibaut_docker_prune
+  changed_when: "'Total reclaimed space: 0B' not in thibaut_docker_prune.stdout"
+  tags:
+    - docker
+    - cleanup
+
+- name: Docker builder prune
+  ansible.builtin.command: docker builder prune -f
+  become: true
+  register: thibaut_docker_builder_prune
+  changed_when: "'Total reclaimed space: 0B' not in thibaut_docker_builder_prune.stdout"
+  tags:
+    - docker
+    - cleanup
+
+- name: List disabled snap revisions
+  ansible.builtin.shell: |
+    set -o pipefail
+    snap list --all | awk '/disabled/{print $1 "@" $3}'
+  args:
+    executable: /bin/bash
+  register: thibaut_snap_disabled
+  changed_when: false
+  tags:
+    - snap
+    - cleanup
+
+- name: Remove disabled snap revisions
+  ansible.builtin.command: "snap remove {{ item.split('@')[0] }} --revision={{ item.split('@')[1] }}"
+  become: true
+  loop: "{{ thibaut_snap_disabled.stdout_lines }}"
+  tags:
+    - snap
+    - cleanup
+
+- name: Brew cleanup
+  ansible.builtin.command: brew cleanup
+  register: thibaut_brew_cleanup
+  changed_when: thibaut_brew_cleanup.stdout | length > 0
+  tags:
+    - brew
+    - cleanup
+
+- name: Brew autoremove
+  ansible.builtin.command: brew autoremove
+  register: thibaut_brew_autoremove
+  changed_when: thibaut_brew_autoremove.stdout | length > 0
+  tags:
+    - brew
+    - cleanup

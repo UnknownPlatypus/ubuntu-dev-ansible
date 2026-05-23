@@ -13,10 +13,3 @@ update-pc *args:
 update-home-serv *args:
     git pull
     uv run ansible-playbook playbook.yml {{ args }}
-
-# Remove dangling docker images and stopped containers
-clean:
-    uv cache prune
-    pre-commit gc
-    docker system prune -f
-    docker builder prune -f
