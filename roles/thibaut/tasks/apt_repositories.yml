@@ -84,7 +84,3 @@
     components: [multiverse]
     enabled: true
   when: ansible_distribution_release in ['noble', 'jammy']
-
-- name: Add Foliate PPA repository
-  ansible.builtin.apt_repository:
-    repo: ppa:apandada1/foliate
