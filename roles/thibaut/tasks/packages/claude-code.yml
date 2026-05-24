@@ -9,4 +9,4 @@
 - name: Install Claude Code
   ansible.builtin.command: bash /tmp/claude_code_install.sh
   args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/claude"
+    creates: "{{ ansible_facts['env'].HOME }}/.local/bin/claude"

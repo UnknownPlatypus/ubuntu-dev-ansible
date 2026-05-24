@@ -37,7 +37,7 @@
     - name: Run all-repos-clone command
       ansible.builtin.command:
         cmd: all-repos-clone --jobs -1
-        chdir: "{{ ansible_env.HOME }}"
+        chdir: "{{ ansible_facts['env'].HOME }}"
       changed_when: true
 
     - name: Get list of git repos in /tmp/workspace

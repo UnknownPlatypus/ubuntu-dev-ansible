@@ -1,7 +1,7 @@
 ---
 - name: Set thibaut_architecture to amd64 if x86_64
   ansible.builtin.set_fact:
-    thibaut_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    thibaut_architecture: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
 
 - name: Add google APT repository
   ansible.builtin.deb822_repository:
@@ -19,9 +19,11 @@
     name: docker
     types: [deb]
     architectures: "{{ thibaut_architecture }}"
-    uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
-    signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
-    suites: ["{{ ansible_distribution_release | lower }}"] # noble, focal, ...
+    uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+    signed_by: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
+    suites: [
+      "{{ ansible_facts['distribution_release'] | lower }}",
+    ] # noble, focal, ...
     components: [stable]
     enabled: true
 
@@ -52,9 +54,9 @@
     name: tailscale
     types: [deb]
     architectures: "{{ thibaut_architecture }}"
-    uris: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}"
-    signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}.noarmor.gpg"
-    suites: ["{{ ansible_distribution_release | lower }}"]
+    uris: "https://pkgs.tailscale.com/stable/{{ ansible_facts['distribution'] | lower }}"
+    signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_facts['distribution'] | lower }}/{{ ansible_facts['distribution_release'] | lower }}.noarmor.gpg"
+    suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
     components: [main]
     enabled: true
 
@@ -70,17 +72,17 @@
 
 - name: Set MongoDB version based on Ubuntu release
   ansible.builtin.set_fact:
-    thibaut_mongodb_version: "{{ '8.0' if ansible_distribution_release == 'noble' else '7.0' }}"
+    thibaut_mongodb_version: "{{ '8.0' if ansible_facts['distribution_release'] == 'noble' else '7.0' }}"
 
 - name: Add MongoDB APT repository based on Ubuntu release
   ansible.builtin.deb822_repository:
     name: "mongodb-org-{{ thibaut_mongodb_version }}"
     types: [deb]
     architectures: "{{ thibaut_architecture }}"
-    uris: "https://repo.mongodb.org/apt/{{ ansible_distribution | lower }}"
+    uris: "https://repo.mongodb.org/apt/{{ ansible_facts['distribution'] | lower }}"
     signed_by: "https://www.mongodb.org/static/pgp/server-{{ thibaut_mongodb_version }}.asc"
     suites:
-      - "{{ ansible_distribution_release | lower }}/mongodb-org/{{ thibaut_mongodb_version }}"
+      - "{{ ansible_facts['distribution_release'] | lower }}/mongodb-org/{{ thibaut_mongodb_version }}"
     components: [multiverse]
     enabled: true
-  when: ansible_distribution_release in ['noble', 'jammy']
+  when: ansible_facts['distribution_release'] in ['noble', 'jammy']

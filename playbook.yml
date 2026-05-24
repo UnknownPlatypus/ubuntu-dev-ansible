@@ -6,7 +6,7 @@
   tags: always
   tasks:
     - name: Check we are running in the directory of the script
-      failed_when: not ansible_env.PWD.endswith('/ubuntu-dev-ansible')
+      failed_when: not ansible_facts['env'].PWD.endswith('/ubuntu-dev-ansible')
       ansible.builtin.debug:
         msg: This playbook should only be run from the `ubuntu-dev-ansible` folder
     - name: Validate become password is valid

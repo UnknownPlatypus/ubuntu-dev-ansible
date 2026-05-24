@@ -2,7 +2,7 @@
 # https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 - name: Download awscliv2 installer
   ansible.builtin.unarchive:
-    src: https://awscli.amazonaws.com/awscli-exe-linux-{{ ansible_architecture }}.zip
+    src: https://awscli.amazonaws.com/awscli-exe-linux-{{ ansible_facts['architecture'] }}.zip
     dest: /tmp
     remote_src: true
     creates: /tmp/aws

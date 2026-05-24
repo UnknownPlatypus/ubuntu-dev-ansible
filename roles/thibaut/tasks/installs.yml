@@ -152,7 +152,7 @@
 - name: Install latest node with n
   ansible.builtin.command: n latest
   environment:
-    N_PREFIX: "{{ ansible_env.HOME }}/.n"
+    N_PREFIX: "{{ ansible_facts['env'].HOME }}/.n"
   register: thibaut_n_install
   changed_when: "'installing' in thibaut_n_install.stdout"
   tags:
@@ -170,6 +170,7 @@
   ansible.builtin.command: "{{ item.command }}"
   register: thibaut_completion_output
   changed_when: false
+  no_log: true
   loop: "{{ thibaut_bash_completions }}"
   loop_control:
     label: "{{ item.name }}"
@@ -181,6 +182,7 @@
     content: "{{ item.stdout }}"
     dest: "~/.local/share/bash-completion/completions/{{ item.item.name }}"
     mode: "0644"
+  no_log: true
   loop: "{{ thibaut_completion_output.results }}"
   loop_control:
     label: "{{ item.item.name }}"

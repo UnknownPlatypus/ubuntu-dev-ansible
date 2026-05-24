@@ -1,7 +1,7 @@
 ---
 - name: Ensure .actrc file exists
   ansible.builtin.copy:
-    dest: "{{ ansible_env.HOME }}/.actrc"
+    dest: "{{ ansible_facts['env'].HOME }}/.actrc"
     content: |
       # .actrc - Configuration file for Act (GitHub Actions local runner)
       -P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:full-24.04

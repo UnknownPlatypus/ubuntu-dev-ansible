@@ -30,7 +30,7 @@
 - name: Build the podman desktop url
   ansible.builtin.set_fact:
     podman_desktop_github_url: "https://github.com/podman-desktop/podman-desktop/releases/download/v{{ podman_desktop_latest_version }}"
-    thibaut_podman_architecture: "{{ 'x64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    thibaut_podman_architecture: "{{ 'x64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
 
 - name: Print parsed podman-desktop local and latest version
   ansible.builtin.debug:
