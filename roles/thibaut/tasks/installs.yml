@@ -23,17 +23,15 @@
   tags:
     - brew
 
-- name: Install awscli v2
-  ansible.builtin.import_tasks: packages/awscli_v2.yml
+- name: Bootstrap tools that ship an install.sh (uv, atuin, Claude Code, Zed)
+  ansible.builtin.include_tasks: packages/script_install.yml
+  loop: "{{ thibaut_script_installs }}"
+  loop_control:
+    label: "{{ item.name }}"
   tags:
-    - aws-cli
+    - script-installs
 
-- name: Install dprint
-  ansible.builtin.import_tasks: packages/dprint.yml
-  tags:
-    - dprint
-
-- name: Install atuin
+- name: Configure atuin (bash integration + history import)
   ansible.builtin.import_tasks: packages/atuin.yml
   tags:
     - atuin
@@ -47,16 +45,6 @@
   ansible.builtin.import_tasks: packages/podman-desktop.yml
   tags:
     - podman
-
-- name: Install opencode
-  ansible.builtin.import_tasks: packages/opencode.yml
-  tags:
-    - opencode
-
-- name: Install Claude Code
-  ansible.builtin.import_tasks: packages/claude-code.yml
-  tags:
-    - claude-code
 
 - name: Docker install side-effects
   ansible.builtin.import_tasks: packages/docker.yml
@@ -90,13 +78,6 @@
   ansible.builtin.command: rustup install stable nightly
   register: thibaut_rustup_install_output
   changed_when: "'unchanged' not in thibaut_rustup_install_output.stdout"
-
-- name: Upgrade UV
-  ansible.builtin.command: uv self update
-  register: thibaut_uv_update
-  changed_when: "'latest version' not in thibaut_uv_update.stderr"
-  tags:
-    - uv
 
 - name: Uv install latest Pythons
   ansible.builtin.command: >

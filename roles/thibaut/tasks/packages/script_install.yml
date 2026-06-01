@@ -1,0 +1,34 @@
+---
+# Generic bootstrap for tools shipped via an official `install.sh` installer that is
+# installing/updating the tool and doing relevant bashrc changes.
+# item: { name, url, bin, bin_dir=.local/bin, args="", post_install_script="", update_cmd="" }
+- name: "Check install status for {{ item.name }}"
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env'].HOME }}/{{ item.bin_dir | default('.local/bin') }}/{{ item.bin }}"
+  register: thibaut_script_install_bin
+
+- name: "Bootstrap {{ item.name }}"
+  when: not thibaut_script_install_bin.stat.exists
+  block:
+    - name: "Download installer for {{ item.name }}"
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "/tmp/{{ item.name }}-install.sh"
+        mode: "0755"
+
+    - name: "Run installer for {{ item.name }}"
+      ansible.builtin.command: "bash /tmp/{{ item.name }}-install.sh {{ item.args | default('') }}"
+      changed_when: true
+
+    # Run once, right after first install (e.g. `atuin import auto`).
+    # shell (not command): may need ~ expansion or pipes.
+    - name: "Run post-install script for {{ item.name }}" # noqa: command-instead-of-shell
+      ansible.builtin.shell: "{{ item.post_install_script }}"
+      when: item.post_install_script is defined
+      changed_when: true
+
+# Runs every play to keep self-installed tools current (e.g. `uv self update`).
+- name: "Update {{ item.name }}" # noqa: command-instead-of-shell
+  ansible.builtin.shell: "{{ item.update_cmd }}"
+  when: item.update_cmd is defined
+  changed_when: false

@@ -1,24 +1,8 @@
 ---
-# https://atuin.sh
-- name: Download Atuin installer
-  ansible.builtin.get_url:
-    url: https://setup.atuin.sh
-    dest: /tmp/atuin_install.sh
-    mode: "0755"
-
-- name: Install Atuin (and import previous shell history)
-  ansible.builtin.shell: /tmp/atuin_install.sh --non-interactive && ~/.atuin/bin/atuin import auto
-  args:
-    creates: ~/.atuin/bin
-
-- name: Update Atuin bash startup script to disable up-arrow binding
+# atuin installer writes a plain `eval "$(atuin init bash)"` to ~/.bashrc.
+# We need to fix it to add one with `--disable-up-arrow`
+- name: Disable the up-arrow binding in atuin's bash init line
   ansible.builtin.lineinfile:
     path: ~/.bashrc
-    regexp: "\\$\\(atuin init bash\\)"
+    regexp: "atuin init bash"
     line: 'eval "$(atuin init bash --disable-up-arrow)"'
-    backrefs: true
-
-- name: Upgrade Atuin
-  ansible.builtin.command: ~/.atuin/bin/atuin-update
-  register: atuin_upgrade
-  changed_when: "'Already up to date' not in atuin_upgrade.stderr"
