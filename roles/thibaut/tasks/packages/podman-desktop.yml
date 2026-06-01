@@ -13,7 +13,7 @@
 
 - name: Extract the podamn-desktop local and latest version
   ansible.builtin.set_fact:
-    podman_desktop_installed_version: |
+    podman_desktop_installed_version: |-
       {{
         local_podman_versions.files
         | map(attribute='path')

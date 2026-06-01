@@ -10,12 +10,3 @@
     path: ~/.ssh
     state: directory
     mode: "0700"
-
-- name: Ssh known_hosts contains github.com key
-  ansible.builtin.lineinfile:
-    dest: ~/.ssh/known_hosts
-    create: true
-    mode: "0644"
-    state: present
-    line: "{{ lookup('file', 'github_ssh_host_key') }}"
-    regexp: "^github\\.com "
