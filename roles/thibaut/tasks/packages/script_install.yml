@@ -1,7 +1,7 @@
 ---
 # Generic bootstrap for tools shipped via an official `install.sh` installer that is
 # installing/updating the tool and doing relevant bashrc changes.
-# item: { name, url, bin, bin_dir=.local/bin, args="", post_install_script="", update_cmd="" }
+# item: { name, url, bin, sha256, bin_dir=.local/bin, args="", post_install_script="", update_cmd="" }
 - name: "Check install status for {{ item.name }}"
   ansible.builtin.stat:
     path: "{{ ansible_facts['env'].HOME }}/{{ item.bin_dir | default('.local/bin') }}/{{ item.bin }}"
@@ -15,6 +15,7 @@
         url: "{{ item.url }}"
         dest: "/tmp/{{ item.name }}-install.sh"
         mode: "0755"
+        checksum: "{{ ('sha256:' + item.sha256) if item.sha256 is defined else omit }}"
 
     - name: "Run installer for {{ item.name }}"
       ansible.builtin.command: "bash /tmp/{{ item.name }}-install.sh {{ item.args | default('') }}"

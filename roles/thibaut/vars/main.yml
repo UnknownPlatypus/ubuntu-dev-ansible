@@ -90,17 +90,21 @@ thibaut_brew_packages:
 thibaut_script_installs:
   - name: uv # Extremely fast Python package & project manager (Astral)
     url: https://astral.sh/uv/install.sh
+    sha256: d79d834572b5b5cdd521289c055adcdbacd43bfe9e6b896445f351075dac4113
     bin: uv
     update_cmd: uv self update
   - name: claude-code # Anthropic's agentic coding tool
     url: https://claude.ai/install.sh
+    sha256: 005ec1a937f32dfbb74f9e810287bcb12cba2d5cae4c9277aa8c6364adbf1787
     bin: claude
     update_cmd: claude update
   - name: zed # High-performance, multiplayer code editor
     url: https://zed.dev/install.sh
+    sha256: 0fba83da4b7ea9ce7e2f042037b8e7ffdb7def73953bba0cd066d870a7ed51c3
     bin: zed
   - name: atuin # Magical shell history with sync and fuzzy search
     url: https://setup.atuin.sh
+    sha256: 3e709edea36c6bccfaa19d9ba82c53323da41dd2e8eb05509682c9a60f939bd4
     bin: atuin
     bin_dir: .atuin/bin
     args: --non-interactive
