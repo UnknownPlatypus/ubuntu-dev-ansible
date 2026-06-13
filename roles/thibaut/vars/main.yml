@@ -138,7 +138,7 @@ thibaut_uv_tools:
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
   - name: twine # Utilities for interacting with PyPI
-  - name: yt-dlp # Fork of youtube-dl with additional features and fixes
+  - name: yt-dlp[default] # Fork of youtube-dl with additional features and fixes
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks
     with:
       - pre-commit-uv # uv plugin for pre-commit
