@@ -54,6 +54,9 @@ thibaut_deb_packages:
   # Application to comfortably monitor your Internet traffic. Cross-platform, Intuitive, Reliable
   - url: https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
     file_name: Sniffnet_LinuxDEB_amd64.deb
+  # Valve's Steam gaming platform; the launcher sets up its own apt repo for updates
+  - url: https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
+    file_name: steam_latest.deb
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:

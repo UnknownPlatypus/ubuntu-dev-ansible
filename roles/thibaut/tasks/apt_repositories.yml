@@ -70,6 +70,17 @@
     enabled: true
     trusted: true
 
+- name: Get enabled dpkg foreign architectures
+  ansible.builtin.command: dpkg --print-foreign-architectures
+  register: thibaut_foreign_architectures
+  changed_when: false
+
+- name: Enable i386 multiarch (required for Steam 32-bit libraries)
+  ansible.builtin.command: dpkg --add-architecture i386
+  changed_when: true
+  register: thibaut_i386_enabled
+  when: "'i386' not in thibaut_foreign_architectures.stdout_lines"
+
 - name: Set MongoDB version based on Ubuntu release
   ansible.builtin.set_fact:
     thibaut_mongodb_version: "{{ '8.0' if ansible_facts['distribution_release'] == 'noble' else '7.0' }}"

@@ -7,6 +7,7 @@
   ansible.builtin.apt:
     name: "{{ thibaut_apt_packages }}"
     state: latest
+    update_cache: true
   become: true
 
 - name: Upgrade apt packages
