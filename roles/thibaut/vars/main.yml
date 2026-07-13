@@ -122,6 +122,8 @@ thibaut_uv_tools:
   - name: build # A simple, correct Python build frontend
   - name: djade # A Django template formatter.
   - name: djangofmt # A fast, HTML aware, Django template formatter, written in Rust.
+  - name: django-upgrade # Automatically upgrade your Django project code (UnknownPlatypus fork, poc/additional-fixers branch)
+    source: git+https://github.com/UnknownPlatypus/django-upgrade@poc/additional-fixers
   - name: deptry # Command line tool to check for unused, missing and transitive dependencies in a Python project
   - name: dolphie # Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
   - name: awsebcli # Command Line Interface for AWS Elastic Beanstalk
