@@ -87,6 +87,8 @@ These are real issues in the current config. Use them as a baseline for the leve
 
 Complete the audit phase fully before starting discovery, since audit results inform what to suggest — no point recommending a tool if the audit already flagged a better alternative in that space.
 
+First, read the discard log at `discarded.md` — tools the user rejected in previous runs. Everything on it is off the table for suggestions.
+
 Search for new tools that fit the user profile but aren't installed. Use batched parallel WebSearch calls.
 
 **Budget:** ~2 searches per category (~16 total). Prioritize categories where the current setup has fewer tools — that's where gaps are most likely.
@@ -105,6 +107,7 @@ Search for new tools that fit the user profile but aren't installed. Use batched
 **Filter criteria — only suggest tools that:**
 
 - Are NOT already installed (check against the inventory)
+- Are NOT in the discard log (`discarded.md`) — the user already rejected these
 - Are actively maintained (recent commits, not archived)
 - Match user style: Rust CLIs, modern Python tooling, TUI interfaces, installable via brew/uv/cargo
 - Have reasonable maturity (not a weekend project — look for >500 GitHub stars or established reputation)
@@ -173,7 +176,7 @@ Combine audit and discovery results into a single report:
 
 After presenting the report, ask:
 
-> "Which tools would you like me to add? Which audit recommendations should I act on? You can reference them by name or number."
+> "Which tools would you like me to add? Which should I discard (never suggest again)? Which audit recommendations should I act on? You can reference them by name or number."
 
 ## Step 5 — Implement Selected Changes
 
@@ -220,6 +223,16 @@ If the tool needs configuration:
 ### Removals (for redundancy fixes)
 
 Remove the tool from the appropriate list in `roles/thibaut/vars/main.yml`.
+
+### Record discards
+
+Append every tool the user chose to discard as a row in the discard log at `discarded.md`, sorted by tool name:
+
+| Tool | Category | Reason | Date |
+
+Use today's date. Record the user's reason if given, otherwise `not selected`. Step 3 reads this log, so a discarded tool never resurfaces.
+
+Completion criterion: every tool the user discarded has a matching row in `discarded.md`.
 
 ### Bashrc updates
 

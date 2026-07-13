@@ -16,10 +16,10 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
   - repo: https://github.com/ansible/ansible-lint
-    rev: 262624cd0ab22a4221293216856c59671ce7aa5e  # frozen: v26.6.0
+    rev: 262624cd0ab22a4221293216856c59671ce7aa5e # frozen: v26.6.0
     hooks:
       - id: ansible-lint
   - repo: https://github.com/trim21/dprint-pre-commit
-    rev: 157f9067861f534fe04c49c81a2cc48f4944f6fa  # frozen: v0.55.1.4
+    rev: 157f9067861f534fe04c49c81a2cc48f4944f6fa # frozen: v0.55.1.4
     hooks:
       - id: dprint

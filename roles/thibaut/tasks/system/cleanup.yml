@@ -49,6 +49,7 @@
   ansible.builtin.command: "snap remove {{ item.split('@')[0] }} --revision={{ item.split('@')[1] }}"
   become: true
   loop: "{{ thibaut_snap_disabled.stdout_lines }}"
+  changed_when: true
   tags:
     - snap
     - cleanup

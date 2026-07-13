@@ -1,3 +1,7 @@
+# List all commands
+_default:
+    @just --list  --unsorted
+
 # Update dependencies and pre-commit hooks, then run all hooks
 update:
     uv sync --upgrade
