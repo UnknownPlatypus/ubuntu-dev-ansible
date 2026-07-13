@@ -75,6 +75,7 @@ thibaut_brew_packages:
   - git-cliff # A highly customizable Changelog Generator that follows Conventional Commit specifications
   - glow # Render markdown on the CLI
   - lazydocker # A simple terminal UI for both docker and docker-compose
+  - lazygit # A simple terminal UI for git commands
   - lychee # Fast, async, stream-based link checker
   - opencode # AI coding agent built for the terminal
   - oxipng # Multithreaded PNG optimizer
@@ -87,6 +88,7 @@ thibaut_brew_packages:
   - typos-cli # Source code spell checker
   - ripgrep # Recursively searches directories for a regex pattern
   - rip2 # A rust-based rm with a focus on safety, ergonomics, and performance
+  - zoxide # A smarter cd command that ranks directories by frecency
 
 # Tools distributed via an official shell installer.
 thibaut_script_installs:
@@ -139,6 +141,7 @@ thibaut_uv_tools:
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
   - name: twine # Utilities for interacting with PyPI
+  - name: ty # An extremely fast Python type checker and language server (Astral)
   - name: yt-dlp[default] # Fork of youtube-dl with additional features and fixes
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks
     with:

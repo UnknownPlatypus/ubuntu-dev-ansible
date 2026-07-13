@@ -42,6 +42,7 @@
     block: |
       export N_PREFIX="$HOME/.n"
       export PATH="$N_PREFIX/bin:$PATH"
+      eval "$(zoxide init bash)"
     marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
     prepend_newline: true
     append_newline: true
