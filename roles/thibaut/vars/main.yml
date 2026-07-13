@@ -117,7 +117,6 @@ thibaut_uv_tools:
   - name: astpretty # Pretty print the output of python stdlib ast.parse
   - name: all-repos # Clone all your repositories and apply sweeping changes
   - name: auditwheel # Auditing and repairing wheels for PyPI
-  - name: black # The uncompromising Python code formatter
   - name: build # A simple, correct Python build frontend
   - name: djade # A Django template formatter.
   - name: djangofmt # A fast, HTML aware, Django template formatter, written in Rust.
