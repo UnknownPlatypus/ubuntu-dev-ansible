@@ -9,6 +9,8 @@
     - config/dust
     - config/zed
     - aws
+    - agents
+    - claude
 
 - name: Create Dotfiles
   ansible.builtin.copy:
@@ -16,6 +18,7 @@
     dest: ~/.{{ item }}
     mode: "0755"
   loop:
+    - agents/AGENTS.md
     - aws/config
     - config/dust/config.toml
     - config/zed/settings.json
