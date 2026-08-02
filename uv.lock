@@ -12,18 +12,6 @@ supported-markers = [
 ]
 
 [[package]]
-name = "ansible"
-version = "14.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "ansible-core" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0d/8a/2800da95cacaabeda411db5bf54b97d1d953a03b5befc03a8a9486659ccb/ansible-14.2.0.tar.gz", hash = "sha256:1c8f18399027d26b0175270cb63bad99f9be16efe79600242c914eaa49941025", size = 50053376, upload-time = "2026-07-14T15:47:34.19Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b4/22/8847073941d543de5131f2130a68e4b6a437e613d5a23c257a7b01b93339/ansible-14.2.0-py3-none-any.whl", hash = "sha256:67f4c5c38f570ca9d87360964aaaea62f1a5eb2501e886b3dec1d67c9290618e", size = 49795074, upload-time = "2026-07-14T15:47:28.003Z" },
-]
-
-[[package]]
 name = "ansible-builder"
 version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1162,14 +1150,14 @@ name = "ubuntu-dev-ansible"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "ansible" },
+    { name = "ansible-core" },
     { name = "ansible-dev-tools", marker = "sys_platform != 'win32'" },
     { name = "python-debian" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "ansible", specifier = ">=10.4.0" },
+    { name = "ansible-core", specifier = ">=2.21" },
     { name = "ansible-dev-tools", marker = "sys_platform != 'win32'", specifier = ">=24.9.0" },
     { name = "python-debian", specifier = ">=0.1.49" },
 ]

@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "ansible-dev-tools>=24.9.0; platform_system != 'Windows'",
-  "ansible>=10.4.0",
+  "ansible-core>=2.21",
   "python-debian>=0.1.49",
 ]
 
