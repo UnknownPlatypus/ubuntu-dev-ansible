@@ -20,6 +20,6 @@ repos:
     hooks:
       - id: ansible-lint
   - repo: https://github.com/trim21/dprint-pre-commit
-    rev: 157f9067861f534fe04c49c81a2cc48f4944f6fa # frozen: v0.55.1.4
+    rev: b3a53778d922923a8ac70b0bb4de76dd1c726ed5 # frozen: v0.55.2.0
     hooks:
       - id: dprint
