@@ -4,7 +4,7 @@
 # item: { name, url, bin, sha256, bin_dir=.local/bin, args="", post_install_script="", update_cmd="" }
 - name: "Check install status for {{ item.name }}"
   ansible.builtin.stat:
-    path: "{{ ansible_facts['env'].HOME }}/{{ item.bin_dir | default('.local/bin') }}/{{ item.bin }}"
+    path: "{{ ansible_facts['env'].HOME }}/{{ item.bin_dir | default('.local/bin') }}/{{ item.name }}"
   register: thibaut_script_install_bin
 
 - name: "Bootstrap {{ item.name }}"
