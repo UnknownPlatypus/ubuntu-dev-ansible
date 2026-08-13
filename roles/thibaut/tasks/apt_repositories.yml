@@ -70,6 +70,17 @@
     enabled: true
     trusted: true
 
+- name: Add SourceGit APT repository
+  ansible.builtin.deb822_repository:
+    name: sourcegit
+    types: [deb]
+    architectures: "{{ thibaut_architecture }}"
+    uris: https://codeberg.org/api/packages/yataro/debian
+    signed_by: https://codeberg.org/api/packages/yataro/debian/repository.key
+    suites: [generic]
+    components: [main]
+    enabled: true
+
 - name: Get enabled dpkg foreign architectures
   ansible.builtin.command: dpkg --print-foreign-architectures
   register: thibaut_foreign_architectures
