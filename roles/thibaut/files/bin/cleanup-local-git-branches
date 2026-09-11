@@ -8,6 +8,8 @@
 from __future__ import annotations
 
 import concurrent.futures
+import dataclasses
+import functools
 import json
 import logging
 import subprocess
@@ -18,81 +20,139 @@ import cyclopts
 app = cyclopts.App(help=__doc__, default_parameter=cyclopts.Parameter(negative=()))
 logger = logging.getLogger(__name__)
 
+ALWAYS_PROTECTED = frozenset({"main", "master"})
+
+
+@dataclasses.dataclass(frozen=True)
+class Repo:
+    name: str
+    default_branch: str | None
+
 
 def run_cmd(command_args: list[str]) -> str:
     result = subprocess.run(command_args, capture_output=True, text=True, check=False)
+    if result.returncode:
+        logger.debug(f"{' '.join(command_args)} failed: {result.stderr.strip()}")
     return result.stdout
 
 
+def _branch_names(ref_pattern: str) -> list[str]:
+    return run_cmd(
+        ["git", "for-each-ref", "--format=%(refname:short)", ref_pattern]
+    ).splitlines()
+
+
 def get_local_branches() -> set[str]:
-    return {
-        branch.removeprefix("*").strip()
-        for branch in run_cmd(["git", "branch"]).splitlines()
-    }
+    return set(_branch_names("refs/heads/"))
 
 
 def get_remote_branches(remote: str = "origin") -> set[str]:
     prefix = f"{remote}/"
     return {
-        branch.strip().removeprefix(prefix)
-        for branch in run_cmd(["git", "branch", "-r"]).splitlines()
-        if branch.strip().startswith(prefix) and not branch.strip().endswith("/HEAD")
+        branch.removeprefix(prefix)
+        for branch in _branch_names(f"refs/remotes/{remote}/")
+        if not branch.endswith("/HEAD")
     }
 
 
-def _check_branch_merged(branch: str) -> str | None:
-    """Return the branch name if it has a merged PR, else None."""
+def get_checked_out_branches() -> set[str]:
+    """Branches checked out in this worktree or a linked one, which git refuses to delete."""
+    marker = "branch refs/heads/"
+    return {
+        line.removeprefix(marker)
+        for line in run_cmd(["git", "worktree", "list", "--porcelain"]).splitlines()
+        if line.startswith(marker)
+    }
+
+
+def _default_branch(repo_json: dict) -> str | None:
+    return (repo_json.get("defaultBranchRef") or {}).get("name")
+
+
+def get_repos() -> list[Repo]:
+    """Repos that can host PRs for this clone: the one gh resolves to and, for a fork, its upstream."""
+    fields = "nameWithOwner,defaultBranchRef,parent"
+    resolved = json.loads(run_cmd(["gh", "repo", "view", "--json", fields]) or "{}")
+    if not resolved:
+        raise SystemExit("Could not resolve the GitHub repo, is `gh` authenticated?")
+
+    repos = [Repo(resolved["nameWithOwner"], _default_branch(resolved))]
+    if parent := resolved["parent"]:
+        name = f"{parent['owner']['login']}/{parent['name']}"
+        upstream = json.loads(
+            run_cmd(["gh", "repo", "view", name, "--json", "defaultBranchRef"]) or "{}"
+        )
+        repos.append(Repo(name, _default_branch(upstream)))
+    return repos
+
+
+def _check_branch_merged(branch: str, repos: list[Repo]) -> str | None:
+    """Return the branch name if any repo has a merged PR for it, else None."""
     logger.debug(f"Checking PR status for branch: {branch}")
-    result = run_cmd(
-        [
-            "gh",
-            "pr",
-            "list",
-            "--head",
-            branch,
-            "--state",
-            "merged",
-            "--json",
-            "number",
-            "--limit",
-            "1",
-        ]
-    )
-    prs = json.loads(result) if result.strip() else []
-    if prs:
-        logger.debug(f"  -> merged (PR #{prs[0]['number']})")
-        return branch
-    logger.debug(f"  -> not merged")
+    for repo in repos:
+        result = run_cmd(
+            [
+                "gh",
+                "pr",
+                "list",
+                "--repo",
+                repo.name,
+                "--head",
+                branch,
+                "--state",
+                "merged",
+                "--json",
+                "number",
+                "--limit",
+                "1",
+            ]
+        )
+        prs = json.loads(result) if result.strip() else []
+        if prs:
+            logger.debug(f"  -> merged ({repo.name}#{prs[0]['number']})")
+            return branch
+    logger.debug("  -> not merged")
     return None
 
 
-def get_merged_branches(local_branches: set[str]) -> set[str]:
-    """Check which local branches have merged PRs using gh CLI."""
+def get_merged_branches(branches: set[str], repos: list[Repo]) -> set[str]:
+    """Check which branches have merged PRs using gh CLI."""
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = executor.map(_check_branch_merged, local_branches)
+        results = executor.map(
+            functools.partial(_check_branch_merged, repos=repos), branches
+        )
     return {branch for branch in results if branch is not None}
 
 
 def cleanup_local_git_branches(
     protected_branches: set[str],
+    repos: list[Repo],
     dry_run: bool = False,
 ) -> None:
     local_branches = get_local_branches() - protected_branches
     logger.debug(f"Local branches (excluding protected): {sorted(local_branches)}")
 
-    branches_to_delete = get_merged_branches(local_branches)
+    merged_branches = get_merged_branches(local_branches, repos)
+
+    if checked_out := sorted(merged_branches & get_checked_out_branches()):
+        logger.info("Merged but checked out, remove the worktree first:")
+        for branch in checked_out:
+            logger.info(f"  - {branch}")
+        logger.info("")
+
+    branches_to_delete = sorted(merged_branches.difference(checked_out))
 
     if not branches_to_delete:
         logger.info("No local branches to cleanup!")
     else:
         logger.info("Merged local branches:")
-        for branch in sorted(branches_to_delete):
+        for branch in branches_to_delete:
             logger.info(f"  - {branch}")
 
         if dry_run:
             logger.info("\nDry run, no local branches deleted.")
         elif input("\nDelete these local branches? (y/n) ").strip().lower() == "y":
-            subprocess.run(["git", "branch", "-D", *branches_to_delete])
+            subprocess.run(["git", "branch", "-D", *branches_to_delete], check=False)
             logger.info("Done!")
         else:
             logger.info("Aborted.")
@@ -100,6 +160,7 @@ def cleanup_local_git_branches(
 
 def cleanup_remote_git_branches(
     protected_branches: set[str],
+    repos: list[Repo],
     remote: str = "origin",
     dry_run: bool = False,
 ) -> None:
@@ -108,14 +169,14 @@ def cleanup_remote_git_branches(
     remote_branches = get_remote_branches(remote) - protected_branches
     logger.debug(f"Remote branches (excluding protected): {sorted(remote_branches)}")
 
-    branches_to_delete = get_merged_branches(remote_branches)
+    branches_to_delete = sorted(get_merged_branches(remote_branches, repos))
 
     if not branches_to_delete:
         logger.info("No remote branches to cleanup!")
         return
 
     logger.info("Merged remote branches:")
-    for branch in sorted(branches_to_delete):
+    for branch in branches_to_delete:
         logger.info(f"  - {remote}/{branch}")
 
     if dry_run:
@@ -123,7 +184,9 @@ def cleanup_remote_git_branches(
         return
 
     if input("\nDelete these remote branches? (y/n) ").strip().lower() == "y":
-        subprocess.run(["git", "push", remote, "--delete", *sorted(branches_to_delete)])
+        subprocess.run(
+            ["git", "push", remote, "--delete", *branches_to_delete], check=False
+        )
         logger.info("Done!")
     else:
         logger.info("Aborted.")
@@ -132,25 +195,41 @@ def cleanup_remote_git_branches(
 @app.default
 def main(
     *,
-    protected: tuple[str, ...] = ("master", "main"),
+    protected: tuple[str, ...] = (),
     dry_run: bool = False,
     verbose: Annotated[bool, cyclopts.Parameter(alias="-v")] = False,
 ) -> None:
+    """
+    Parameters
+    ----------
+    protected
+        Extra branches to keep, on top of main/master and each repo's default branch.
+    """
     logging.basicConfig(
         level=logging.DEBUG if verbose else logging.INFO,
         format="[%(levelname)s] %(message)s",
     )
 
-    protected_branches = set(protected)
+    repos = get_repos()
+    logger.debug(f"Looking for merged PRs in: {[repo.name for repo in repos]}")
+
+    protected_branches = (
+        ALWAYS_PROTECTED
+        | set(protected)
+        | {repo.default_branch for repo in repos if repo.default_branch}
+    )
+    logger.debug(f"Protected branches: {sorted(protected_branches)}")
 
     cleanup_local_git_branches(
         protected_branches=protected_branches,
+        repos=repos,
         dry_run=dry_run,
     )
 
     logger.info("")
     cleanup_remote_git_branches(
         protected_branches=protected_branches,
+        repos=repos,
         dry_run=dry_run,
     )
 
