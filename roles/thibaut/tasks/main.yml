@@ -9,6 +9,11 @@
   tags:
     - grub
 
+- name: Raise inotify watches limit
+  ansible.builtin.import_tasks: system/inotify.yml
+  tags:
+    - inotify
+
 - name: Copy dotfiles
   ansible.builtin.import_tasks: system/dotfiles.yml
   tags:

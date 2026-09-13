@@ -1,0 +1,12 @@
+---
+# Ubuntu ships fs.inotify.max_user_watches=65536 in /usr/lib/sysctl.d/30-tracker.conf,
+# but JetBrains IDEs recommand more for large projects.
+# See https://youtrack.jetbrains.com/articles/SUPPORT-A-1715/Inotify-Watches-Limit-Linux
+- name: Raise inotify watches limit for JetBrains IDEs
+  become: true
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_watches
+    value: "1048576"
+    sysctl_file: /etc/sysctl.d/idea.conf
+    sysctl_set: true
+    reload: true
