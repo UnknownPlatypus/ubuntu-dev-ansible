@@ -8,6 +8,7 @@ dependencies = [
   "ansible-dev-tools>=24.9.0; platform_system != 'Windows'",
   "ansible-core>=2.21",
   "python-debian>=0.1.49",
+  "mitogen>=0.3.53",
 ]
 
 [tool.uv]

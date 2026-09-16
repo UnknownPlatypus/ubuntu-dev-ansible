@@ -17,6 +17,7 @@ For some extra LLM goodies (Ollama, open-webui, ...)
 
 ## Debugging
 
+- Playbooks run through the [Mitogen](https://mitogen.networkgenomics.com/ansible_detailed.html) strategy by default. Prefix a run with `ANSIBLE_STRATEGY=linear` to fall back to stock Ansible
 - Print current ansible facts filtered using `ansible localhost -m ansible.builtin.setup -c local -a 'filter=ansible_d*'`
 
 ## Fork! Copy! Adapt!
