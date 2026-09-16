@@ -14,7 +14,7 @@ alias pr="pre-commit run"
 function workon() { source ~/.virtualenvs/$1/bin/activate; }
 
 # Rust
-alias cwr="cargo watch -q -c -x 'run -q'"
+alias cwr="bacon run"
 
 # Clipboard utils
 alias clip="xclip -selection c"

@@ -2,7 +2,6 @@
 thibaut_files: "{{ role_path }}/files"
 
 thibaut_apt_packages:
-  - bat # Cat clone with syntax highlighting and Git integration
   - caprine # Elegant Facebook Messenger desktop app
   - curl # Command line tool for transferring data using various protocols
   - firefox-nightly # Nightly build of Firefox browser
@@ -61,8 +60,12 @@ thibaut_brew_packages:
   - act # Run your GitHub Actions locally
   - aoe # Terminal session manager for AI coding agents on Linux and macOS
   - awscli # Amazon AWS command-line interface (provides `aws`)
+  - bacon # Background Rust code checker, keeps cargo check/clippy/test running on save
+  - bat # Cat clone with syntax highlighting and Git integration
   - binsider # TUI to analyze ELF binaries
   - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
+  - cargo-binstall # Install Rust binaries from prebuilt artifacts instead of compiling
+  - cargo-nextest # Next-generation Rust test runner with per-test process isolation
   - codex # OpenAI coding agent CLI
   - dprint # Pluggable, configurable code formatter (JS/TS, JSON, Markdown, TOML, …)
   - dua-cli # View disk space usage and delete unwanted data, fast
@@ -70,6 +73,7 @@ thibaut_brew_packages:
   - eza # Modern replacement for ls
   - fd # Simple, fast and user-friendly alternative to find
   - fzf # General-purpose command-line fuzzy finder
+  - gh # GitHub official CLI
   - git-cliff # A highly customizable Changelog Generator that follows Conventional Commit specifications
   - git-delta # Syntax-highlighting pager for git, diff, grep, and blame output
   - glow # Render markdown on the CLI
@@ -87,6 +91,7 @@ thibaut_brew_packages:
   - typos-cli # Source code spell checker
   - ripgrep # Recursively searches directories for a regex pattern
   - rip2 # A rust-based rm with a focus on safety, ergonomics, and performance
+  - xh # Friendly and fast HTTP client, HTTPie syntax in a single Rust binary
   - zoxide # A smarter cd command that ranks directories by frecency
 
 # Tools distributed via an official shell installer.
@@ -102,7 +107,7 @@ thibaut_script_installs:
   - name: zed # High-performance, multiplayer code editor
     url: https://zed.dev/install.sh
     sha256: 0fba83da4b7ea9ce7e2f042037b8e7ffdb7def73953bba0cd066d870a7ed51c3
-  - name: herdr # High-performance, multiplayer code editor
+  - name: herdr # Agent-aware terminal multiplexer, runs coding agents in tabs and panes
     url: https://herdr.dev/install.sh
     sha256: 3db3af8375006e193a393b5e3129feb237f30bc6f053fffbe1dc75da1f3d9ac4
   - name: atuin # Magical shell history with sync and fuzzy search
@@ -117,7 +122,6 @@ thibaut_uv_tools:
   - name: astpretty # Pretty print the output of python stdlib ast.parse
   - name: all-repos # Clone all your repositories and apply sweeping changes
   - name: auditwheel # Auditing and repairing wheels for PyPI
-  - name: build # A simple, correct Python build frontend
   - name: djade # A Django template formatter.
   - name: djangofmt # A fast, HTML aware, Django template formatter, written in Rust.
   - name: django-upgrade # Automatically upgrade your Django project code (UnknownPlatypus fork, poc/additional-fixers branch)
@@ -127,7 +131,6 @@ thibaut_uv_tools:
   - name: awsebcli # Command Line Interface for AWS Elastic Beanstalk
   - name: gh-profiler # Examine a GitHub user's profile, to help quickly decide how much to invest in their contributions
   - name: hatch # Modern, extensible Python project management
-  - name: httpie # User-friendly command-line HTTP client for the API era
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
   - name: keyring # Easy way to access the system keyring service from python
@@ -137,10 +140,9 @@ thibaut_uv_tools:
   - name: posting # The modern API client that lives in your terminal.
   - name: pre-commit-mirror-maker # Scripts for creating mirror repositories that do not have .pre-commit-hooks.yaml
   - name: pyinstrument # Sampling profiler for Python programs
-  - name: recoverpy # A tool to recover deleted Python files by searching through memory dumps for identifiable syntax patterns
+  - name: recoverpy # Interactively find and recover deleted or overwritten files from your terminal
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
-  - name: twine # Utilities for interacting with PyPI
   - name: ty # An extremely fast Python type checker and language server (Astral)
   - name: yt-dlp[default] # Fork of youtube-dl with additional features and fixes
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks

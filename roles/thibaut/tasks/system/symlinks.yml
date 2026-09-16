@@ -1,11 +1,9 @@
 ---
-# There is a name collision with another Debian package.
-# See https://github.com/sharkdp/bat?tab=readme-ov-file#on-ubuntu-using-apt
-- name: Create `bat` -> `batcat` symlink
+# bat now comes from brew under its real name, so the apt `batcat` workaround has to be undone.
+- name: Remove the legacy `bat` -> `batcat` symlink
   ansible.builtin.file:
-    src: /usr/bin/batcat
     dest: ~/.local/bin/bat
-    state: link
+    state: absent
 
 # Claude Code is a disgusting piece os software actively harming standard for no reason.
 # Unlike codex that uses the standard `AGENTS.md`, it needs a proprietary `CLAUDE.md`.
