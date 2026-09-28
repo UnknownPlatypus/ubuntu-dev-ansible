@@ -32,7 +32,6 @@ thibaut_apt_packages:
   - libproj-dev # Cartographic Projections Library
 
   # GUI
-  - code # Visual Studio Code editor
   - foliate # Ebook reader
   # - spotify-client # Spotify music streaming client
   - vlc # Multimedia player and streamer

@@ -1,5 +1,5 @@
 [org/gnome/shell]
-favorite-apps=['org.gnome.Nautilus.desktop', 'slack.desktop', 'firefox.desktop', 'gitkraken.desktop', 'org.gnome.Terminal.desktop', 'code.desktop', 'spotify.desktop', 'org.gnome.Settings.desktop', 'gnome-control-center.desktop', 'firefox-nightly.desktop']
+favorite-apps=['org.gnome.Nautilus.desktop', 'slack.desktop', 'firefox.desktop', 'gitkraken.desktop', 'org.gnome.Terminal.desktop', 'spotify.desktop', 'org.gnome.Settings.desktop', 'gnome-control-center.desktop', 'firefox-nightly.desktop']
 
 [org/gnome/terminal/legacy/keybindings]
 copy='<Primary>c'

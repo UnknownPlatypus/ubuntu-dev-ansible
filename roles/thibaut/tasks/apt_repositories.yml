@@ -38,17 +38,6 @@
     components: [main]
     enabled: true
 
-- name: Add Visual Studio Code APT repository
-  ansible.builtin.deb822_repository:
-    name: vscode
-    types: [deb]
-    architectures: "{{ thibaut_architecture }}"
-    uris: https://packages.microsoft.com/repos/code
-    signed_by: https://packages.microsoft.com/keys/microsoft.asc
-    suites: [stable]
-    components: [main]
-    enabled: true
-
 - name: Add Tailscale APT repository
   ansible.builtin.deb822_repository:
     name: tailscale
