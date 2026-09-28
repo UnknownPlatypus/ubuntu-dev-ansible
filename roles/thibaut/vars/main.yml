@@ -76,6 +76,7 @@ thibaut_brew_packages:
   - git-cliff # A highly customizable Changelog Generator that follows Conventional Commit specifications
   - git-delta # Syntax-highlighting pager for git, diff, grep, and blame output
   - glow # Render markdown on the CLI
+  - immich-go # Bulk upload photos and Google Takeout archives to an Immich server
   - lazydocker # A simple terminal UI for both docker and docker-compose
   - lazygit # A simple terminal UI for git commands
   - lychee # Fast, async, stream-based link checker
