@@ -81,19 +81,15 @@
   register: thibaut_i386_enabled
   when: "'i386' not in thibaut_foreign_architectures.stdout_lines"
 
-- name: Set MongoDB version based on Ubuntu release
-  ansible.builtin.set_fact:
-    thibaut_mongodb_version: "{{ '8.0' if ansible_facts['distribution_release'] == 'noble' else '7.0' }}"
-
-- name: Add MongoDB APT repository based on Ubuntu release
+- name: Add MongoDB APT repository
   ansible.builtin.deb822_repository:
-    name: "mongodb-org-{{ thibaut_mongodb_version }}"
+    name: mongodb-org-8.0
     types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: "https://repo.mongodb.org/apt/{{ ansible_facts['distribution'] | lower }}"
-    signed_by: "https://www.mongodb.org/static/pgp/server-{{ thibaut_mongodb_version }}.asc"
-    suites:
-      - "{{ ansible_facts['distribution_release'] | lower }}/mongodb-org/{{ thibaut_mongodb_version }}"
+    signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
+    # The resolute suite only ships tools, not the server, and the noble build runs fine on resolute.
+    suites: [noble/mongodb-org/8.0]
     components: [multiverse]
     enabled: true
-  when: ansible_facts['distribution_release'] in ['noble', 'jammy']
+  when: ansible_facts['distribution_release'] in ['noble', 'resolute']
