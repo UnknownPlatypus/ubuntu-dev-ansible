@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["cyclopts"]
+# dependencies = ["cyclopts", "rich"]
 # ///
 """Clean up local and remote branches after GitHub PRs are merged."""
 
@@ -15,9 +15,14 @@ from collections.abc import Iterable
 from typing import Annotated
 
 import cyclopts
+from rich.console import Console
+from rich.markup import escape
+from rich.prompt import Confirm
+from rich.text import Text
 
 app = cyclopts.App(help=__doc__, default_parameter=cyclopts.Parameter(negative=()))
 logger = logging.getLogger(__name__)
+console = Console()
 
 ALWAYS_PROTECTED = frozenset({"main", "master"})
 # Renovate owns its upstream branches: never delete them remotely.
@@ -50,7 +55,6 @@ class Branch:
 @dataclasses.dataclass(frozen=True)
 class Verdict:
     reason: str
-    force: bool
     review: bool = False
 
 
@@ -63,6 +67,10 @@ def run_cmd(command_args: list[str]) -> str:
 
 def run_ok(command_args: list[str]) -> bool:
     return not subprocess.run(command_args, capture_output=True, check=False).returncode
+
+
+def _git(args: list[str]) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["git", *args], capture_output=True, text=True, check=False)
 
 
 def _branch_names(ref_pattern: str) -> list[str]:
@@ -95,14 +103,15 @@ def get_remote_branches(remote: str = "origin") -> set[str]:
 
 
 def get_worktrees() -> dict[str, str]:
-    """Branch name -> worktree path. Worktrees are reported, never removed."""
+    """Branch name -> linked worktree path, skipping the main worktree listed first."""
     worktrees: dict[str, str] = {}
-    path = ""
-    for line in run_cmd(["git", "worktree", "list", "--porcelain"]).splitlines():
-        if line.startswith("worktree "):
-            path = line.removeprefix("worktree ")
-        elif line.startswith("branch refs/heads/"):
-            worktrees[line.removeprefix("branch refs/heads/")] = path
+    blocks = run_cmd(["git", "worktree", "list", "--porcelain"]).strip().split("\n\n")
+    for block in blocks[1:]:
+        path, *lines = block.splitlines()
+        for line in lines:
+            if line.startswith("branch refs/heads/"):
+                name = line.removeprefix("branch refs/heads/")
+                worktrees[name] = path.removeprefix("worktree ")
     return worktrees
 
 
@@ -178,9 +187,9 @@ def classify_branch(
 ) -> Verdict | None:
     """Classify a branch without treating a deleted upstream as proof of a merge."""
     if base and run_ok(["git", "merge-base", "--is-ancestor", branch.name, base]):
-        return Verdict(f"in {base}", force=False)
+        return Verdict(f"in {base}")
     if base and _is_rebased_into(branch.name, base):
-        return Verdict(f"rebased into {base}", force=True)
+        return Verdict(f"rebased into {base}")
 
     reasons = []
     if pr := _merged_pr(branch, prs, protected):
@@ -188,7 +197,7 @@ def classify_branch(
     if branch.gone:
         reasons.append(f"upstream {branch.upstream} deleted")
     if reasons:
-        return Verdict("; ".join(reasons), force=True, review=True)
+        return Verdict("; ".join(reasons), review=True)
     return None
 
 
@@ -212,73 +221,80 @@ def classify_remote_branches(
     for name in branches:
         ref = f"{remote}/{name}"
         if base and run_ok(["git", "merge-base", "--is-ancestor", ref, base]):
-            verdicts[name] = Verdict(f"in {base}", force=False)
+            verdicts[name] = Verdict(f"in {base}")
         elif base and _is_rebased_into(ref, base):
-            verdicts[name] = Verdict(f"rebased into {base}", force=False)
+            verdicts[name] = Verdict(f"rebased into {base}")
         elif pr := prs.get(name):
-            verdicts[name] = Verdict(f"merged PR {pr}", force=False, review=True)
+            verdicts[name] = Verdict(f"merged PR {pr}", review=True)
     return verdicts
 
 
-def _report(header: str, verdicts: dict[str, Verdict]) -> None:
+def _report(
+    header: str, verdicts: dict[str, Verdict], worktrees: dict[str, str]
+) -> None:
     if not verdicts:
         return
-    logger.info("%s (%d):", header, len(verdicts))
+    console.print(f"{header} ({len(verdicts)}):", style="bold")
     for name, verdict in sorted(verdicts.items()):
-        logger.info("  %s — %s", name, verdict.reason)
+        line = Text.assemble(("  " + name, "cyan"), f" — {verdict.reason}")
+        if path := worktrees.get(name):
+            line.append(f" (checked out at {path})", style="yellow")
+        console.print(line)
 
 
-def _confirm(prompt: str) -> bool:
-    return input(f"Delete {prompt}? [y/N] ").strip().lower() == "y"
+def _failed(name: str, stderr: str) -> None:
+    # Only the first line: git follows its errors with hints we act on ourselves.
+    error = stderr.strip().partition("\n")[0]
+    console.print(f"✗ {name}  {error}", style="red", markup=False)
 
 
-def delete_local_branches(verdicts: dict[str, Verdict]) -> None:
-    for force in (False, True):
-        names = sorted(
-            name for name, verdict in verdicts.items() if verdict.force is force
-        )
-        if names:
-            subprocess.run(
-                ["git", "branch", "-D" if force else "-d", *names], check=False
-            )
+def delete_local_branch(name: str, worktree: str | None) -> None:
+    if worktree:
+        if not Confirm.ask(f"  Remove worktree {escape(worktree)} too?", default=False):
+            return
+        console.print(f"  Removing worktree {worktree}…", style="yellow", markup=False)
+        result = _git(["worktree", "remove", "--force", worktree])
+        if result.returncode:
+            _failed(name, result.stderr)
+            return
+    result = _git(["branch", "-d", name])
+    if result.returncode and "not fully merged" in result.stderr:
+        if not Confirm.ask(f"  Force delete {escape(name)}?", default=False):
+            return
+        result = _git(["branch", "-D", name])
+    if result.returncode:
+        _failed(name, result.stderr)
+    else:
+        console.print(f"✓ {name}", style="green", markup=False)
 
 
 def cleanup_local_git_branches(
     protected: set[str], base: str | None, prs: dict[str, str], dry_run: bool
 ) -> None:
+    console.print("Pruning local branches…", style="bold")
     branches = [
         branch for branch in get_local_branches() if branch.name not in protected
     ]
     verdicts = classify_branches(branches, base, prs, protected)
     worktrees = get_worktrees()
+    safe = {name: verdict for name, verdict in verdicts.items() if not verdict.review}
+    review = {name: verdict for name, verdict in verdicts.items() if verdict.review}
 
-    blocked = {name: verdict for name, verdict in verdicts.items() if name in worktrees}
-    deletable = {
-        name: verdict for name, verdict in verdicts.items() if name not in worktrees
-    }
-    safe = {name: verdict for name, verdict in deletable.items() if not verdict.review}
-    review = {name: verdict for name, verdict in deletable.items() if verdict.review}
-
-    if not deletable and not blocked:
-        logger.info("Local: nothing to clean.")
+    if not verdicts:
+        console.print("No local branches to clean!", style="green")
         return
 
-    _report("Local branches safe to delete", safe)
-    _report("Local branches needing review", review)
-    if blocked:
-        logger.info(
-            "Local branches kept because they are checked out (%d):", len(blocked)
-        )
-        for name, verdict in sorted(blocked.items()):
-            logger.info("  %s — %s (%s)", name, verdict.reason, worktrees[name])
-
+    _report("Local branches safe to delete", safe, worktrees)
+    _report("Local branches needing review", review, worktrees)
     if dry_run:
-        logger.info("Dry run: no local branches deleted.")
+        console.print("Dry run: no local branches deleted.", style="dim")
         return
-    if safe and _confirm(f"{len(safe)} safe local branches"):
-        delete_local_branches(safe)
-    if review and _confirm(f"{len(review)} review-required local branches"):
-        delete_local_branches(review)
+    for label, candidates in (("safe", safe), ("review-required", review)):
+        if candidates and Confirm.ask(
+            f"Delete {len(candidates)} {label} local branches?", default=False
+        ):
+            for name in sorted(candidates):
+                delete_local_branch(name, worktrees.get(name))
 
 
 def cleanup_remote_git_branches(
@@ -288,6 +304,7 @@ def cleanup_remote_git_branches(
     remote: str,
     dry_run: bool,
 ) -> None:
+    console.print("Pruning remote branches…", style="bold")
     branches = {
         name
         for name in get_remote_branches(remote) - protected
@@ -298,19 +315,25 @@ def cleanup_remote_git_branches(
     review = {name: verdict for name, verdict in verdicts.items() if verdict.review}
 
     if not verdicts:
-        logger.info("Remote: nothing to clean.")
+        console.print("No remote branches to clean!", style="green")
         return
 
-    _report(f"Remote {remote} branches safe to delete", safe)
-    _report(f"Remote {remote} branches needing review", review)
+    _report(f"Remote {remote} branches safe to delete", safe, {})
+    _report(f"Remote {remote} branches needing review", review, {})
     if dry_run:
-        logger.info("Dry run: no remote branches deleted.")
+        console.print("Dry run: no remote branches deleted.", style="dim")
         return
     for label, candidates in (("safe", safe), ("review-required", review)):
-        if candidates and _confirm(f"{len(candidates)} {label} remote branches"):
-            subprocess.run(
-                ["git", "push", remote, "--delete", *sorted(candidates)], check=False
-            )
+        if candidates and Confirm.ask(
+            f"Delete {len(candidates)} {label} remote branches?", default=False
+        ):
+            result = _git(["push", remote, "--delete", *sorted(candidates)])
+            if result.returncode:
+                _failed("push", result.stderr)
+            else:
+                console.print(
+                    f"✓ Pruned {len(candidates)} remote branches", style="green"
+                )
 
 
 @app.default
@@ -329,11 +352,10 @@ def main(
     no_fetch
         Use existing remote-tracking refs. This is quicker but may miss recent merges or deletions.
     """
-    logging.basicConfig(
-        level=logging.DEBUG if verbose else logging.INFO,
-        format="%(message)s",
-    )
+    if verbose:
+        logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 
+    console.print("Fetching merged PRs…", style="bold")
     repos = get_repos()
     protected_branches = (
         ALWAYS_PROTECTED
@@ -345,8 +367,9 @@ def main(
 
     base = get_base_ref(repos)
     if base is None:
-        logger.warning(
-            "No remote-tracking default branch; Git-only checks are unavailable."
+        console.print(
+            "No remote-tracking default branch; Git-only checks are unavailable.",
+            style="yellow",
         )
 
     # This is deliberately one request per repository, shared by local and remote cleanup.

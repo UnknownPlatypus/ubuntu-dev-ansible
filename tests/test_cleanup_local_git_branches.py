@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import contextlib
+import functools
 import importlib.util
 import pathlib
+import subprocess
 import sys
+import tempfile
 import unittest
 from importlib.machinery import SourceFileLoader
 from unittest.mock import patch
@@ -61,9 +65,7 @@ class ClassificationTests(unittest.TestCase):
         self.assertEqual(
             verdict,
             cleanup.Verdict(
-                "merged PR me/project#42; upstream origin/feature deleted",
-                force=True,
-                review=True,
+                "merged PR me/project#42; upstream origin/feature deleted", review=True
             ),
         )
 
@@ -75,9 +77,35 @@ class ClassificationTests(unittest.TestCase):
         ):
             verdict = cleanup.classify_branch(branch, "origin/main", {}, {"main"})
 
-        self.assertEqual(
-            verdict, cleanup.Verdict("rebased into origin/main", force=True)
-        )
+        self.assertEqual(verdict, cleanup.Verdict("rebased into origin/main"))
+
+
+class DeleteLocalBranchTests(unittest.TestCase):
+    def test_worktree_removal_and_force_delete_wait_for_confirmation(self) -> None:
+        git = functools.partial(subprocess.run, check=True, capture_output=True)
+        commit = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q"]
+        with tempfile.TemporaryDirectory() as tmp, contextlib.chdir(tmp):
+            git(["git", "init", "-q", "-b", "main"])
+            git([*commit, "--allow-empty", "-m", "init"])
+            git(["git", "worktree", "add", "-q", "wt", "-b", "merged"])
+            git(["git", "checkout", "-q", "-b", "unmerged"])
+            git([*commit, "--allow-empty", "-m", "work"])
+            git(["git", "checkout", "-q", "main"])
+            worktree = f"{tmp}/wt"
+
+            with patch.object(cleanup.Confirm, "ask", return_value=False):
+                cleanup.delete_local_branch("merged", worktree)
+                cleanup.delete_local_branch("unmerged", None)
+            self.assertEqual(cleanup.get_worktrees(), {"merged": worktree})
+            self.assertEqual(
+                cleanup._branch_names("refs/heads/"), ["main", "merged", "unmerged"]
+            )
+
+            with patch.object(cleanup.Confirm, "ask", return_value=True):
+                cleanup.delete_local_branch("merged", worktree)
+                cleanup.delete_local_branch("unmerged", None)
+            self.assertEqual(cleanup.get_worktrees(), {})
+            self.assertEqual(cleanup._branch_names("refs/heads/"), ["main"])
 
 
 if __name__ == "__main__":
