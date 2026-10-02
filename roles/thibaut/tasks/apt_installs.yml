@@ -29,18 +29,9 @@
   tags:
     - cleanup
 
-- name: Download .deb packages from url
-  ansible.builtin.get_url:
-    url: "{{ item.url }}"
-    dest: "/tmp/{{ item.file_name }}"
-    timeout: 30
-    mode: "0755"
-  loop: "{{ thibaut_deb_packages }}"
-
-- name: Install downloaded .deb packages
+- name: Install .deb packages from url
   ansible.builtin.apt:
-    deb: "/tmp/{{ item.file_name }}"
-    allow_downgrade: "{{ item.allow_downgrade | default('false') }}"
+    deb: "{{ item }}"
   loop: "{{ thibaut_deb_packages }}"
   become: true
 
@@ -53,6 +44,3 @@
     dest: /etc/apt/sources.list.d/steam-stable.list
     mode: "0644"
   become: true
-
-- name: Install MongoDB Compass
-  ansible.builtin.import_tasks: packages/mongodb-compass.yml

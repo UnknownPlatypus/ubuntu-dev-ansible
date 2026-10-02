@@ -17,12 +17,6 @@
     ollama_latest_version: "{{ ollama_release_data.json.tag_name | replace('v', '') }}"
   changed_when: false
 
-- name: Print parsed ollama local and latest version
-  ansible.builtin.debug:
-    msg:
-      - "Local ollama version: {{ ollama_installed_version }}"
-      - "Latest ollama version: {{ ollama_latest_version }}"
-
 - name: Install or Upgrade Ollama
   when: local_ollama_version_output.rc != 0 or ollama_latest_version != ollama_installed_version
   block:

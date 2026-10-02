@@ -1,11 +1,5 @@
 ---
-- name: Check ssh dir exists
-  ansible.builtin.stat:
-    path: ~/.ssh
-  register: ssh_dir
-
-- name: Create ssh dir (if needed)
-  when: not ssh_dir.stat.exists
+- name: Create ssh dir
   ansible.builtin.file:
     path: ~/.ssh
     state: directory

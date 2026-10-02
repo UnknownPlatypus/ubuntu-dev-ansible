@@ -45,20 +45,19 @@ thibaut_apt_packages:
   - docker-buildx-plugin
   - docker-compose-plugin
 
+# Urls that always point to the latest release
 thibaut_deb_packages:
   # Popular chat and voice communication platform for communities
-  - url: https://discord.com/api/download?platform=linux&format=deb
-    file_name: discord-latest.deb
+  - https://discord.com/api/download?platform=linux&format=deb
   # Application to comfortably monitor your Internet traffic. Cross-platform, Intuitive, Reliable
-  - url: https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
-    file_name: Sniffnet_LinuxDEB_amd64.deb
+  - https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
   # Valve's Steam gaming platform; the launcher sets up its own apt repo for updates (restored in apt_installs.yml)
-  - url: https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
-    file_name: steam_latest.deb
+  - https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
+  # The GUI for MongoDB
+  - https://compass.mongodb.com/api/v2/download/latest/compass/stable/linux_deb
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:
-  - act # Run your GitHub Actions locally
   - aoe # Terminal session manager for AI coding agents on Linux and macOS
   - awscli # Amazon AWS command-line interface (provides `aws`)
   - bacon # Background Rust code checker, keeps cargo check/clippy/test running on save
@@ -93,6 +92,7 @@ thibaut_brew_packages:
   - typos-cli # Source code spell checker
   - ripgrep # Recursively searches directories for a regex pattern
   - rip2 # A rust-based rm with a focus on safety, ergonomics, and performance
+  - samply # A sampling CPU profiler. See https://github.com/astral-sh/uv/issues/10344
   - xh # Friendly and fast HTTP client, HTTPie syntax in a single Rust binary
   - zoxide # A smarter cd command that ranks directories by frecency
 
@@ -154,10 +154,6 @@ thibaut_uv_tools:
   - name: tox # Generic virtual environment management and test command line tool
     with:
       - tox-uv # uv plugin for tox
-
-# Avoid cargo install if possible because they are rather slow (building from source)
-thibaut_cargo_packages:
-  - samply # A sampling CPU profiler. See https://github.com/astral-sh/uv/issues/10344
 
 # Bash completions to generate into ~/.local/share/bash-completion/completions/<name>
 # `name` must match the binary being completed (that's what bash-completion looks up).

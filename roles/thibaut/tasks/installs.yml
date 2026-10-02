@@ -46,15 +46,16 @@
   tags:
     - podman
 
-- name: Docker install side-effects
-  ansible.builtin.import_tasks: packages/docker.yml
+# The docker-ce package already creates the group and enables its services.
+# https://docs.docker.com/engine/install/linux-postinstall/
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_facts['env'].USER }}"
+    groups: docker
+    append: true
+  become: true
   tags:
     - docker
-
-- name: Act install side-effects
-  ansible.builtin.import_tasks: packages/act.yml
-  tags:
-    - act
 
 - name: Install rust toolchain
   ansible.builtin.include_role:
@@ -64,13 +65,6 @@
         - rust
   vars:
     rustup_cargo_crates: []
-  tags:
-    - rust
-
-- name: Install cargo packages
-  ansible.builtin.command: "cargo install {{ thibaut_cargo_packages | join(' ') }}"
-  register: thibaut_cargo_install_output
-  changed_when: "'Installing' in thibaut_cargo_install_output.stderr"
   tags:
     - rust
 
@@ -109,14 +103,9 @@
   tags:
     - uv
 
+# Also upgrades the `with` packages.
 - name: Uv upgrade tools
-  ansible.builtin.command: >
-    uv tool upgrade
-    {{ item.name }}
-    {% if item.with is defined %}
-    {% for w in item.with %}--upgrade-package {{ w }}{% endfor %}
-    {% endif %}
-  loop: "{{ thibaut_uv_tools }}"
+  ansible.builtin.command: uv tool upgrade --all
   register: thibaut_uv_upgrade
   changed_when: "'Nothing to upgrade' not in thibaut_uv_upgrade.stderr"
   tags:

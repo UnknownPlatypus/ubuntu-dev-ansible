@@ -32,12 +32,6 @@
     podman_desktop_github_url: "https://github.com/podman-desktop/podman-desktop/releases/download/v{{ podman_desktop_latest_version }}"
     thibaut_podman_architecture: "{{ 'x64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
 
-- name: Print parsed podman-desktop local and latest version
-  ansible.builtin.debug:
-    msg:
-      - "Local podman-desktop version: {{ podman_desktop_installed_version }}"
-      - "Latest podman-desktop version: {{ podman_desktop_latest_version }}"
-
 - name: Install or Upgrade Podman Desktop
   when: podman_desktop_installed_version != podman_desktop_latest_version
   block:

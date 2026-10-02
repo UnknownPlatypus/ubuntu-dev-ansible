@@ -1,39 +1,23 @@
 ---
-- name: Check if ~/workspace exists
-  ansible.builtin.stat:
-    path: ~/workspace
-  register: thibaut_workspace_stat
-
-- name: Create ~/workspace if it doesn't exist
+- name: Create ~/workspace
   ansible.builtin.file:
     path: ~/workspace
     state: directory
     mode: "0755"
-  when: not thibaut_workspace_stat.stat.exists
 
-- name: Check all-repos config drift
-  ansible.builtin.command:
-    cmd: diff "{{ thibaut_files }}/{{ item }}" "~/{{ item }}"
-  register: thibaut_all_repos_conf_diff
-  changed_when: thibaut_all_repos_conf_diff.rc >= 1
-  ignore_errors: true
+- name: Update all-repos config files
+  ansible.builtin.copy:
+    src: "{{ thibaut_files }}/{{ item }}"
+    dest: ~/{{ item }}
+    mode: "0600"
   loop:
     - all-repos.json
     - my-repos.json
+  register: thibaut_all_repos_conf
 
 - name: Clone all missing repos # noqa: no-handler
-  when: thibaut_all_repos_conf_diff.changed
+  when: thibaut_all_repos_conf.changed
   block:
-    - name: Update all-repos config files
-      ansible.builtin.copy:
-        src: "{{ thibaut_files }}/{{ item }}"
-        dest: ~/{{ item }}
-        mode: "0600"
-        force: true
-      loop:
-        - all-repos.json
-        - my-repos.json
-
     - name: Run all-repos-clone command
       ansible.builtin.command:
         cmd: all-repos-clone --jobs -1

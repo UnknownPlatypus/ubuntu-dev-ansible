@@ -1,39 +1,28 @@
 ---
-# Jetbrains Toolbox does not provide a 'latest' url so we have to manually find it.
 # We only ensure it is installed because the tool automatically update himself afterward.
 # https://www.jetbrains.com/help/rust/installation-guide.html#-nhkivi_92
 - name: Check if JetBrains Toolbox is installed
   ansible.builtin.stat:
     path: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
-  register: jetbrains_toolbox_installed
-  changed_when: false
+  register: thibaut_jetbrains_toolbox
 
 - name: Download and install JetBrains ToolBox
-  when: not jetbrains_toolbox_installed.stat.exists
+  when: not thibaut_jetbrains_toolbox.stat.exists
   block:
-    - name: Ensure libfuse2 is installed (Toolbox requirement)
-      ansible.builtin.apt:
-        name:
-          - libfuse2
-        state: present
-      become: true
+    - name: Create JetBrains ToolBox download dir
+      ansible.builtin.file:
+        path: /tmp/jetbrains-toolbox
+        state: directory
+        mode: "0755"
 
-    - name: Find all versions of JetBrains Toolbox
-      ansible.builtin.uri:
-        url: https://data.services.jetbrains.com/products/releases?code=TBA&type=release
-      register: jetbrains_index
-      check_mode: false
-
-    - name: Finds the latest version of JetBrains Toolbox
-      ansible.builtin.set_fact:
-        jetbrains_toolbox_version: "{{ jetbrains_index.json.TBA.0.build }}"
-
+    # This url redirects to the latest release, whose top dir embeds the version.
     - name: Download JetBrains ToolBox
       ansible.builtin.unarchive:
-        src: https://download.jetbrains.com/toolbox/jetbrains-toolbox-{{ jetbrains_toolbox_version }}.tar.gz
-        dest: /tmp
+        src: https://data.services.jetbrains.com/products/download?platform=linux&code=TBA
+        dest: /tmp/jetbrains-toolbox
         remote_src: true
+        extra_opts: [--strip-components=1]
 
     - name: Launch JetBrains ToolBox
-      ansible.builtin.command: /tmp/jetbrains-toolbox-{{ jetbrains_toolbox_version }}/jetbrains-toolbox
+      ansible.builtin.command: /tmp/jetbrains-toolbox/bin/jetbrains-toolbox
       changed_when: true
