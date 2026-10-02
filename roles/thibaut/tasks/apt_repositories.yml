@@ -88,6 +88,26 @@
     dest: /etc/default/claude-desktop
     mode: "0644"
 
+- name: Add Slack APT repository
+  ansible.builtin.deb822_repository:
+    name: slack
+    types: [deb]
+    architectures: "{{ thibaut_architecture }}"
+    uris: https://packagecloud.io/slacktechnologies/slack/debian/
+    signed_by: https://packagecloud.io/slacktechnologies/slack/gpgkey
+    suites: [jessie]
+    components: [main]
+    enabled: true
+
+# Otherwise Slack's daily cron adds a duplicate slack.list on fresh installs.
+- name: Stop slack-desktop from adding its own apt source
+  ansible.builtin.copy:
+    content: |
+      repo_add_once="false"
+      repo_reenable_on_distupgrade="false"
+    dest: /etc/default/slack
+    mode: "0644"
+
 - name: Add gitlab-ci-local APT repository
   ansible.builtin.deb822_repository:
     name: gitlab-ci-local

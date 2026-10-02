@@ -54,8 +54,5 @@
     mode: "0644"
   become: true
 
-- name: Install slack latest .deb package
-  ansible.builtin.import_tasks: packages/slack.yml
-
 - name: Install MongoDB Compass
   ansible.builtin.import_tasks: packages/mongodb-compass.yml

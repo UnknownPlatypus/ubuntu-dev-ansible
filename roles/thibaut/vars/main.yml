@@ -13,6 +13,7 @@ thibaut_apt_packages:
   - jq # Lightweight command-line JSON processor
   - nginx # High-performance HTTP server and reverse proxy
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
+  - slack-desktop # Slack team chat
   - sourcegit # Fast, opensource Git GUI client
   - tailscale # Secure, easy-to-use VPN for building private networks
   - tmux # Terminal multiplexer
