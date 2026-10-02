@@ -80,16 +80,3 @@
   changed_when: true
   register: thibaut_i386_enabled
   when: "'i386' not in thibaut_foreign_architectures.stdout_lines"
-
-- name: Add MongoDB APT repository
-  ansible.builtin.deb822_repository:
-    name: mongodb-org-8.0
-    types: [deb]
-    architectures: "{{ thibaut_architecture }}"
-    uris: "https://repo.mongodb.org/apt/{{ ansible_facts['distribution'] | lower }}"
-    signed_by: https://www.mongodb.org/static/pgp/server-8.0.asc
-    # The resolute suite only ships tools, not the server, and the noble build runs fine on resolute.
-    suites: [noble/mongodb-org/8.0]
-    components: [multiverse]
-    enabled: true
-  when: ansible_facts['distribution_release'] in ['noble', 'resolute']
