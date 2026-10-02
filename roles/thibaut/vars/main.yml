@@ -45,16 +45,21 @@ thibaut_apt_packages:
   - docker-buildx-plugin
   - docker-compose-plugin
 
-# Urls that always point to the latest release
+# Urls that always point to the latest release, `name` is the installed package name.
+# Updates are only detected for urls redirecting to a versioned file, others are installed once.
 thibaut_deb_packages:
   # Popular chat and voice communication platform for communities
-  - https://discord.com/api/download?platform=linux&format=deb
+  - name: discord
+    url: https://discord.com/api/download?platform=linux&format=deb
   # Application to comfortably monitor your Internet traffic. Cross-platform, Intuitive, Reliable
-  - https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
+  - name: sniffnet
+    url: https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
   # Valve's Steam gaming platform; the launcher sets up its own apt repo for updates (restored in apt_installs.yml)
-  - https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
+  - name: steam-launcher
+    url: https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
   # The GUI for MongoDB
-  - https://compass.mongodb.com/api/v2/download/latest/compass/stable/linux_deb
+  - name: mongodb-compass
+    url: https://compass.mongodb.com/api/v2/download/latest/compass/stable/linux_deb
 
 # Use brew for packages that are lagging a lot behind in apt.
 thibaut_brew_packages:

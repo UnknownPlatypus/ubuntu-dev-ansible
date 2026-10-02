@@ -3,6 +3,8 @@
   hosts: localhost
   connection: local
   any_errors_fatal: true
+  # Hardware facts cost ~4s and nothing uses them. `gathering = smart` reuses these in the next play.
+  gather_subset: [min]
   tags: always
   tasks:
     - name: Check we are running in the directory of the script

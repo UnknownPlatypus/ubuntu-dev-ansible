@@ -8,6 +8,7 @@
     name: "{{ thibaut_apt_packages }}"
     state: latest
     update_cache: true
+    cache_valid_time: 3600
   become: true
 
 - name: Upgrade apt packages
@@ -29,10 +30,43 @@
   tags:
     - cleanup
 
+# Not package_facts: loading the whole apt cache takes ~5s.
+- name: Get installed .deb package versions
+  ansible.builtin.command: >-
+    dpkg-query -W -f='${Package} ${source:Upstream-Version} ${db:Status-Status}\n'
+    {{ thibaut_deb_packages | map(attribute='name') | join(' ') }}
+  register: thibaut_deb_dpkg
+  changed_when: false
+  # rc 1 means some packages are not installed.
+  failed_when: thibaut_deb_dpkg.rc > 1
+
+- name: Map installed .deb packages to their upstream version
+  ansible.builtin.set_fact:
+    thibaut_deb_versions: >-
+      {{ dict(thibaut_deb_dpkg.stdout_lines | select('search', ' installed$')
+      | map('regex_replace', ' installed$', '') | map('split')) }}
+
+# `apt: deb` downloads the whole file before comparing versions,
+# a HEAD on the redirect gives the latest version for free.
+- name: Resolve .deb urls to their versioned download
+  ansible.builtin.uri:
+    url: "{{ item.url }}"
+    method: HEAD
+    follow_redirects: none
+    status_code: [200, 302]
+  register: thibaut_deb_heads
+  loop: "{{ thibaut_deb_packages }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.name in thibaut_deb_versions
+
 - name: Install .deb packages from url
   ansible.builtin.apt:
-    deb: "{{ item }}"
-  loop: "{{ thibaut_deb_packages }}"
+    deb: "{{ item.item.url }}"
+  loop: "{{ thibaut_deb_heads.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  when: item is skipped or (item.location is defined and thibaut_deb_versions[item.item.name] not in item.location)
   become: true
 
 # steam-launcher ships this source as a conffile; release upgrades disable it. Same content as the package's.
