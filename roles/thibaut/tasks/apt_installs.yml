@@ -44,6 +44,16 @@
   loop: "{{ thibaut_deb_packages }}"
   become: true
 
+# steam-launcher ships this source as a conffile; release upgrades disable it. Same content as the package's.
+- name: Restore Steam apt source
+  ansible.builtin.copy:
+    content: |
+      deb [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+      deb-src [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+    dest: /etc/apt/sources.list.d/steam-stable.list
+    mode: "0644"
+  become: true
+
 - name: Install slack latest .deb package
   ansible.builtin.import_tasks: packages/slack.yml
 

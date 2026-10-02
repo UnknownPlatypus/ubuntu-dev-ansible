@@ -18,3 +18,21 @@
   ansible.builtin.shell: dconf load /org/gnome/Ptyxis/ < "{{ thibaut_files }}/ptyxis.dconf"
   when: "'b1dcc9dd52624d8da863c897e6d979b9' not in thibaut_ptyxis_profile.stdout"
   changed_when: true
+
+- name: Resolve dock favorites globs
+  ansible.builtin.set_fact:
+    thibaut_dock_apps: >-
+      {{ thibaut_dock_apps | default([])
+      + ((lookup('fileglob', lookup('env', 'HOME') + '/.local/share/applications/' + item, wantlist=True) | map('basename') | list)
+      if '*' in item else [item]) }}
+  loop: "{{ thibaut_dock_favorites }}"
+
+- name: Read dock favorites
+  ansible.builtin.command: dconf read /org/gnome/shell/favorite-apps
+  register: thibaut_dock_current
+  changed_when: false
+
+- name: Pin dock favorites
+  ansible.builtin.command: dconf write /org/gnome/shell/favorite-apps "{{ thibaut_dock_apps }}"
+  when: thibaut_dock_current.stdout != thibaut_dock_apps | string
+  changed_when: true

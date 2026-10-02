@@ -3,9 +3,11 @@ thibaut_files: "{{ role_path }}/files"
 
 thibaut_apt_packages:
   - caprine # Elegant Facebook Messenger desktop app
+  - claude-desktop # Anthropic's Claude desktop app
   - curl # Command line tool for transferring data using various protocols
   - firefox-nightly # Nightly build of Firefox browser
   - git # Distributed version control system
+  - gitlab-ci-local # Run GitLab CI pipelines locally
   - google-chrome-stable # Google Chrome web browser
   - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
@@ -49,7 +51,7 @@ thibaut_deb_packages:
   # Application to comfortably monitor your Internet traffic. Cross-platform, Intuitive, Reliable
   - url: https://github.com/GyulyVGC/sniffnet/releases/latest/download/Sniffnet_LinuxDEB_amd64.deb
     file_name: Sniffnet_LinuxDEB_amd64.deb
-  # Valve's Steam gaming platform; the launcher sets up its own apt repo for updates
+  # Valve's Steam gaming platform; the launcher sets up its own apt repo for updates (restored in apt_installs.yml)
   - url: https://repo.steampowered.com/steam/archive/stable/steam_latest.deb
     file_name: steam_latest.deb
 
@@ -177,3 +179,16 @@ thibaut_bash_completions:
     command: docker completion bash
   - name: djangofmt
     command: djangofmt completions bash
+
+# Dock pins, enforced on every run. Globs match JetBrains Toolbox launchers, which embed a per-install id.
+thibaut_dock_favorites:
+  - org.gnome.Nautilus.desktop
+  - slack.desktop
+  - firefox.desktop
+  - jetbrains-pycharm-*.desktop
+  - sourcegit.desktop
+  - org.gnome.Ptyxis.desktop
+  - spotify.desktop
+  - firefox-nightly.desktop
+  - jetbrains-rustrover-*.desktop
+  - dev.zed.Zed.desktop

@@ -70,6 +70,43 @@
     components: [main]
     enabled: true
 
+- name: Add Claude Desktop APT repository
+  ansible.builtin.deb822_repository:
+    name: claude-desktop
+    types: [deb]
+    architectures: "{{ thibaut_architecture }}"
+    uris: https://downloads.claude.ai/claude-desktop/apt/stable
+    signed_by: https://downloads.claude.ai/keys/claude-code.asc
+    suites: [stable]
+    components: [main]
+    enabled: true
+
+# The package registers its own .list on install, which release upgrades can't migrate and disable.
+- name: Stop claude-desktop from adding its own apt source
+  ansible.builtin.copy:
+    content: "CLAUDE_DESKTOP_ADD_REPO=false\n"
+    dest: /etc/default/claude-desktop
+    mode: "0644"
+
+- name: Add gitlab-ci-local APT repository
+  ansible.builtin.deb822_repository:
+    name: gitlab-ci-local
+    types: [deb]
+    uris: https://gitlab-ci-local-ppa.firecow.dk/
+    signed_by: https://gitlab-ci-local-ppa.firecow.dk/pubkey.gpg
+    suites: ["./"]
+    enabled: true
+
+- name: Remove apt sources disabled by release upgrades
+  ansible.builtin.file:
+    path: "/etc/apt/sources.list.d/{{ item }}"
+    state: absent
+  loop:
+    - claude-desktop.list
+    - claude-desktop.list.disabled
+    - steam-beta.list.disabled
+    - steam-stable.list.disabled
+
 - name: Get enabled dpkg foreign architectures
   ansible.builtin.command: dpkg --print-foreign-architectures
   register: thibaut_foreign_architectures
