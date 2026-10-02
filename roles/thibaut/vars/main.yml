@@ -16,6 +16,7 @@ thibaut_apt_packages:
   - tmux # Terminal multiplexer
   - tree # Directory listing in tree-like format
   - wget # Retrieves files using HTTP, HTTPS, and FTP protocols
+  - wl-clipboard # Wayland clipboard CLI (wl-copy/wl-paste), xclip doesn't work on Wayland
 
   # Build tools
   - build-essential # Informational list of build-essential packages

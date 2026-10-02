@@ -11,6 +11,7 @@
     - aws
     - agents
     - claude
+    - local/share/org.gnome.Ptyxis/palettes
 
 - name: Create Dotfiles
   ansible.builtin.copy:
@@ -23,6 +24,8 @@
     - config/dust/config.toml
     - config/zed/settings.json
     - config/ripgreprc
+    - local/share/org.gnome.Ptyxis/palettes/thibaut.palette
+    - local/share/org.gnome.Ptyxis/palettes/prod-deploy.palette
     - ipython/profile_default/startup/00-imports.py
     - ansible.cfg
     - bash_aliases
@@ -46,6 +49,7 @@
       export N_PREFIX="$HOME/.n"
       export PATH="$N_PREFIX/bin:$PATH"
       eval "$(zoxide init bash)"
+      eval "$(fzf --bash)"
     marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
     prepend_newline: true
     append_newline: true

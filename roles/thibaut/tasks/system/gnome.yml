@@ -8,3 +8,13 @@
   ansible.builtin.shell: dconf load / < "{{ thibaut_files }}/gnome-terminal-profiles.dconf"
   when: not gnome_profiles.stdout
   changed_when: true
+
+- name: Check Ptyxis config was loaded
+  ansible.builtin.command: dconf read /org/gnome/Ptyxis/default-profile-uuid
+  register: thibaut_ptyxis_profile
+  changed_when: false
+
+- name: Load Ptyxis config
+  ansible.builtin.shell: dconf load /org/gnome/Ptyxis/ < "{{ thibaut_files }}/ptyxis.dconf"
+  when: "'b1dcc9dd52624d8da863c897e6d979b9' not in thibaut_ptyxis_profile.stdout"
+  changed_when: true

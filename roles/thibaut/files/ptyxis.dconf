@@ -1,0 +1,25 @@
+[/]
+default-profile-uuid='b1dcc9dd52624d8da863c897e6d979b9'
+profile-uuids=['b1dcc9dd52624d8da863c897e6d979b9', '2b1eed43429c4ffab1c32ca3483bfb5e']
+use-system-font=false
+font-name='Monospace 11'
+default-columns=uint32 160
+default-rows=uint32 48
+restore-window-size=false
+
+[Profiles/b1dcc9dd52624d8da863c897e6d979b9]
+label='Thibaut'
+palette='thibaut'
+opacity=0.78
+scrollback-lines=20000
+
+[Profiles/2b1eed43429c4ffab1c32ca3483bfb5e]
+label='Prod Deploy'
+palette='prod-deploy'
+
+[Shortcuts]
+copy-clipboard='<ctrl>c'
+paste-clipboard='<ctrl>v'
+move-next-tab='<ctrl><shift>Right'
+move-previous-tab='<ctrl><shift>Left'
+primary-menu=''
