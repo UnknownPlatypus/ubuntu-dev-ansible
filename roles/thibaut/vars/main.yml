@@ -9,7 +9,6 @@ thibaut_apt_packages:
   - git # Distributed version control system
   - gitlab-ci-local # Run GitLab CI pipelines locally
   - google-chrome-stable # Google Chrome web browser
-  - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
   - nginx # High-performance HTTP server and reverse proxy
   - ptyxis # GNOME's default terminal since 25.10, release upgrades keep gnome-terminal instead
@@ -71,10 +70,11 @@ thibaut_brew_packages:
   - binsider # TUI to analyze ELF binaries
   - btop # Resource monitor that shows usage and stats for processor, memory, disks, network and processes
   - cargo-binstall # Install Rust binaries from prebuilt artifacts instead of compiling
+  - cargo-insta # Snapshot review CLI for insta (ruff, djangofmt snapshot tests)
   - cargo-nextest # Next-generation Rust test runner with per-test process isolation
   - codex # OpenAI coding agent CLI
+  - deno # JavaScript runtime, yt-dlp needs it to solve YouTube challenges
   - dprint # Pluggable, configurable code formatter (JS/TS, JSON, Markdown, TOML, …)
-  - dua-cli # View disk space usage and delete unwanted data, fast
   - dust # More intuitive version of du (disk usage)
   - eza # Modern replacement for ls
   - fd # Simple, fast and user-friendly alternative to find
@@ -83,6 +83,7 @@ thibaut_brew_packages:
   - git-cliff # A highly customizable Changelog Generator that follows Conventional Commit specifications
   - git-delta # Syntax-highlighting pager for git, diff, grep, and blame output
   - glow # Render markdown on the CLI
+  - hyperfine # Command-line benchmarking tool, apt lags behind
   - immich-go # Bulk upload photos and Google Takeout archives to an Immich server
   - lazydocker # A simple terminal UI for both docker and docker-compose
   - lazygit # A simple terminal UI for git commands
@@ -92,7 +93,6 @@ thibaut_brew_packages:
   - pandoc # Universal document converter
   - podman # Daemonless container engine for managing OCI containers and pods
   - sd # Intuitive find & replace CLI
-  - taplo # TOML toolkit
   - tokei # Code statistics tool
   - tlrc # tl;dr pages client (simplified man pages)
   - typos-cli # Source code spell checker
@@ -138,7 +138,6 @@ thibaut_uv_tools:
   - name: dolphie # Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
   - name: awsebcli # Command Line Interface for AWS Elastic Beanstalk
   - name: gh-profiler # Examine a GitHub user's profile, to help quickly decide how much to invest in their contributions
-  - name: hatch # Modern, extensible Python project management
   - name: ipython # Enhanced interactive Python shell
   - name: jpegoptim-py # Python wrapper for jpegoptim
   - name: keyring # Easy way to access the system keyring service from python
@@ -151,6 +150,7 @@ thibaut_uv_tools:
   - name: recoverpy # Interactively find and recover deleted or overwritten files from your terminal
   - name: ruff # An extremely fast Python linter, written in Rust
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
+  - name: tombi # TOML formatter, linter and language server, successor of the unmaintained taplo
   - name: ty # An extremely fast Python type checker and language server (Astral)
   - name: yt-dlp[default] # Fork of youtube-dl with additional features and fixes
   - name: pre-commit # Framework for managing and maintaining multi-language pre-commit hooks

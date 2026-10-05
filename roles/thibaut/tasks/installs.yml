@@ -76,14 +76,13 @@
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install
-    3.8
-    3.9
-    3.10
     3.11
     3.12
     3.13
     3.14
     3.14t
+    3.15
+    3.15t
   register: thibaut_uv_python_install
   changed_when: "'Installed' in thibaut_uv_python_install.stderr"
   tags:
