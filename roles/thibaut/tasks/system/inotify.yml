@@ -1,5 +1,5 @@
 ---
-# Ubuntu ships fs.inotify.max_user_watches=65536 in /usr/lib/sysctl.d/30-tracker.conf,
+# Ubuntu ships fs.inotify.max_user_watches=65536 in /usr/lib/sysctl.d/30-localsearch.conf,
 # but JetBrains IDEs recommand more for large projects.
 # See https://youtrack.jetbrains.com/articles/SUPPORT-A-1715/Inotify-Watches-Limit-Linux
 - name: Raise inotify watches limit for JetBrains IDEs

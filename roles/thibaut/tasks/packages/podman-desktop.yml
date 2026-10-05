@@ -37,16 +37,16 @@
   block:
     - name: Create Podman installation directory
       ansible.builtin.file:
-        path: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}"
+        path: /opt/podman-desktop
         state: directory
         mode: "0755"
       become: true
 
+    # The archive's top dir is `podman-desktop-<version>-<arch>`.
     - name: Download & install Podman Desktop
       ansible.builtin.unarchive:
         src: "{{ podman_desktop_github_url }}/podman-desktop-{{ podman_desktop_latest_version }}-{{ thibaut_podman_architecture }}.tar.gz"
-        dest: "/opt/podman-desktop"
-        creates: "/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop"
+        dest: /opt/podman-desktop
         remote_src: true
         mode: "0755"
       become: true
@@ -58,27 +58,23 @@
         mode: "0644"
       become: true
 
-    - name: Create .desktop file
-      ansible.builtin.copy:
-        dest: "/usr/share/applications/podman-desktop.desktop"
-        content: |
-          [Desktop Entry]
-          Name=Podman Desktop
-          Exec=/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}/podman-desktop
-          Icon=/opt/podman-desktop/podman-desktop.svg
-          Type=Application
-          Categories=Development;Virtualization;
-          Terminal=false
-        mode: "0644"
-      become: true
-
-    - name: Sort versions and identify old ones to remove
-      ansible.builtin.set_fact:
-        versions_to_remove: "{{ (local_podman_versions.files | map(attribute='path') | sort)[:-1] }}"
-
     - name: Remove old podman-desktop versions
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
-      loop: "{{ versions_to_remove }}"
+      loop: "{{ local_podman_versions.files | map(attribute='path') }}"
       become: true
+
+- name: Create .desktop file
+  ansible.builtin.copy:
+    dest: "/usr/share/applications/podman-desktop.desktop"
+    content: |
+      [Desktop Entry]
+      Name=Podman Desktop
+      Exec=/opt/podman-desktop/podman-desktop-{{ podman_desktop_latest_version }}-{{ thibaut_podman_architecture }}/podman-desktop
+      Icon=/opt/podman-desktop/podman-desktop.svg
+      Type=Application
+      Categories=Development;Virtualization;
+      Terminal=false
+    mode: "0644"
+  become: true

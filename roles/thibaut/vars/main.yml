@@ -12,6 +12,7 @@ thibaut_apt_packages:
   - hyperfine # Command-line benchmarking tool
   - jq # Lightweight command-line JSON processor
   - nginx # High-performance HTTP server and reverse proxy
+  - ptyxis # GNOME's default terminal since 25.10, release upgrades keep gnome-terminal instead
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
   - slack-desktop # Slack team chat
   - sourcegit # Fast, opensource Git GUI client
@@ -186,7 +187,6 @@ thibaut_bash_completions:
 thibaut_dock_favorites:
   - org.gnome.Nautilus.desktop
   - slack.desktop
-  - firefox.desktop
   - jetbrains-pycharm-*.desktop
   - sourcegit.desktop
   - org.gnome.Ptyxis.desktop
