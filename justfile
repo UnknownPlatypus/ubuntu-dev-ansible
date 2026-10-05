@@ -2,6 +2,10 @@
 _default:
     @just --list  --unsorted
 
+# Run the playbook, extra args are forwarded (e.g. `just run --tags llm`)
+run *args:
+    uv run ansible-playbook --ask-become-pass playbook.yml {{ args }}
+
 # Update dependencies and pre-commit hooks, then run all hooks
 update:
     uv sync --upgrade

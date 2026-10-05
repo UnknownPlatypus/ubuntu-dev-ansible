@@ -19,6 +19,8 @@ repos:
     rev: e7f397ad6dfa20d274afa17cd7bbedd84ed136f5 # frozen: v26.9.0
     hooks:
       - id: ansible-lint
+        # Ansible refuses to run under a non-UTF-8 locale, which git GUIs and IDEs may set
+        entry: env LC_ALL=C.UTF-8 python3 -m ansiblelint -v --force-color
   - repo: https://github.com/trim21/dprint-pre-commit
     rev: 1e03f1f6c9350b2ddf4495c4a9f0a2d3918942dd # frozen: v0.60.1.0
     hooks:
