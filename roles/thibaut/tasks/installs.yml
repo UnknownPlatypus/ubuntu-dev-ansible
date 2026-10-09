@@ -84,7 +84,7 @@
     3.15
     3.15t
   register: thibaut_uv_python_install
-  changed_when: "'Installed' in thibaut_uv_python_install.stderr"
+  changed_when: "'Downloaded' in thibaut_uv_python_install.stderr"
   tags:
     - uv
 
@@ -98,7 +98,7 @@
     {% endif %}
   loop: "{{ thibaut_uv_tools }}"
   register: thibaut_uv_tool_install
-  changed_when: "'already installed' not in thibaut_uv_tool_install.stderr"
+  changed_when: thibaut_uv_tool_install.stderr is search('^ [+-] ', multiline=True)
   tags:
     - uv
 

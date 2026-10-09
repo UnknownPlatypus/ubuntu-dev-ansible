@@ -28,7 +28,7 @@
   ansible.builtin.command: docker builder prune -f
   become: true
   register: thibaut_docker_builder_prune
-  changed_when: "'Total reclaimed space: 0B' not in thibaut_docker_builder_prune.stdout"
+  changed_when: thibaut_docker_builder_prune.stdout is not search('Total( reclaimed space)?:\\s+0B')
   tags:
     - docker
     - cleanup
