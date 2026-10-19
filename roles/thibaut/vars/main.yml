@@ -9,6 +9,7 @@ thibaut_apt_packages:
   - git # Distributed version control system
   - gitlab-ci-local # Run GitLab CI pipelines locally
   - google-chrome-stable # Google Chrome web browser
+  - intel-media-va-driver-non-free # VA-API video decode on Intel GPUs (Firefox), ignored on AMD
   - jq # Lightweight command-line JSON processor
   - nginx # High-performance HTTP server and reverse proxy
   - ptyxis # GNOME's default terminal since 25.10, release upgrades keep gnome-terminal instead

@@ -23,6 +23,22 @@
   tags:
     - brew
 
+# btop needs perfmon to read Intel GPU stats, brew upgrades replace the binary and drop it.
+- name: Resolve btop binary
+  ansible.builtin.stat:
+    path: /home/linuxbrew/.linuxbrew/bin/btop
+  register: thibaut_btop
+  tags:
+    - brew
+
+- name: Grant btop perfmon capability
+  community.general.capabilities:
+    path: "{{ thibaut_btop.stat.lnk_source }}"
+    capability: cap_perfmon+ep
+  become: true
+  tags:
+    - brew
+
 - name: Bootstrap tools that ship an install.sh (uv, atuin, Claude Code, Zed)
   ansible.builtin.include_tasks: packages/script_install.yml
   loop: "{{ thibaut_script_installs }}"
