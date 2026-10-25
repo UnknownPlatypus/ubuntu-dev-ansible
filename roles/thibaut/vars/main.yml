@@ -40,7 +40,7 @@ thibaut_apt_packages:
   - vlc # Multimedia player and streamer
 
   # Guitar Rig (Windows only), run through Native Access under Wine. Launch "Native Access" from GNOME, never via `wine` directly.
-  - winehq-stable # WineHQ Wine, ni-wine needs >= 11
+  - winehq-staging # Wine >= 11.19: stable 11.0 rejects Guitar Rig's WASAPI period (rounding bug), the audio engine never starts
   - ni-wine # Native Access + NI products under Wine, prefix in ~/.wine-ni
   - pipewire-jack # JACK API on PipeWire, needed by WineASIO for low latency audio
 
