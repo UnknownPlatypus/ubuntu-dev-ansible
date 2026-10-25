@@ -117,6 +117,29 @@
     suites: ["./"]
     enabled: true
 
+# Ubuntu's wine is too old for ni-wine (needs >= 11) and its wow64 build breaks the Native Access installer.
+- name: Add WineHQ APT repository
+  ansible.builtin.deb822_repository:
+    name: winehq
+    types: [deb]
+    architectures: "{{ thibaut_architecture }}"
+    uris: "https://dl.winehq.org/wine-builds/{{ ansible_facts['distribution'] | lower }}"
+    signed_by: https://dl.winehq.org/wine-builds/winehq.key
+    suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
+    components: [main]
+    enabled: true
+
+- name: Add ni-wine PPA (Native Access under Wine)
+  ansible.builtin.deb822_repository:
+    name: ni-wine
+    types: [deb]
+    architectures: "{{ thibaut_architecture }}"
+    uris: "https://ppa.launchpadcontent.net/selimbucher/ni-wine/{{ ansible_facts['distribution'] | lower }}"
+    signed_by: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDD1F1609D6C94C54395A156B053F4E4FBB994005
+    suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
+    components: [main]
+    enabled: true
+
 - name: Remove apt sources disabled by release upgrades
   ansible.builtin.file:
     path: "/etc/apt/sources.list.d/{{ item }}"

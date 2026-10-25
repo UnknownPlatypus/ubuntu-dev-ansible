@@ -39,6 +39,11 @@ thibaut_apt_packages:
   # - spotify-client # Spotify music streaming client
   - vlc # Multimedia player and streamer
 
+  # Guitar Rig (Windows only), run through Native Access under Wine. Launch "Native Access" from GNOME, never via `wine` directly.
+  - winehq-stable # WineHQ Wine, ni-wine needs >= 11
+  - ni-wine # Native Access + NI products under Wine, prefix in ~/.wine-ni
+  - pipewire-jack # JACK API on PipeWire, needed by WineASIO for low latency audio
+
   # Docker
   - docker-ce
   - docker-ce-cli
