@@ -13,3 +13,16 @@ update-pc *args:
 update-home-serv *args:
     git pull
     uv run ansible-playbook playbook.yml {{ args }}
+
+# Free disk space with each tool's own cache clean command
+gc:
+    pre-commit gc
+    prek cache gc
+    uv cache prune
+    npm cache verify
+    pnpm store prune
+    brew cleanup
+    docker image prune --force
+    docker builder prune --force
+    flatpak uninstall --unused --assumeyes
+    sudo apt-get autoclean

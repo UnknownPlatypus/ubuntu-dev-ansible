@@ -13,17 +13,3 @@ update:
     uv run ansible-galaxy role install -r requirements.yml --force
     pre-commit autoupdate --freeze
     pre-commit run -a
-
-# Free disk space with each tool's own cache clean command
-gc:
-    pre-commit gc
-    prek cache gc
-    uv cache prune
-    npm cache clean --force
-    pnpm store prune
-    bun pm cache rm
-    deno clean
-    brew cleanup --prune=all
-    docker image prune --all --force
-    docker builder prune --all --force
-    sudo apt-get clean
