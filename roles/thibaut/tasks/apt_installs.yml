@@ -16,13 +16,6 @@
     upgrade: safe
   become: true
 
-- name: Remove useless packages from the cache
-  ansible.builtin.apt:
-    autoclean: true
-  become: true
-  tags:
-    - cleanup
-
 - name: Remove dependencies that are no longer required
   ansible.builtin.apt:
     autoremove: true

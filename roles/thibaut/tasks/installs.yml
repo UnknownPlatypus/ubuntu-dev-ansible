@@ -126,14 +126,6 @@
   tags:
     - uv
 
-- name: Uv prune cache
-  ansible.builtin.command: uv cache prune --force
-  register: thibaut_uv_prune
-  changed_when: "'Removed' in thibaut_uv_prune.stderr"
-  tags:
-    - uv
-    - cleanup
-
 - name: Ensure user bash-completion dir exists
   ansible.builtin.file:
     path: ~/.local/share/bash-completion/completions
