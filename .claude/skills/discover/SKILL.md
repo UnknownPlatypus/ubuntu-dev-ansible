@@ -27,14 +27,16 @@ Monthly audit and discovery sweep for the ubuntu-dev-ansible repo. Two phases: (
 
 Read these files to build a complete inventory of every tool currently installed:
 
-- `roles/thibaut/vars/main.yml` — tool lists: `thibaut_apt_packages`, `thibaut_brew_packages`, `thibaut_uv_tools`, `thibaut_cargo_packages`, `thibaut_deb_packages`
-- `roles/thibaut/tasks/packages/*.yml` — custom installer tasks (note: `docker.yml` and `act.yml` contain post-install side-effects only — the tools themselves are in the main vars)
+- `roles/thibaut/vars/main.yml` — tool lists: `thibaut_apt_packages`, `thibaut_deb_packages`, `thibaut_brew_packages`, `thibaut_script_installs`, `thibaut_uv_tools`
+- `roles/thibaut/tasks/installs.yml` — rustup and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml` (`atuin.yml` only configures the script-installed atuin)
 - `roles/thibaut/tasks/llm.yml` — LLM-specific tools installed outside the main vars
+
+Rust dev tools (cargo-nextest, cargo-insta, …) go through brew, there is no cargo list.
 
 Extract every tool name and its install method. Present a brief summary:
 
 - Total tool count
-- Breakdown by install method (apt: N, brew: N, uv: N, cargo: N, deb: N, custom: N)
+- Breakdown by install method (apt: N, deb: N, brew: N, script: N, uv: N, custom: N)
 
 ## Step 2 — Audit Current Setup
 
@@ -78,10 +80,12 @@ Analyze the installed tools for issues. Use batched parallel WebSearch calls (is
 
 **Calibration — the kind of findings you should catch:**
 
-- lychee is installed via both brew AND uv (redundant — keep brew, remove from uv)
-- typos-cli is installed via both brew AND uv (redundant — keep brew, remove from uv)
+- lychee and typos-cli were installed via both brew AND uv (redundant — kept brew, removed from uv)
+- aoe and herdr were both installed as AI coding agent session managers (redundant — dropped aoe)
 
-These are real issues in the current config. Use them as a baseline for the level of analysis expected.
+These were real issues in past configs, now fixed. Use them as a baseline for the level of analysis expected.
+
+Known intentional overlaps, do not flag: djade + djangofmt (the user benchmarks djangofmt against djade).
 
 ## Step 3 — Discover New Tools
 
@@ -182,24 +186,21 @@ After presenting the report, ask:
 
 For each tool the user selects:
 
-### Simple package additions (apt/brew/uv/cargo)
+### Simple package additions
 
 Add to the appropriate list in `roles/thibaut/vars/main.yml`:
 
 - **apt:** Add to `thibaut_apt_packages` with a comment describing the tool
-- **brew:** Add to `thibaut_brew_packages` with a comment describing the tool
+- **deb:** Add to `thibaut_deb_packages` with a `name` and a `url` that always points to the latest `.deb`
+- **brew:** Add to `thibaut_brew_packages` with a comment describing the tool (also for Rust/cargo tools)
 - **uv:** Add to `thibaut_uv_tools` as `- name: toolname # description`
-- **cargo:** Add to `thibaut_cargo_packages` with a comment
+- **official install.sh:** Add to `thibaut_script_installs` with `url`, `sha256` and `update_cmd` if the tool self-updates
 
 Maintain alphabetical order within each section. Match the existing comment style.
 
 ### Custom installers
 
-Create a new file at `roles/thibaut/tasks/packages/<tool-name>.yml`. Two patterns exist — pick the simpler one that fits:
-
-**Pattern A — self-updating tools:** Try upgrade first, install if not present. See `packages/opencode.yml`, `packages/dprint.yml`.
-
-**Pattern B — GitHub release tracking:** Fetch latest version from GitHub API, compare with installed version, download if different, clean old versions. See `packages/podman-desktop.yml`, `packages/awscli_v2.yml`.
+Only when none of the lists above fit. Create `roles/thibaut/tasks/packages/<tool-name>.yml`, e.g. GitHub release tracking: fetch the latest version from the GitHub API, compare with the installed version, download if different, clean old versions. See `packages/podman-desktop.yml`, `packages/ollama.yml`.
 
 Always use `changed_when` to track actual changes.
 
