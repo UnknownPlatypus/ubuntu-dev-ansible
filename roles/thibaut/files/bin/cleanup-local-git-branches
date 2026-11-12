@@ -3,379 +3,242 @@
 # requires-python = ">=3.12"
 # dependencies = ["cyclopts", "rich"]
 # ///
-"""Clean up local and remote branches after GitHub PRs are merged."""
+"""Prune local and remote branches already merged into the GitHub default branch."""
 
 from __future__ import annotations
 
 import dataclasses
 import json
-import logging
 import subprocess
-from collections.abc import Iterable
-from typing import Annotated
+import webbrowser
 
 import cyclopts
 from rich.console import Console
-from rich.markup import escape
 from rich.prompt import Confirm
-from rich.text import Text
 
 app = cyclopts.App(help=__doc__, default_parameter=cyclopts.Parameter(negative=()))
-logger = logging.getLogger(__name__)
 console = Console()
 
-ALWAYS_PROTECTED = frozenset({"main", "master"})
-# Renovate owns its upstream branches: never delete them remotely.
-REMOTE_SKIP_PREFIXES = ("renovate/",)
-# One request per repository replaces a request for every branch. Older PRs simply remain
-# untouched unless Git itself can prove the branch was merged.
+REMOTE = "origin"
+LOCAL_REFS = "refs/heads/"
+REMOTE_REFS = f"refs/remotes/{REMOTE}/"
+ALWAYS_PROTECTED = frozenset({"HEAD", "main", "master"})
+# One request per repository. Older PRs are only caught when Git itself sees the merge.
 MERGED_PR_LIMIT = 1_000
 
 
 @dataclasses.dataclass(frozen=True)
-class Repo:
+class Ref:
     name: str
-    default_branch: str | None
+    sha: str
+    author: str
 
 
 @dataclasses.dataclass(frozen=True)
-class Branch:
-    name: str
-    upstream: str | None
-    gone: bool
-
-    def pr_heads(self, protected: set[str]) -> tuple[str, ...]:
-        """Possible PR heads: the local name and, if renamed, its upstream name."""
-        pushed = self.upstream.split("/", 1)[-1] if self.upstream else self.name
-        if pushed == self.name or pushed in protected:
-            return (self.name,)
-        return (self.name, pushed)
+class Merged:
+    names: frozenset[str]  # branches merged per Git, plus merged PR heads
+    shas: frozenset[str]  # tips proven merged: in the base or a merged PR head
+    prs: dict[str, str]  # PR head branch -> PR URL
 
 
-@dataclasses.dataclass(frozen=True)
-class Verdict:
-    reason: str
-    review: bool = False
-
-
-def run_cmd(command_args: list[str]) -> str:
-    result = subprocess.run(command_args, capture_output=True, text=True, check=False)
+def run(*args: str) -> str:
+    result = subprocess.run(args, capture_output=True, text=True, check=False)
     if result.returncode:
-        logger.debug("%s failed: %s", " ".join(command_args), result.stderr.strip())
+        raise SystemExit(f"{' '.join(args)} failed: {result.stderr.strip()}")
     return result.stdout
 
 
-def run_ok(command_args: list[str]) -> bool:
-    return not subprocess.run(command_args, capture_output=True, check=False).returncode
-
-
-def _git(args: list[str]) -> subprocess.CompletedProcess[str]:
+def _git(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(["git", *args], capture_output=True, text=True, check=False)
 
 
-def _branch_names(ref_pattern: str) -> list[str]:
-    return run_cmd(
-        ["git", "for-each-ref", "--format=%(refname:short)", ref_pattern]
-    ).splitlines()
+def info(message: str) -> None:
+    console.print(message, style="dim", markup=False)
 
 
-def get_local_branches() -> list[Branch]:
-    fields = ("refname:short", "upstream:short", "upstream:track")
-    ref_format = "%09".join(f"%({field})" for field in fields)
+def refs(prefix: str, *filters: str) -> list[Ref]:
+    """Branches under a ref prefix, sorted by name."""
+    ref_format = "%(refname)%09%(objectname)%09%(authoremail:trim)"
+    lines = run("git", "for-each-ref", f"--format={ref_format}", *filters, prefix)
     return [
-        Branch(name, upstream or None, gone=track == "[gone]")
-        for name, upstream, track in (
-            line.split("\t")
-            for line in run_cmd(
-                ["git", "for-each-ref", f"--format={ref_format}", "refs/heads/"]
-            ).splitlines()
-        )
+        Ref(name.removeprefix(prefix), sha, author)
+        for name, sha, author in (line.split("\t") for line in lines.splitlines())
     ]
 
 
-def get_remote_branches(remote: str = "origin") -> set[str]:
-    prefix = f"{remote}/"
-    return {
-        branch.removeprefix(prefix)
-        for branch in _branch_names(f"refs/remotes/{remote}/")
-        if not branch.endswith("/HEAD")
+def github_repos() -> tuple[list[str], str]:
+    """The GitHub repo plus, for a fork, its upstream parent, and the default branch."""
+    fields = "nameWithOwner,defaultBranchRef,parent"
+    repo = json.loads(run("gh", "repo", "view", "--json", fields))
+    names = [repo["nameWithOwner"]]
+    if parent := repo["parent"]:
+        names.append(f"{parent['owner']['login']}/{parent['name']}")
+    return names, repo["defaultBranchRef"]["name"]
+
+
+def upstream_remotes(repos: list[str]) -> list[str]:
+    """Remotes pointing at one of the GitHub repos: merged work lands on their default branch."""
+    suffixes = tuple(f"{sep}{repo.lower()}" for repo in repos for sep in "/:")
+    remotes = (line.split() for line in run("git", "remote", "-v").splitlines())
+    matching = {
+        name
+        for name, url, _ in remotes
+        if url.lower().removesuffix(".git").endswith(suffixes)
     }
+    return sorted(matching) or [REMOTE]
 
 
-def get_worktrees() -> dict[str, str]:
+def fetch_merged(repos: list[str], default_branch: str) -> Merged:
+    # In a fork, origin's default branch lags behind the upstream one.
+    remotes = upstream_remotes(repos)
+    info("Fetching full git history")
+    to_fetch = sorted({REMOTE, *remotes})
+    run("git", "fetch", "--multiple", "--prune", "--quiet", *to_fetch)
+
+    bases = [f"{remote}/{default_branch}" for remote in remotes]
+    info(f"Checking for merged branches on {', '.join(bases)}")
+    merged_filters = [f"--merged={base}" for base in bases]
+    in_base = [
+        ref
+        for prefix in (LOCAL_REFS, REMOTE_REFS)
+        for ref in refs(prefix, *merged_filters)
+    ]
+    names = {ref.name for ref in in_base}
+    shas = {ref.sha for ref in in_base}
+
+    # Squash and rebase merges leave no trace in Git: only GitHub knows about them.
+    prs: dict[str, str] = {}
+    for repo in repos:
+        info(f"Checking for merged PRs on {repo}")
+        fields = "headRefName,headRefOid,url"
+        limit = str(MERGED_PR_LIMIT)
+        output = run(
+            *("gh", "pr", "list", "--repo", repo, "--state", "merged"),
+            *("--json", fields, "--limit", limit),
+        )
+        for pr in json.loads(output):
+            prs.setdefault(pr["headRefName"], pr["url"])
+            shas.add(pr["headRefOid"])
+
+    names |= prs.keys()
+    info(f"Found {len(names)} merged branches")
+    return Merged(frozenset(names), frozenset(shas), prs)
+
+
+def worktrees_by_branch() -> dict[str, str]:
     """Branch name -> linked worktree path, skipping the main worktree listed first."""
     worktrees: dict[str, str] = {}
-    blocks = run_cmd(["git", "worktree", "list", "--porcelain"]).strip().split("\n\n")
+    blocks = run("git", "worktree", "list", "--porcelain").strip().split("\n\n")
     for block in blocks[1:]:
-        path, *lines = block.splitlines()
-        for line in lines:
-            if line.startswith("branch refs/heads/"):
-                name = line.removeprefix("branch refs/heads/")
-                worktrees[name] = path.removeprefix("worktree ")
+        attrs = dict(line.partition(" ")[::2] for line in block.splitlines())
+        if branch := attrs.get("branch"):
+            worktrees[branch.removeprefix(LOCAL_REFS)] = attrs["worktree"]
     return worktrees
 
 
-def _default_branch(repo_json: dict) -> str | None:
-    return (repo_json.get("defaultBranchRef") or {}).get("name")
+def confirm(names: list[str], label: str) -> bool:
+    if not names:
+        console.print(f"No {label.lower()} branches to clean!", style="green")
+        return False
+    console.print(f"{label} branches to clean", style="bold")
+    for name in names:
+        console.print(f"  {name}", style="cyan", markup=False)
+    return Confirm.ask("Delete these branches?", default=False)
 
 
-def get_repos() -> list[Repo]:
-    """The resolved GitHub repo and, for a fork, its upstream parent."""
-    fields = "nameWithOwner,defaultBranchRef,parent"
-    resolved = json.loads(run_cmd(["gh", "repo", "view", "--json", fields]) or "{}")
-    if not resolved:
-        raise SystemExit("Could not resolve the GitHub repo; is gh authenticated?")
-
-    repos = [Repo(resolved["nameWithOwner"], _default_branch(resolved))]
-    if parent := resolved["parent"]:
-        name = f"{parent['owner']['login']}/{parent['name']}"
-        upstream = json.loads(
-            run_cmd(["gh", "repo", "view", name, "--json", "defaultBranchRef"]) or "{}"
-        )
-        repos.append(Repo(name, _default_branch(upstream)))
-    return repos
-
-
-def get_base_ref(repos: list[Repo], remote: str = "origin") -> str | None:
-    """The remote-tracking ref merged work lands on, such as ``origin/main``."""
-    for repo in repos:
-        ref = f"{remote}/{repo.default_branch}"
-        if repo.default_branch and run_ok(["git", "rev-parse", "--verify", ref]):
-            return ref
-    return None
-
-
-def merged_prs(repos: Iterable[Repo]) -> dict[str, str]:
-    """Recent merged PR head names, fetched once per repository."""
-    result: dict[str, str] = {}
-    for repo in repos:
-        output = run_cmd(
-            [
-                "gh",
-                "pr",
-                "list",
-                "--repo",
-                repo.name,
-                "--state",
-                "merged",
-                "--json",
-                "number,headRefName",
-                "--limit",
-                str(MERGED_PR_LIMIT),
-            ]
-        )
-        for pr in json.loads(output) if output.strip() else []:
-            result.setdefault(pr["headRefName"], f"{repo.name}#{pr['number']}")
-    return result
-
-
-def _is_rebased_into(branch: str, base: str) -> bool:
-    """Every commit has a patch-id twin in base, as after a rebase merge."""
-    commits = run_cmd(["git", "cherry", base, branch]).splitlines()
-    return bool(commits) and all(commit.startswith("-") for commit in commits)
-
-
-def _merged_pr(branch: Branch, prs: dict[str, str], protected: set[str]) -> str | None:
-    return next((prs[head] for head in branch.pr_heads(protected) if head in prs), None)
-
-
-def classify_branch(
-    branch: Branch,
-    base: str | None,
-    prs: dict[str, str],
-    protected: set[str],
-) -> Verdict | None:
-    """Classify a branch without treating a deleted upstream as proof of a merge."""
-    if base and run_ok(["git", "merge-base", "--is-ancestor", branch.name, base]):
-        return Verdict(f"in {base}")
-    if base and _is_rebased_into(branch.name, base):
-        return Verdict(f"rebased into {base}")
-
-    reasons = []
-    if pr := _merged_pr(branch, prs, protected):
-        reasons.append(f"merged PR {pr}")
-    if branch.gone:
-        reasons.append(f"upstream {branch.upstream} deleted")
-    if reasons:
-        return Verdict("; ".join(reasons), review=True)
-    return None
-
-
-def classify_branches(
-    branches: Iterable[Branch],
-    base: str | None,
-    prs: dict[str, str],
-    protected: set[str],
-) -> dict[str, Verdict]:
-    return {
-        branch.name: verdict
-        for branch in branches
-        if (verdict := classify_branch(branch, base, prs, protected)) is not None
-    }
-
-
-def classify_remote_branches(
-    branches: Iterable[str], base: str | None, prs: dict[str, str], remote: str
-) -> dict[str, Verdict]:
-    verdicts: dict[str, Verdict] = {}
-    for name in branches:
-        ref = f"{remote}/{name}"
-        if base and run_ok(["git", "merge-base", "--is-ancestor", ref, base]):
-            verdicts[name] = Verdict(f"in {base}")
-        elif base and _is_rebased_into(ref, base):
-            verdicts[name] = Verdict(f"rebased into {base}")
-        elif pr := prs.get(name):
-            verdicts[name] = Verdict(f"merged PR {pr}", review=True)
-    return verdicts
-
-
-def _report(
-    header: str, verdicts: dict[str, Verdict], worktrees: dict[str, str]
-) -> None:
-    if not verdicts:
-        return
-    console.print(f"{header} ({len(verdicts)}):", style="bold")
-    for name, verdict in sorted(verdicts.items()):
-        line = Text.assemble(("  " + name, "cyan"), f" — {verdict.reason}")
-        if path := worktrees.get(name):
-            line.append(f" (checked out at {path})", style="yellow")
-        console.print(line)
-
-
-def _failed(name: str, stderr: str) -> None:
+def _failed(name: str, result: subprocess.CompletedProcess[str]) -> None:
     # Only the first line: git follows its errors with hints we act on ourselves.
-    error = stderr.strip().partition("\n")[0]
+    error = result.stderr.strip().partition("\n")[0]
     console.print(f"✗ {name}  {error}", style="red", markup=False)
 
 
-def delete_local_branch(name: str, worktree: str | None) -> None:
-    if worktree:
-        if not Confirm.ask(f"  Remove worktree {escape(worktree)} too?", default=False):
-            return
-        console.print(f"  Removing worktree {worktree}…", style="yellow", markup=False)
-        result = _git(["worktree", "remove", "--force", worktree])
-        if result.returncode:
-            _failed(name, result.stderr)
-            return
-    result = _git(["branch", "-d", name])
-    if result.returncode and "not fully merged" in result.stderr:
-        if not Confirm.ask(f"  Force delete {escape(name)}?", default=False):
-            return
-        result = _git(["branch", "-D", name])
-    if result.returncode:
-        _failed(name, result.stderr)
-    else:
-        console.print(f"✓ {name}", style="green", markup=False)
+def remove_worktree(name: str, worktree: str) -> bool:
+    info(f"  Removing worktree {worktree}")
+    result = _git("worktree", "remove", worktree)
+    if not result.returncode:
+        return True
+    _failed(name, result)
+    subprocess.run(["git", "-C", worktree, "status", "--short"], check=False)
+    if not Confirm.ask(
+        "  Force remove worktree? Pending changes will be lost", default=False
+    ):
+        return False
+    subprocess.run(["git", "worktree", "remove", "--force", worktree], check=False)
+    return True
 
 
-def cleanup_local_git_branches(
-    protected: set[str], base: str | None, prs: dict[str, str], dry_run: bool
-) -> None:
+def delete_local_branch(ref: Ref, merged: Merged, worktree: str | None) -> None:
+    if worktree and not remove_worktree(ref.name, worktree):
+        return
+    # `-d` only compares with HEAD and the upstream, so it rejects squash merges.
+    proven = ref.sha in merged.shas
+    result = _git("branch", "-D" if proven else "-d", ref.name)
+    if not result.returncode:
+        console.print(f"✓ {ref.name}", style="green", markup=False)
+        return
+
+    _failed(ref.name, result)
+    if proven:
+        return
+    url = merged.prs.get(ref.name)
+    if url and Confirm.ask("  See PR on GitHub?", default=True):
+        webbrowser.open(url)
+    if Confirm.ask("  Force delete?", default=False):
+        subprocess.run(["git", "branch", "-D", ref.name], check=False)
+
+
+def prune_local_branches(merged: Merged, protected: frozenset[str]) -> None:
     console.print("Pruning local branches…", style="bold")
-    branches = [
-        branch for branch in get_local_branches() if branch.name not in protected
+    to_clean = [
+        ref
+        for ref in refs(LOCAL_REFS)
+        if ref.name not in protected
+        and (ref.name in merged.names or ref.sha in merged.shas)
     ]
-    verdicts = classify_branches(branches, base, prs, protected)
-    worktrees = get_worktrees()
-    safe = {name: verdict for name, verdict in verdicts.items() if not verdict.review}
-    review = {name: verdict for name, verdict in verdicts.items() if verdict.review}
-
-    if not verdicts:
-        console.print("No local branches to clean!", style="green")
+    if not confirm([ref.name for ref in to_clean], "Local"):
         return
 
-    _report("Local branches safe to delete", safe, worktrees)
-    _report("Local branches needing review", review, worktrees)
-    if dry_run:
-        console.print("Dry run: no local branches deleted.", style="dim")
-        return
-    for label, candidates in (("safe", safe), ("review-required", review)):
-        if candidates and Confirm.ask(
-            f"Delete {len(candidates)} {label} local branches?", default=False
-        ):
-            for name in sorted(candidates):
-                delete_local_branch(name, worktrees.get(name))
+    worktrees = worktrees_by_branch()
+    for ref in to_clean:
+        delete_local_branch(ref, merged, worktrees.get(ref.name))
+    console.print("Done cleaning local branches!", style="bold green")
 
 
-def cleanup_remote_git_branches(
-    protected: set[str],
-    base: str | None,
-    prs: dict[str, str],
-    remote: str,
-    dry_run: bool,
-) -> None:
+def prune_remote_branches(merged: Merged, protected: frozenset[str]) -> None:
     console.print("Pruning remote branches…", style="bold")
-    branches = {
-        name
-        for name in get_remote_branches(remote) - protected
-        if not name.startswith(REMOTE_SKIP_PREFIXES)
-    }
-    verdicts = classify_remote_branches(branches, base, prs, remote)
-    safe = {name: verdict for name, verdict in verdicts.items() if not verdict.review}
-    review = {name: verdict for name, verdict in verdicts.items() if verdict.review}
-
-    if not verdicts:
-        console.print("No remote branches to clean!", style="green")
+    email = run("git", "config", "user.email").strip()
+    # A remote delete has no safety net: only tips I authored that are proven merged.
+    to_clean = [
+        ref.name
+        for ref in refs(REMOTE_REFS)
+        if ref.name not in protected and ref.author == email and ref.sha in merged.shas
+    ]
+    if not confirm(to_clean, "Remote"):
         return
 
-    _report(f"Remote {remote} branches safe to delete", safe, {})
-    _report(f"Remote {remote} branches needing review", review, {})
-    if dry_run:
-        console.print("Dry run: no remote branches deleted.", style="dim")
-        return
-    for label, candidates in (("safe", safe), ("review-required", review)):
-        if candidates and Confirm.ask(
-            f"Delete {len(candidates)} {label} remote branches?", default=False
-        ):
-            result = _git(["push", remote, "--delete", *sorted(candidates)])
-            if result.returncode:
-                _failed("push", result.stderr)
-            else:
-                console.print(
-                    f"✓ Pruned {len(candidates)} remote branches", style="green"
-                )
+    result = _git("push", REMOTE, "--delete", *to_clean)
+    if result.returncode:
+        error = result.stderr.strip()
+        console.print(f"Push failed: {error}", style="red", markup=False)
+    else:
+        console.print(f"Pruned {len(to_clean)} remote branches!", style="bold green")
 
 
 @app.default
-def main(
-    *,
-    protected: tuple[str, ...] = (),
-    dry_run: bool = False,
-    no_fetch: bool = False,
-    verbose: Annotated[bool, cyclopts.Parameter(alias="-v")] = False,
-) -> None:
+def main(*, protected: tuple[str, ...] = ()) -> None:
     """
     Parameters
     ----------
     protected
-        Extra branches to keep, on top of main/master and each repository's default branch.
-    no_fetch
-        Use existing remote-tracking refs. This is quicker but may miss recent merges or deletions.
+        Extra branches to keep, on top of main/master, the default and the current branch.
     """
-    if verbose:
-        logging.basicConfig(level=logging.DEBUG, format="%(message)s")
-
-    console.print("Fetching merged PRs…", style="bold")
-    repos = get_repos()
-    protected_branches = (
-        ALWAYS_PROTECTED
-        | set(protected)
-        | {repo.default_branch for repo in repos if repo.default_branch}
-    )
-    if not no_fetch:
-        run_cmd(["git", "fetch", "origin", "--prune"])
-
-    base = get_base_ref(repos)
-    if base is None:
-        console.print(
-            "No remote-tracking default branch; Git-only checks are unavailable.",
-            style="yellow",
-        )
-
-    # This is deliberately one request per repository, shared by local and remote cleanup.
-    prs = merged_prs(repos)
-    cleanup_local_git_branches(protected_branches, base, prs, dry_run)
-    cleanup_remote_git_branches(protected_branches, base, prs, "origin", dry_run)
+    console.print("Fetching merged branches…", style="bold")
+    repos, default_branch = github_repos()
+    merged = fetch_merged(repos, default_branch)
+    current_branch = run("git", "branch", "--show-current").strip()
+    keep = ALWAYS_PROTECTED | {*protected, default_branch, current_branch}
+    prune_local_branches(merged, keep)
+    prune_remote_branches(merged, keep)
 
 
 if __name__ == "__main__":

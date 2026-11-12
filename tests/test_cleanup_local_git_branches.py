@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import contextlib
-import functools
 import importlib.util
 import pathlib
 import subprocess
@@ -22,90 +21,84 @@ cleanup = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = cleanup
 SPEC.loader.exec_module(cleanup)
 
+PROTECTED = frozenset({"main"})
 
-class MergedPrsTests(unittest.TestCase):
-    def test_fetches_merged_prs_once_per_repo(self) -> None:
-        repos = [
-            cleanup.Repo("me/fork", "main"),
-            cleanup.Repo("upstream/project", "main"),
-        ]
-        outputs = iter(
-            [
-                '[{"number": 1, "headRefName": "from-fork"}]',
-                '[{"number": 2, "headRefName": "from-upstream"}]',
-            ]
+
+def git(*args: str) -> str:
+    result = subprocess.run(["git", *args], check=True, capture_output=True, text=True)
+    return result.stdout.strip()
+
+
+def commit(branch: str, *args: str) -> str:
+    """Create a branch off main holding one commit, and return its tip."""
+    git("checkout", "-q", "-b", branch, "main")
+    git("commit", "-q", "--allow-empty", "-m", branch, *args)
+    return git("rev-parse", "HEAD")
+
+
+class PruneTests(unittest.TestCase):
+    def setUp(self) -> None:
+        tmp = self.enterContext(tempfile.TemporaryDirectory())
+        self.enterContext(contextlib.chdir(tmp))
+        git("init", "-q", "--bare", "origin.git")
+        git("init", "-q", "-b", "main", "repo")
+        self.enterContext(contextlib.chdir("repo"))
+        git("remote", "add", "origin", "../origin.git")
+        git("config", "user.name", "me")
+        git("config", "user.email", "me@example.com")
+        git("config", "commit.gpgsign", "false")
+        git("commit", "-q", "--allow-empty", "-m", "init")
+
+    def test_base_remote_is_the_one_pointing_at_the_github_repo(self) -> None:
+        git("remote", "add", "up", "git@github.com:Typed/Proj.git")
+
+        self.assertEqual(cleanup.upstream_remotes(["typed/proj"]), ["up"])
+        self.assertEqual(cleanup.upstream_remotes(["me/untracked"]), ["origin"])
+
+    def test_local_branch_is_forced_only_when_its_tip_is_proven_merged(self) -> None:
+        git("branch", "in-main")
+        git("worktree", "add", "-q", "../wt", "in-main")
+        squashed = commit("squashed")
+        commit("reused-name")
+        commit("wip")
+        git("checkout", "-q", "main")
+        merged = cleanup.Merged(
+            names=frozenset({"in-main", "squashed", "reused-name"}),
+            shas=frozenset({git("rev-parse", "main"), squashed}),
+            prs={"reused-name": "https://github.com/me/repo/pull/1"},
         )
 
-        with patch.object(cleanup, "run_cmd", side_effect=outputs) as run_cmd:
-            self.assertEqual(
-                cleanup.merged_prs(repos),
-                {"from-fork": "me/fork#1", "from-upstream": "upstream/project#2"},
-            )
-
-        self.assertEqual(run_cmd.call_count, 2)
-        self.assertTrue(
-            all("--head" not in call.args[0] for call in run_cmd.call_args_list)
-        )
-
-
-class ClassificationTests(unittest.TestCase):
-    def test_gone_upstream_requires_review_even_if_pr_was_merged(self) -> None:
-        branch = cleanup.Branch("feature", "origin/feature", gone=True)
-        with (
-            patch.object(cleanup, "run_ok", return_value=False),
-            patch.object(cleanup, "_is_rebased_into", return_value=False),
+        # Accept the list, then decline both the PR link and the force delete.
+        answers = {"Delete these branches?": True}
+        with patch.object(
+            cleanup.Confirm, "ask", side_effect=lambda prompt, **_: answers.get(prompt)
         ):
-            verdict = cleanup.classify_branch(
-                branch,
-                "origin/main",
-                {"feature": "me/project#42"},
-                {"main"},
-            )
+            cleanup.prune_local_branches(merged, PROTECTED)
 
         self.assertEqual(
-            verdict,
-            cleanup.Verdict(
-                "merged PR me/project#42; upstream origin/feature deleted", review=True
-            ),
+            [ref.name for ref in cleanup.refs(cleanup.LOCAL_REFS)],
+            ["main", "reused-name", "wip"],
+        )
+        self.assertEqual(cleanup.worktrees_by_branch(), {})
+
+    def test_remote_branch_needs_my_authorship_and_a_proven_merge(self) -> None:
+        mine = commit("mine")
+        commit("mine-unproven")
+        theirs = commit("theirs", "--author=them <them@example.com>")
+        git("push", "-q", "origin", "main", "mine", "mine-unproven", "theirs")
+        merged = cleanup.Merged(
+            names=frozenset({"mine", "mine-unproven", "theirs"}),
+            shas=frozenset({mine, theirs}),
+            prs={},
         )
 
-    def test_rebased_branch_is_safe_without_a_github_pr_lookup(self) -> None:
-        branch = cleanup.Branch("feature", "origin/feature", gone=False)
-        with (
-            patch.object(cleanup, "run_ok", return_value=False),
-            patch.object(cleanup, "_is_rebased_into", return_value=True),
-        ):
-            verdict = cleanup.classify_branch(branch, "origin/main", {}, {"main"})
+        with patch.object(cleanup.Confirm, "ask", return_value=True):
+            cleanup.prune_remote_branches(merged, PROTECTED)
 
-        self.assertEqual(verdict, cleanup.Verdict("rebased into origin/main"))
-
-
-class DeleteLocalBranchTests(unittest.TestCase):
-    def test_worktree_removal_and_force_delete_wait_for_confirmation(self) -> None:
-        git = functools.partial(subprocess.run, check=True, capture_output=True)
-        commit = ["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q"]
-        with tempfile.TemporaryDirectory() as tmp, contextlib.chdir(tmp):
-            git(["git", "init", "-q", "-b", "main"])
-            git([*commit, "--allow-empty", "-m", "init"])
-            git(["git", "worktree", "add", "-q", "wt", "-b", "merged"])
-            git(["git", "checkout", "-q", "-b", "unmerged"])
-            git([*commit, "--allow-empty", "-m", "work"])
-            git(["git", "checkout", "-q", "main"])
-            worktree = f"{tmp}/wt"
-
-            with patch.object(cleanup.Confirm, "ask", return_value=False):
-                cleanup.delete_local_branch("merged", worktree)
-                cleanup.delete_local_branch("unmerged", None)
-            self.assertEqual(cleanup.get_worktrees(), {"merged": worktree})
-            self.assertEqual(
-                cleanup._branch_names("refs/heads/"), ["main", "merged", "unmerged"]
-            )
-
-            with patch.object(cleanup.Confirm, "ask", return_value=True):
-                cleanup.delete_local_branch("merged", worktree)
-                cleanup.delete_local_branch("unmerged", None)
-            self.assertEqual(cleanup.get_worktrees(), {})
-            self.assertEqual(cleanup._branch_names("refs/heads/"), ["main"])
+        self.assertEqual(
+            git("--git-dir=../origin.git", "branch", "--format=%(refname:short)"),
+            "main\nmine-unproven\ntheirs",
+        )
 
 
 if __name__ == "__main__":
