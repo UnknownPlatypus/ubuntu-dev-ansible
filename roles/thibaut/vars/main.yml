@@ -16,6 +16,7 @@ thibaut_apt_packages:
   - pv # Pipe Viewer - monitors the progress of data through a pipeline
   - slack-desktop # Slack team chat
   - sourcegit # Fast, opensource Git GUI client
+  - steam-libs-i386:i386 # Steam's 32-bit libs (libGL.so.1, ...), only recommended by steam-launcher
   - tailscale # Secure, easy-to-use VPN for building private networks
   - tmux # Terminal multiplexer
   - tree # Directory listing in tree-like format
