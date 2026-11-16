@@ -1,7 +1,7 @@
 ---
 # Generic bootstrap for tools shipped via an official `install.sh` installer that is
 # installing/updating the tool and doing relevant bashrc changes.
-# item: { name, url, bin, sha256, bin_dir=.local/bin, args="", post_install_script="", update_cmd="" }
+# item: { name, url, bin, sha256, bin_dir=.local/bin, args="", env={}, post_install_script="", update_cmd="" }
 - name: "Check install status for {{ item.name }}"
   ansible.builtin.stat:
     path: "{{ ansible_facts['env'].HOME }}/{{ item.bin_dir | default('.local/bin') }}/{{ item.name }}"
@@ -19,6 +19,7 @@
 
     - name: "Run installer for {{ item.name }}"
       ansible.builtin.command: "bash /tmp/{{ item.name }}-install.sh {{ item.args | default('') }}"
+      environment: "{{ item.env | default({}) }}"
       changed_when: true
 
     # Run once, right after first install (e.g. `atuin import auto`).

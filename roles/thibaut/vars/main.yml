@@ -126,6 +126,12 @@ thibaut_script_installs:
   - name: herdr # Agent-aware terminal multiplexer, runs coding agents in tabs and panes
     url: https://herdr.dev/install.sh
     sha256: 3db3af8375006e193a393b5e3129feb237f30bc6f053fffbe1dc75da1f3d9ac4
+  - name: depot # CLI for Depot remote container builds and CI runners
+    url: https://depot.dev/install-cli.sh
+    sha256: 96ccb232543ef95ce500bf4d715fbda5c896e3f55fb8a298b0218537cbb58aa1
+    env:
+      # Defaults to ~/.depot/bin, which isn't on PATH.
+      DEPOT_INSTALL_DIR: "{{ ansible_facts['env'].HOME }}/.local/bin"
   - name: atuin # Magical shell history with sync and fuzzy search
     url: https://setup.atuin.sh
     sha256: 3e709edea36c6bccfaa19d9ba82c53323da41dd2e8eb05509682c9a60f939bd4
