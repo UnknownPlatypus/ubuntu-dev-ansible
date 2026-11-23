@@ -1,0 +1,31 @@
+[user]
+	email = thibaut.decombe@gmail.com
+	name = Thibaut Decombe
+
+
+[checkout]
+    workers = 0
+
+[core]
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+    line-numbers = true
+[merge]
+    conflictStyle = zdiff3
+[alias]
+	prebase = rebase -x 'pre-commit run --from-ref HEAD~ --to-ref HEAD'
+	stash-rename = "!_() { rev=$(git rev-parse $1) && git stash drop $1 || exit 1 ; git diff-index --quiet HEAD; s=$?; [ $s != 0 ] && git stash save \"tmp stash from stash-rename\"; git stash apply $rev && shift && git stash save \"$@\" && [ $s != 0 ] && git stash pop stash@{1}; }; _"
+[diff]
+	algorithm = histogram
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+	default = current
+[rerere]
+	enabled = true
+[branch]
+	autoSetupMerge = simple

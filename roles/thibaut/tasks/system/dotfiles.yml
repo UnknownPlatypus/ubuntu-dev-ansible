@@ -7,6 +7,7 @@
   loop:
     - ipython/profile_default/startup
     - config/dust
+    - config/git
     - config/zed
     - aws
     - agents
@@ -22,6 +23,8 @@
     - agents/AGENTS.md
     - aws/config
     - config/dust/config.toml
+    - config/git/config
+    - config/git/ignore
     - config/zed/settings.json
     - config/ripgreprc
     - local/share/org.gnome.Ptyxis/palettes/thibaut.palette
@@ -30,8 +33,6 @@
     - ansible.cfg
     - bash_aliases
     - digrc
-    - gitconfig_opensource
-    - gitignore
     - justfile
 
 - name: Install custom scripts to ~/.local/bin
