@@ -89,6 +89,15 @@
   register: thibaut_rustup_install_output
   changed_when: "'unchanged' not in thibaut_rustup_install_output.stdout"
 
+- name: Install & upgrade Rust CLIs with cargo-binstall
+  ansible.builtin.command: >
+    cargo binstall --no-confirm --disable-strategies compile
+    {{ thibaut_cargo_binstall_crates | join(' ') }}
+  register: thibaut_cargo_binstall
+  changed_when: "'will install' in thibaut_cargo_binstall.stdout"
+  tags:
+    - rust
+
 - name: Uv install latest Pythons
   ansible.builtin.command: >
     uv python install

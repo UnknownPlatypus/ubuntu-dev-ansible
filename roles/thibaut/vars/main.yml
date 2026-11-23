@@ -111,6 +111,10 @@ thibaut_brew_packages:
   - zizmor # Static security analysis for GitHub Actions workflows
   - zoxide # A smarter cd command that ranks directories by frecency
 
+# Rust CLIs missing from brew, installed from prebuilt binaries with cargo-binstall.
+thibaut_cargo_binstall_crates:
+  - cargo-clean-all # Recursively clean target/ dirs of all cargo projects under a directory
+
 # Tools distributed via an official shell installer.
 thibaut_script_installs:
   - name: uv # Extremely fast Python package & project manager (Astral)

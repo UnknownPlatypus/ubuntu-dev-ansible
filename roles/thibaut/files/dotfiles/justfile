@@ -16,6 +16,7 @@ update-home-serv *args:
 
 # Free disk space with each tool's own cache clean command
 gc:
+    cargo clean-all ~/workspace
     pre-commit gc
     prek cache gc
     uv cache prune
