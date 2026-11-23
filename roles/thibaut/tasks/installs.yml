@@ -135,6 +135,13 @@
   tags:
     - uv
 
+- name: Update global agent skills
+  ansible.builtin.command: bunx skills update -g
+  register: thibaut_skills_update
+  changed_when: "'up to date' not in thibaut_skills_update.stderr"
+  tags:
+    - skills
+
 - name: Ensure user bash-completion dir exists
   ansible.builtin.file:
     path: ~/.local/share/bash-completion/completions
