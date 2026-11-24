@@ -98,10 +98,13 @@ def fetch_merged(repos: list[str], default_branch: str) -> Merged:
     bases = [f"{remote}/{default_branch}" for remote in remotes]
     info(f"Checking for merged branches on {', '.join(bases)}")
     merged_filters = [f"--merged={base}" for base in bases]
+    # A branch sitting on a base tip was just created, it has no commits to be merged.
+    base_tips = set(run("git", "rev-parse", *bases).split())
     in_base = [
         ref
         for prefix in (LOCAL_REFS, REMOTE_REFS)
         for ref in refs(prefix, *merged_filters)
+        if ref.sha not in base_tips
     ]
     names = {ref.name for ref in in_base}
     shas = {ref.sha for ref in in_base}
