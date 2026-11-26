@@ -23,7 +23,8 @@ REMOTE = "origin"
 LOCAL_REFS = "refs/heads/"
 REMOTE_REFS = f"refs/remotes/{REMOTE}/"
 ALWAYS_PROTECTED = frozenset({"HEAD", "main", "master"})
-# One request per repository. Older PRs are only caught when Git itself sees the merge.
+# Only my PRs, 100 per request: listing everyone's is slow.
+# Older PRs are only caught when Git itself sees the merge.
 MERGED_PR_LIMIT = 1_000
 
 
@@ -93,7 +94,7 @@ def fetch_merged(repos: list[str], default_branch: str) -> Merged:
     remotes = upstream_remotes(repos)
     info("Fetching full git history")
     to_fetch = sorted({REMOTE, *remotes})
-    run("git", "fetch", "--multiple", "--prune", "--quiet", *to_fetch)
+    run("git", "fetch", "--multiple", "--jobs=0", "--prune", "--quiet", *to_fetch)
 
     bases = [f"{remote}/{default_branch}" for remote in remotes]
     info(f"Checking for merged branches on {', '.join(bases)}")
@@ -117,7 +118,7 @@ def fetch_merged(repos: list[str], default_branch: str) -> Merged:
         limit = str(MERGED_PR_LIMIT)
         output = run(
             *("gh", "pr", "list", "--repo", repo, "--state", "merged"),
-            *("--json", fields, "--limit", limit),
+            *("--author", "@me", "--json", fields, "--limit", limit),
         )
         for pr in json.loads(output):
             prs.setdefault(pr["headRefName"], pr["url"])
