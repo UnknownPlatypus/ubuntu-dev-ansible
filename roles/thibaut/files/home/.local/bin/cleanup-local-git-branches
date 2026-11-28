@@ -88,6 +88,13 @@ def upstream_remotes(repos: list[str]) -> list[str]:
     return sorted(matching) or [REMOTE]
 
 
+def moved_since_creation(ref: Ref) -> bool:
+    """Whether the branch got commits, per its reflog: with none left, it counts as fresh."""
+    reflog = _git("log", "--walk-reflogs", "--format=%H", f"{LOCAL_REFS}{ref.name}")
+    shas = reflog.stdout.split()
+    return bool(shas) and shas[-1] != ref.sha
+
+
 def fetch_merged(repos: list[str], default_branch: str) -> Merged:
     # In a fork, origin's default branch lags behind the upstream one.
     remotes = upstream_remotes(repos)
@@ -98,16 +105,20 @@ def fetch_merged(repos: list[str], default_branch: str) -> Merged:
     bases = [f"{remote}/{default_branch}" for remote in remotes]
     info(f"Checking for merged branches on {', '.join(bases)}")
     merged_filters = [f"--merged={base}" for base in bases]
-    # A branch sitting on a base tip was just created, it has no commits to be merged.
+    local = refs(LOCAL_REFS, *merged_filters)
+    # A branch on a base tip is either fresh or fast-forwarded into the base,
+    # so its tip proves nothing.
     base_tips = set(run("git", "rev-parse", *bases).split())
     in_base = [
         ref
-        for prefix in (LOCAL_REFS, REMOTE_REFS)
-        for ref in refs(prefix, *merged_filters)
+        for ref in local + refs(REMOTE_REFS, *merged_filters)
         if ref.sha not in base_tips
     ]
     names = {ref.name for ref in in_base}
     shas = {ref.sha for ref in in_base}
+    names |= {
+        ref.name for ref in local if ref.sha in base_tips and moved_since_creation(ref)
+    }
 
     # Squash and rebase merges leave no trace in Git: only GitHub knows about them.
     prs: dict[str, str] = {}

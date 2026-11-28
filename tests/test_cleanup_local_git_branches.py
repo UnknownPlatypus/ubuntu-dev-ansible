@@ -55,6 +55,18 @@ class PruneTests(unittest.TestCase):
         self.assertEqual(cleanup.upstream_remotes(["typed/proj"]), ["up"])
         self.assertEqual(cleanup.upstream_remotes(["me/untracked"]), ["origin"])
 
+    def test_branch_on_the_base_tip_is_merged_only_once_it_got_commits(self) -> None:
+        commit("fast-forwarded")
+        git("checkout", "-q", "main")
+        git("merge", "-q", "--ff-only", "fast-forwarded")
+        git("push", "-q", "origin", "main")
+        git("branch", "fresh")
+
+        merged = cleanup.fetch_merged([], "main")
+
+        self.assertEqual(merged.names, {"main", "fast-forwarded"})
+        self.assertEqual(merged.shas, set())
+
     def test_local_branch_is_forced_only_when_its_tip_is_proven_merged(self) -> None:
         git("branch", "in-main")
         git("worktree", "add", "-q", "../wt", "in-main")
