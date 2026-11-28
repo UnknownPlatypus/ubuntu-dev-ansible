@@ -163,14 +163,6 @@
   tags:
     - uv
 
-- name: Update global agent skills
-  # Full path: on a first run, ~/.bun/bin isn't on PATH yet.
-  ansible.builtin.command: "{{ ansible_facts['env'].HOME }}/.bun/bin/bunx skills update -g"
-  register: thibaut_skills_update
-  changed_when: "'up to date' not in thibaut_skills_update.stderr"
-  tags:
-    - skills
-
 - name: Ensure user bash-completion dir exists
   ansible.builtin.file:
     path: ~/.local/share/bash-completion/completions
@@ -201,3 +193,11 @@
     label: "{{ item.item.name }}"
   tags:
     - bash-completions
+
+# Last, so every install (bun included) has run before it.
+- name: Update global agent skills
+  ansible.builtin.command: bunx skills update -g
+  register: thibaut_skills_update
+  changed_when: "'up to date' not in thibaut_skills_update.stderr"
+  tags:
+    - skills
