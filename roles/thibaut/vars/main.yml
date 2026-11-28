@@ -144,6 +144,11 @@ thibaut_script_installs:
     args: --non-interactive
     post_install_script: atuin import auto
     update_cmd: atuin update
+  # No update_cmd: greenday's `just security-upgrade` pins the bun version in ~/.bun.
+  - name: bun # JavaScript runtime and package manager, provides `bunx`
+    url: https://bun.com/install
+    sha256: 04882bf41679d49d9af108657a1e5515bf04fdf2940d12c0d0b1e5d79dc53be8
+    bin_dir: .bun/bin
 
 thibaut_uv_tools:
   - name: all-repos # Clone all your repositories and apply sweeping changes
@@ -172,6 +177,7 @@ thibaut_uv_tools:
   - name: pyinstrument # Sampling profiler for Python programs
   - name: recoverpy # Interactively find and recover deleted or overwritten files from your terminal
   - name: ruff # An extremely fast Python linter, written in Rust
+  - name: rumdl # Fast Markdown linter and formatter, written in Rust
   - name: rust-just # A handy command runner
   - name: shellcheck-py # Python wrapper for ShellCheck, a static analysis tool for shell scripts
   - name: sherlock-project # Hunt down social media accounts by username across social networks

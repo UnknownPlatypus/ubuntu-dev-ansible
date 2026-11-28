@@ -18,10 +18,8 @@ update-home-serv *args:
 gc:
     cargo clean-all ~/workspace
     pre-commit gc
-    prek cache gc
     uv cache prune
     npm cache verify
-    pnpm store prune
     brew cleanup
     docker image prune --force
     docker builder prune --force

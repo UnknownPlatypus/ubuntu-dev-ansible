@@ -85,7 +85,7 @@ Analyze the installed tools for issues. Use batched parallel WebSearch calls (is
 
 These were real issues in past configs, now fixed. Use them as a baseline for the level of analysis expected.
 
-Known intentional overlaps, do not flag: djade + djangofmt (the user benchmarks djangofmt against djade).
+Known exceptions, accepted as-is: djade + djangofmt (the user benchmarks djangofmt against djade), caprine (still works for the user despite the messenger.com shutdown).
 
 ## Step 3 — Discover New Tools
 

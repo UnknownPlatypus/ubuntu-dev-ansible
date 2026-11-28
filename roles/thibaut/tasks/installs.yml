@@ -136,7 +136,8 @@
     - uv
 
 - name: Update global agent skills
-  ansible.builtin.command: bunx skills update -g
+  # Full path: on a first run, ~/.bun/bin isn't on PATH yet.
+  ansible.builtin.command: "{{ ansible_facts['env'].HOME }}/.bun/bin/bunx skills update -g"
   register: thibaut_skills_update
   changed_when: "'up to date' not in thibaut_skills_update.stderr"
   tags:
