@@ -1,9 +1,4 @@
 {
-  "json": {},
-  "markdown": {},
-  "toml": {},
-  "ruff": {},
-  "yaml": {},
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.4.wasm",
     "https://plugins.dprint.dev/markdown-0.17.8.wasm",

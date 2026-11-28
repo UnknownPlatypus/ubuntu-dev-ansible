@@ -1,8 +1,0 @@
----
-# atuin installer writes a plain `eval "$(atuin init bash)"` to ~/.bashrc.
-# We need to fix it to add one with `--disable-up-arrow`
-- name: Disable the up-arrow binding in atuin's bash init line
-  ansible.builtin.lineinfile:
-    path: ~/.bashrc
-    regexp: "atuin init bash"
-    line: 'eval "$(atuin init bash --disable-up-arrow)"'

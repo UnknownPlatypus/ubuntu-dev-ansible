@@ -1,46 +1,20 @@
 ---
-- name: Create ~/workspace
-  ansible.builtin.file:
-    path: ~/workspace
-    state: directory
-    mode: "0755"
-
+# all-repos-* commands read these from ~.
 - name: Update all-repos config files
   ansible.builtin.copy:
-    src: "{{ thibaut_files }}/{{ item }}"
+    src: "{{ item }}"
     dest: ~/{{ item }}
     mode: "0600"
   loop:
     - all-repos.json
     - my-repos.json
-  register: thibaut_all_repos_conf
 
-- name: Clone all missing repos # noqa: no-handler
-  when: thibaut_all_repos_conf.changed
-  block:
-    - name: Run all-repos-clone command
-      ansible.builtin.command:
-        cmd: all-repos-clone --jobs -1
-        chdir: "{{ ansible_facts['env'].HOME }}"
-      changed_when: true
-
-    - name: Get list of git repos in /tmp/workspace
-      ansible.builtin.find:
-        paths: /tmp/workspace
-        file_type: directory
-      register: thibaut_tmp_git_repos
-
-    - name: Check which git repo don't exist in ~/workspace
-      ansible.builtin.stat:
-        path: ~/workspace/{{ item.path | basename }}
-      loop: "{{ thibaut_tmp_git_repos.files }}"
-      register: thibaut_workspace_dir_stats
-
-    - name: Copy missing git repos to ~/workspace
-      ansible.builtin.copy:
-        src: "{{ item.item.path }}/"
-        dest: ~/workspace/{{ item.item.path | basename }}/
-        remote_src: true
-        mode: preserve
-      loop: "{{ thibaut_workspace_dir_stats.results }}"
-      when: not item.stat.exists
+# `update: false` never touches existing clones, false positive: https://github.com/ansible/ansible-lint/issues/5217
+- name: Clone missing repos into ~/workspace # noqa: latest[git]
+  ansible.builtin.git:
+    repo: "{{ item.value }}"
+    dest: ~/workspace/{{ item.key }}
+    update: false
+  loop: "{{ lookup('file', 'my-repos.json') | from_json | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

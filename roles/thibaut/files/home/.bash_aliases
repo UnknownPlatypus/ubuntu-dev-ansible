@@ -30,7 +30,6 @@ alias rip='rip --graveyard ~/.local/share/Trash/files'
 
 # Git
 alias grgc="git reset --hard HEAD && git clean -fd"
-alias rmgm='git branch --merged master | grep -v master | xargs git branch -d'
 
 alias gc="git commit -m"
 alias gca="git commit -am"

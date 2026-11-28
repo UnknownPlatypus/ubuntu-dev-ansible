@@ -28,7 +28,7 @@ Monthly audit and discovery sweep for the ubuntu-dev-ansible repo. Two phases: (
 Read these files to build a complete inventory of every tool currently installed:
 
 - `roles/thibaut/vars/main.yml` — tool lists: `thibaut_apt_packages`, `thibaut_deb_packages`, `thibaut_brew_packages`, `thibaut_script_installs`, `thibaut_uv_tools`
-- `roles/thibaut/tasks/installs.yml` — rustup and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml` (`atuin.yml` only configures the script-installed atuin)
+- `roles/thibaut/tasks/installs.yml` — rustup, Podman Desktop (Flathub) and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml`
 - `roles/thibaut/tasks/llm.yml` — LLM-specific tools installed outside the main vars
 
 Rust dev tools (cargo-nextest, cargo-insta, …) go through brew, there is no cargo list.
@@ -200,7 +200,7 @@ Maintain alphabetical order within each section. Match the existing comment styl
 
 ### Custom installers
 
-Only when none of the lists above fit. Create `roles/thibaut/tasks/packages/<tool-name>.yml`, e.g. GitHub release tracking: fetch the latest version from the GitHub API, compare with the installed version, download if different, clean old versions. See `packages/podman-desktop.yml`, `packages/ollama.yml`.
+Only when none of the lists above fit. Create `roles/thibaut/tasks/packages/<tool-name>.yml`, e.g. GitHub release tracking: fetch the latest version from the GitHub API, compare with the installed version, download if different. See the ollama tasks in `llm.yml`.
 
 Always use `changed_when` to track actual changes.
 
@@ -217,9 +217,7 @@ Then add the include to `roles/thibaut/tasks/installs.yml`:
 
 If the tool needs configuration:
 
-1. Create the config file in `roles/thibaut/files/dotfiles/<config-path>`
-2. Add the directory to the dirs loop in `roles/thibaut/tasks/system/dotfiles.yml` (if needed)
-3. Add the file to the copy loop in `roles/thibaut/tasks/system/dotfiles.yml`
+Create the config file at its path relative to `~` under `roles/thibaut/files/home/` (e.g. `home/.config/<tool>/config.toml`). `roles/thibaut/tasks/system/dotfiles.yml` copies that whole tree into `~`.
 
 ### Removals (for redundancy fixes)
 

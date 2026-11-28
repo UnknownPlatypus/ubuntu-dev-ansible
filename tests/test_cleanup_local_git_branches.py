@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 SCRIPT = (
     pathlib.Path(__file__).parents[1]
-    / "roles/thibaut/files/bin/cleanup-local-git-branches"
+    / "roles/thibaut/files/home/.local/bin/cleanup-local-git-branches"
 )
 LOADER = SourceFileLoader("cleanup_local_git_branches", str(SCRIPT))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)

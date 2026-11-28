@@ -1,8 +1,0 @@
----
-# Claude Code is a disgusting piece os software actively harming standard for no reason.
-# Unlike codex that uses the standard `AGENTS.md`, it needs a proprietary `CLAUDE.md`.
-- name: Create `CLAUDE.md` -> `AGENTS.md` symlink
-  ansible.builtin.file:
-    src: ~/.agents/AGENTS.md
-    dest: ~/.claude/CLAUDE.md
-    state: link

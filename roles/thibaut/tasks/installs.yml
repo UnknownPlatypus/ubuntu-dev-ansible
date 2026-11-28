@@ -47,8 +47,13 @@
   tags:
     - script-installs
 
-- name: Configure atuin (bash integration + history import)
-  ansible.builtin.import_tasks: packages/atuin.yml
+# atuin installer writes a plain `eval "$(atuin init bash)"` to ~/.bashrc.
+# We need to fix it to add one with `--disable-up-arrow`
+- name: Disable the up-arrow binding in atuin's bash init line
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    regexp: "atuin init bash"
+    line: 'eval "$(atuin init bash --disable-up-arrow)"'
   tags:
     - atuin
 
@@ -57,8 +62,31 @@
   tags:
     - jetbrains
 
-- name: Install Podman Desktop Toolbox
-  ansible.builtin.import_tasks: packages/podman-desktop.yml
+- name: Add Flathub remote
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  become: true
+  tags:
+    - podman
+
+- name: Install & upgrade Podman Desktop
+  community.general.flatpak:
+    name: io.podman_desktop.PodmanDesktop
+    state: latest
+  become: true
+  tags:
+    - podman
+
+# Podman Desktop used to be a tarball in /opt, drop once every machine is migrated.
+- name: Remove the old Podman Desktop tarball install
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/podman-desktop
+    - /usr/share/applications/podman-desktop.desktop
+  become: true
   tags:
     - podman
 

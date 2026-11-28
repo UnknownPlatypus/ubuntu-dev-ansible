@@ -6,18 +6,15 @@
 - name: Add google APT repository
   ansible.builtin.deb822_repository:
     name: google
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: http://dl.google.com/linux/chrome/deb
     signed_by: https://dl.google.com/linux/linux_signing_key.pub
     suites: [stable]
     components: [main]
-    enabled: true
 
 - name: Add Docker APT repository
   ansible.builtin.deb822_repository:
     name: docker
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
     signed_by: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
@@ -25,61 +22,50 @@
       "{{ ansible_facts['distribution_release'] | lower }}",
     ] # noble, focal, ...
     components: [stable]
-    enabled: true
 
 - name: Add Mozilla APT repository
   ansible.builtin.deb822_repository:
     name: mozilla
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: https://packages.mozilla.org/apt
     signed_by: https://packages.mozilla.org/apt/repo-signing-key.gpg
     suites: [mozilla]
     components: [main]
-    enabled: true
 
 - name: Add Tailscale APT repository
   ansible.builtin.deb822_repository:
     name: tailscale
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: "https://pkgs.tailscale.com/stable/{{ ansible_facts['distribution'] | lower }}"
     signed_by: "https://pkgs.tailscale.com/stable/{{ ansible_facts['distribution'] | lower }}/{{ ansible_facts['distribution_release'] | lower }}.noarmor.gpg"
     suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
     components: [main]
-    enabled: true
 
 - name: Add caprine APT repository
   ansible.builtin.deb822_repository:
     name: caprine
-    types: [deb]
     uris: "https://apt.fury.io/lefterisgar/"
     suites: ["*"]
     components: ["*"]
-    enabled: true
     trusted: true
 
 - name: Add SourceGit APT repository
   ansible.builtin.deb822_repository:
     name: sourcegit
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: https://codeberg.org/api/packages/yataro/debian
     signed_by: https://codeberg.org/api/packages/yataro/debian/repository.key
     suites: [generic]
     components: [main]
-    enabled: true
 
 - name: Add Claude Desktop APT repository
   ansible.builtin.deb822_repository:
     name: claude-desktop
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: https://downloads.claude.ai/claude-desktop/apt/stable
     signed_by: https://downloads.claude.ai/keys/claude-code.asc
     suites: [stable]
     components: [main]
-    enabled: true
 
 # The package registers its own .list on install, which release upgrades can't migrate and disable.
 - name: Stop claude-desktop from adding its own apt source
@@ -91,13 +77,11 @@
 - name: Add Slack APT repository
   ansible.builtin.deb822_repository:
     name: slack
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: https://packagecloud.io/slacktechnologies/slack/debian/
     signed_by: https://packagecloud.io/slacktechnologies/slack/gpgkey
     suites: [jessie]
     components: [main]
-    enabled: true
 
 # Otherwise Slack's daily cron adds a duplicate slack.list on fresh installs.
 - name: Stop slack-desktop from adding its own apt source
@@ -111,34 +95,28 @@
 - name: Add gitlab-ci-local APT repository
   ansible.builtin.deb822_repository:
     name: gitlab-ci-local
-    types: [deb]
     uris: https://gitlab-ci-local-ppa.firecow.dk/
     signed_by: https://gitlab-ci-local-ppa.firecow.dk/pubkey.gpg
     suites: ["./"]
-    enabled: true
 
 # Ubuntu's wine is too old for ni-wine (needs >= 11) and its wow64 build breaks the Native Access installer.
 - name: Add WineHQ APT repository
   ansible.builtin.deb822_repository:
     name: winehq
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: "https://dl.winehq.org/wine-builds/{{ ansible_facts['distribution'] | lower }}"
     signed_by: https://dl.winehq.org/wine-builds/winehq.key
     suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
     components: [main]
-    enabled: true
 
 - name: Add ni-wine PPA (Native Access under Wine)
   ansible.builtin.deb822_repository:
     name: ni-wine
-    types: [deb]
     architectures: "{{ thibaut_architecture }}"
     uris: "https://ppa.launchpadcontent.net/selimbucher/ni-wine/{{ ansible_facts['distribution'] | lower }}"
     signed_by: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xDD1F1609D6C94C54395A156B053F4E4FBB994005
     suites: ["{{ ansible_facts['distribution_release'] | lower }}"]
     components: [main]
-    enabled: true
 
 - name: Remove apt sources disabled by release upgrades
   ansible.builtin.file:

@@ -1,11 +1,10 @@
 ---
-thibaut_files: "{{ role_path }}/files"
-
 thibaut_apt_packages:
   - caprine # Elegant Facebook Messenger desktop app
   - claude-desktop # Anthropic's Claude desktop app
   - curl # Command line tool for transferring data using various protocols
   - firefox-nightly # Nightly build of Firefox browser
+  - flatpak # Sandboxed app runtime, installs Podman Desktop from Flathub
   - git # Distributed version control system
   - gitlab-ci-local # Run GitLab CI pipelines locally
   - google-chrome-stable # Google Chrome web browser

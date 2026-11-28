@@ -1,44 +1,9 @@
 ---
-- name: Dotfiles dirs
-  ansible.builtin.file:
-    path: ~/.{{ item }}
-    state: directory
-    mode: "0755"
-  loop:
-    - ipython/profile_default/startup
-    - config/dust
-    - config/git
-    - config/zed
-    - aws
-    - agents
-    - claude
-    - local/share/org.gnome.Ptyxis/palettes
-
-- name: Create Dotfiles
+# `files/home/` mirrors ~, the copy creates missing parent dirs.
+- name: Copy dotfiles and custom scripts
   ansible.builtin.copy:
-    src: "{{ thibaut_files }}/dotfiles/{{ item }}"
-    dest: ~/.{{ item }}
-    mode: "0755"
-  loop:
-    - agents/AGENTS.md
-    - aws/config
-    - config/dust/config.toml
-    - config/git/config
-    - config/git/ignore
-    - config/zed/settings.json
-    - config/ripgreprc
-    - local/share/org.gnome.Ptyxis/palettes/thibaut.palette
-    - local/share/org.gnome.Ptyxis/palettes/prod-deploy.palette
-    - ipython/profile_default/startup/00-imports.py
-    - ansible.cfg
-    - bash_aliases
-    - digrc
-    - justfile
-
-- name: Install custom scripts to ~/.local/bin
-  ansible.builtin.copy:
-    src: "{{ thibaut_files }}/bin/"
-    dest: ~/.local/bin/
+    src: home/
+    dest: ~/
     mode: "0755"
 
 - name: Update ~/.bashrc for various tools
@@ -52,3 +17,17 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK: tools"
     prepend_newline: true
     append_newline: true
+
+- name: Create ~/.claude
+  ansible.builtin.file:
+    path: ~/.claude
+    state: directory
+    mode: "0755"
+
+# Claude Code is a disgusting piece os software actively harming standard for no reason.
+# Unlike codex that uses the standard `AGENTS.md`, it needs a proprietary `CLAUDE.md`.
+- name: Create `CLAUDE.md` -> `AGENTS.md` symlink
+  ansible.builtin.file:
+    src: ~/.agents/AGENTS.md
+    dest: ~/.claude/CLAUDE.md
+    state: link

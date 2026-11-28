@@ -1,22 +1,21 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["cyclopts", "rich"]
+# dependencies = ["rich"]
 # ///
 """Prune local and remote branches already merged into the GitHub default branch."""
 
 from __future__ import annotations
 
+import argparse
 import dataclasses
 import json
 import subprocess
 import webbrowser
 
-import cyclopts
 from rich.console import Console
 from rich.prompt import Confirm
 
-app = cyclopts.App(help=__doc__, default_parameter=cyclopts.Parameter(negative=()))
 console = Console()
 
 REMOTE = "origin"
@@ -228,14 +227,16 @@ def prune_remote_branches(merged: Merged, protected: frozenset[str]) -> None:
         console.print(f"Pruned {len(to_clean)} remote branches!", style="bold green")
 
 
-@app.default
-def main(*, protected: tuple[str, ...] = ()) -> None:
-    """
-    Parameters
-    ----------
-    protected
-        Extra branches to keep, on top of main/master, the default and the current branch.
-    """
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--protected",
+        action="extend",
+        nargs="+",
+        default=[],
+        help="extra branches to keep, on top of main/master, the default and the current one",
+    )
+    protected = parser.parse_args().protected
     console.print("Fetching merged branches…", style="bold")
     repos, default_branch = github_repos()
     merged = fetch_merged(repos, default_branch)
@@ -246,4 +247,4 @@ def main(*, protected: tuple[str, ...] = ()) -> None:
 
 
 if __name__ == "__main__":
-    app()
+    main()
