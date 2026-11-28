@@ -6,6 +6,5 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
   "ansible-core>=2.21",
-  "python-debian>=0.1.49",
   "mitogen>=0.3.53",
 ]

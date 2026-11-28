@@ -4,5 +4,4 @@ collections:
   - name: ansible.posix
 
 roles:
-  - name: hurricanehrndz.rustup
   - name: markosamuli.linuxbrew

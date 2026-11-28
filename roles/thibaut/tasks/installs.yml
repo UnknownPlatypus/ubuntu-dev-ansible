@@ -101,21 +101,12 @@
   tags:
     - docker
 
-- name: Install rust toolchain
-  ansible.builtin.include_role:
-    name: hurricanehrndz.rustup
-    apply:
-      tags:
-        - rust
-  vars:
-    rustup_cargo_crates: []
-  tags:
-    - rust
-
 - name: Install Rust stable and nightly with rustup
   ansible.builtin.command: rustup install stable nightly
   register: thibaut_rustup_install_output
   changed_when: "'unchanged' not in thibaut_rustup_install_output.stdout"
+  tags:
+    - rust
 
 - name: Install & upgrade Rust CLIs with cargo-binstall
   ansible.builtin.command: >

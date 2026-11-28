@@ -8,7 +8,7 @@ and re-install with less effort.
 1. `sudo apt install curl`
 2. `curl -LsSf https://astral.sh/uv/install.sh | sh`
 3. `uv sync -p 3.12 && . .venv/bin/activate`
-4. `ansible-galaxy role install markosamuli.linuxbrew hurricanehrndz.rustup`
+4. `ansible-galaxy role install markosamuli.linuxbrew`
 5. `ansible-playbook --ask-become-pass playbook.yml`
 
 For some extra LLM goodies (Ollama, open-webui, ...)

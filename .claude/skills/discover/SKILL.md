@@ -28,7 +28,7 @@ Monthly audit and discovery sweep for the ubuntu-dev-ansible repo. Two phases: (
 Read these files to build a complete inventory of every tool currently installed:
 
 - `roles/thibaut/vars/main.yml` — tool lists: `thibaut_apt_packages`, `thibaut_deb_packages`, `thibaut_brew_packages`, `thibaut_script_installs`, `thibaut_uv_tools`
-- `roles/thibaut/tasks/installs.yml` — rustup, Podman Desktop (Flathub) and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml`
+- `roles/thibaut/tasks/installs.yml` — Rust toolchains, Podman Desktop (Flathub) and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml`
 - `roles/thibaut/tasks/llm.yml` — LLM-specific tools installed outside the main vars
 
 Rust dev tools (cargo-nextest, cargo-insta, …) go through brew, there is no cargo list.

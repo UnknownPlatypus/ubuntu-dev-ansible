@@ -143,6 +143,12 @@ thibaut_script_installs:
     args: --non-interactive
     post_install_script: atuin import auto
     update_cmd: atuin update
+  - name: rustup # Rust toolchain installer, toolchains are installed in installs.yml
+    url: https://sh.rustup.rs
+    sha256: d890e2fef6fa991b19cde2e608199bc1dca4e37f41f884edf8849ff693048de6
+    bin_dir: .cargo/bin
+    args: -y
+    update_cmd: rustup self update
   # No update_cmd: greenday's `just security-upgrade` pins the bun version in ~/.bun.
   - name: bun # JavaScript runtime and package manager, provides `bunx`
     url: https://bun.com/install
