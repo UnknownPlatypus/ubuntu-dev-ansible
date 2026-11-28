@@ -113,5 +113,28 @@ class PruneTests(unittest.TestCase):
         )
 
 
+class RecursiveTests(unittest.TestCase):
+    def test_cleans_every_repo_below_despite_failures(self) -> None:
+        self.enterContext(
+            contextlib.chdir(self.enterContext(tempfile.TemporaryDirectory()))
+        )
+        git("init", "-q", "a")
+        git("init", "-q", "b")
+        pathlib.Path("not-a-repo").mkdir()
+        visited = []
+
+        def failing_clean(protected: list[str]) -> None:
+            visited.append(pathlib.Path.cwd().name)
+            raise SystemExit("gh repo view failed")
+
+        with (
+            patch.object(cleanup, "clean_repo", side_effect=failing_clean),
+            patch.object(sys, "argv", ["cleanup-local-git-branches", "-r"]),
+        ):
+            cleanup.main()
+
+        self.assertEqual(visited, ["a", "b"])
+
+
 if __name__ == "__main__":
     unittest.main()

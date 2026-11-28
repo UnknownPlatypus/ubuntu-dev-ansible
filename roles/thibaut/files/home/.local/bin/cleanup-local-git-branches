@@ -8,8 +8,10 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import dataclasses
 import json
+import pathlib
 import subprocess
 import webbrowser
 
@@ -238,6 +240,16 @@ def prune_remote_branches(merged: Merged, protected: frozenset[str]) -> None:
         console.print(f"Pruned {len(to_clean)} remote branches!", style="bold green")
 
 
+def clean_repo(protected: list[str]) -> None:
+    console.print("Fetching merged branches…", style="bold")
+    repos, default_branch = github_repos()
+    merged = fetch_merged(repos, default_branch)
+    current_branch = run("git", "branch", "--show-current").strip()
+    keep = ALWAYS_PROTECTED | {*protected, default_branch, current_branch}
+    prune_local_branches(merged, keep)
+    prune_remote_branches(merged, keep)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -247,14 +259,27 @@ def main() -> None:
         default=[],
         help="extra branches to keep, on top of main/master, the default and the current one",
     )
-    protected = parser.parse_args().protected
-    console.print("Fetching merged branches…", style="bold")
-    repos, default_branch = github_repos()
-    merged = fetch_merged(repos, default_branch)
-    current_branch = run("git", "branch", "--show-current").strip()
-    keep = ALWAYS_PROTECTED | {*protected, default_branch, current_branch}
-    prune_local_branches(merged, keep)
-    prune_remote_branches(merged, keep)
+    parser.add_argument(
+        "-r",
+        "--recursive",
+        action="store_true",
+        help="clean every Git repo directly under the current directory",
+    )
+    args = parser.parse_args()
+    if not args.recursive:
+        clean_repo(args.protected)
+        return
+
+    for path in sorted(pathlib.Path.cwd().iterdir()):
+        # Checked in the loop: cleaning a repo can remove a sibling worktree.
+        if not (path / ".git").exists():
+            continue
+        console.rule(path.name)
+        with contextlib.chdir(path):
+            try:
+                clean_repo(args.protected)
+            except SystemExit as error:
+                console.print(str(error), style="red", markup=False)
 
 
 if __name__ == "__main__":
