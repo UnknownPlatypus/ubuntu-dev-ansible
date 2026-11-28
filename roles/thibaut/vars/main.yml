@@ -118,18 +118,18 @@ thibaut_cargo_binstall_crates:
 thibaut_script_installs:
   - name: uv # Extremely fast Python package & project manager (Astral)
     url: https://astral.sh/uv/install.sh
-    sha256: d79d834572b5b5cdd521289c055adcdbacd43bfe9e6b896445f351075dac4113
+    sha256: 51781aafe6950cc659f79873e1bdca55fbb9da6e0ef650bf98093a0f0aaaf453
     update_cmd: uv self update
   - name: claude # Anthropic's agentic coding tool
     url: https://claude.ai/install.sh
-    sha256: 005ec1a937f32dfbb74f9e810287bcb12cba2d5cae4c9277aa8c6364adbf1787
+    sha256: 2c5506d110560bf618bbe88f678f2c2a0047c86a9c6585fc84976120b1de0b44
     update_cmd: claude update
   - name: zed # High-performance, multiplayer code editor
     url: https://zed.dev/install.sh
-    sha256: 0fba83da4b7ea9ce7e2f042037b8e7ffdb7def73953bba0cd066d870a7ed51c3
+    sha256: c42e96c9e3da1fae61ac11b0922ad033e8fcac3c34b44303805ad3796081b502
   - name: herdr # Agent-aware terminal multiplexer, runs coding agents in tabs and panes
     url: https://herdr.dev/install.sh
-    sha256: 3db3af8375006e193a393b5e3129feb237f30bc6f053fffbe1dc75da1f3d9ac4
+    sha256: bf83668c944cff30b3365eee5a4fe15ff61a4b749ab0c73b98e7a203f70893dd
   - name: depot # CLI for Depot remote container builds and CI runners
     url: https://depot.dev/install-cli.sh
     sha256: 96ccb232543ef95ce500bf4d715fbda5c896e3f55fb8a298b0218537cbb58aa1
@@ -138,7 +138,7 @@ thibaut_script_installs:
       DEPOT_INSTALL_DIR: "{{ ansible_facts['env'].HOME }}/.local/bin"
   - name: atuin # Magical shell history with sync and fuzzy search
     url: https://setup.atuin.sh
-    sha256: 3e709edea36c6bccfaa19d9ba82c53323da41dd2e8eb05509682c9a60f939bd4
+    sha256: 6c4aba2c831734a8a3c9a924c1199cae05520bf0b359d5e996666a9e9f0e44bf
     bin_dir: .atuin/bin
     args: --non-interactive
     post_install_script: atuin import auto

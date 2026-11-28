@@ -29,7 +29,6 @@ Read these files to build a complete inventory of every tool currently installed
 
 - `roles/thibaut/vars/main.yml` — tool lists: `thibaut_apt_packages`, `thibaut_deb_packages`, `thibaut_brew_packages`, `thibaut_script_installs`, `thibaut_uv_tools`
 - `roles/thibaut/tasks/installs.yml` — Rust toolchains, Podman Desktop (Flathub) and the custom installers it imports from `roles/thibaut/tasks/packages/*.yml`
-- `roles/thibaut/tasks/llm.yml` — LLM-specific tools installed outside the main vars
 
 Rust dev tools (cargo-nextest, cargo-insta, …) go through brew, there is no cargo list.
 
@@ -194,13 +193,13 @@ Add to the appropriate list in `roles/thibaut/vars/main.yml`:
 - **deb:** Add to `thibaut_deb_packages` with a `name` and a `url` that always points to the latest `.deb`
 - **brew:** Add to `thibaut_brew_packages` with a comment describing the tool (also for Rust/cargo tools)
 - **uv:** Add to `thibaut_uv_tools` as `- name: toolname # description`
-- **official install.sh:** Add to `thibaut_script_installs` with `url`, `sha256` and `update_cmd` if the tool self-updates
+- **official install.sh:** Add to `thibaut_script_installs` with `url`, `sha256: TODO` right below it, and `update_cmd` if the tool self-updates, then run `just pin-installers` to fill in the hash
 
 Maintain alphabetical order within each section. Match the existing comment style.
 
 ### Custom installers
 
-Only when none of the lists above fit. Create `roles/thibaut/tasks/packages/<tool-name>.yml`, e.g. GitHub release tracking: fetch the latest version from the GitHub API, compare with the installed version, download if different. See the ollama tasks in `llm.yml`.
+Only when none of the lists above fit. Create `roles/thibaut/tasks/packages/<tool-name>.yml`, e.g. GitHub release tracking: fetch the latest version from the GitHub API, compare with the installed version, download if different.
 
 Always use `changed_when` to track actual changes.
 
